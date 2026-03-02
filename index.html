@@ -63,25 +63,34 @@ canvas{image-rendering:pixelated}
 #scoreboard.show{display:block}
 .sb-title{font-size:13px;color:#9a8340;margin-bottom:8px;letter-spacing:3px;text-transform:uppercase}
 .sb-line{font-size:8px;margin:4px 0}
-#shop-overlay{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:260;display:none;background:linear-gradient(180deg,rgba(10,8,20,.98),rgba(4,4,10,.99));border:1px solid #3a3020;padding:14px 18px;box-shadow:0 0 40px rgba(0,0,0,.8);max-width:700px;width:90%}
-#shop-overlay.show{display:block}
-.shop-header{text-align:center;color:#d4af37;font-size:11px;letter-spacing:3px;text-transform:uppercase;border-bottom:1px solid #2a2418;padding-bottom:6px;margin-bottom:8px}
-.shop-gold{text-align:center;color:#ffcc44;font-size:8px;margin-bottom:8px}
-.shop-tabs{display:flex;gap:4px;margin-bottom:8px;justify-content:center}
-.shop-tab{background:rgba(20,18,30,.8);color:#666;border:1px solid #1a1a22;padding:4px 10px;font-family:'Press Start 2P',monospace;font-size:5px;cursor:pointer;text-transform:uppercase;letter-spacing:1px}
-.shop-tab.active{color:#d4af37;border-color:#3a3020;background:rgba(40,35,20,.6)}
-.shop-tab:hover{color:#9a8340}
-.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;max-height:320px;overflow-y:auto}
-.shop-item{background:linear-gradient(180deg,rgba(20,18,30,.9),rgba(12,10,20,.95));border:1px solid #1a1a22;padding:6px 8px;cursor:pointer;transition:all .2s}
-.shop-item:hover{border-color:#3a3020;background:rgba(30,25,15,.8)}
-.shop-item.owned{opacity:.4;cursor:default}
-.shop-item.locked{opacity:.5;cursor:not-allowed}
-.shop-item-name{font-size:6px;color:#ccc;margin-bottom:2px}
-.shop-item-stats{font-size:5px;color:#5588cc;margin-bottom:2px}
-.shop-item-cost{font-size:5px;color:#ffcc44}
-.shop-item-tier{display:inline-block;font-size:4px;padding:1px 4px;border-radius:2px;margin-left:4px}
-.shop-close{position:absolute;top:6px;right:10px;color:#666;font-size:8px;cursor:pointer;background:none;border:none;font-family:'Press Start 2P',monospace}
-.shop-close:hover{color:#cc4444}
+@keyframes forgeOpen{0%{opacity:0;transform:translate(-50%,-50%) scale(.85)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+@keyframes emberPulse{0%,100%{box-shadow:0 0 30px rgba(180,80,0,.15),0 0 60px rgba(0,0,0,.7),inset 0 0 40px rgba(0,0,0,.3)}50%{box-shadow:0 0 40px rgba(200,100,0,.25),0 0 80px rgba(0,0,0,.7),inset 0 0 40px rgba(0,0,0,.3)}}
+@keyframes goldShine{0%,100%{text-shadow:0 0 6px rgba(212,175,55,.4),2px 2px 0 #000}50%{text-shadow:0 0 12px rgba(255,200,50,.6),0 0 20px rgba(212,175,55,.3),2px 2px 0 #000}}
+#shop-overlay{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.85);z-index:260;display:none;opacity:0;background:linear-gradient(180deg,#1a120a,#0e0906 40%,#120a06);border:2px solid #5a3a1a;border-image:linear-gradient(180deg,#8a6a30,#3a2510,#8a6a30) 1;padding:18px 22px;max-width:720px;width:92%;animation:emberPulse 4s ease-in-out infinite}
+#shop-overlay.show{display:block;opacity:1;transform:translate(-50%,-50%) scale(1);animation:forgeOpen .35s ease-out forwards,emberPulse 4s ease-in-out 0.35s infinite}
+.shop-header{text-align:center;color:#d4af37;font-size:12px;letter-spacing:4px;text-transform:uppercase;padding-bottom:8px;margin-bottom:10px;text-shadow:0 0 8px rgba(200,140,20,.5),0 0 20px rgba(180,100,0,.2),2px 2px 0 #000;border-bottom:2px solid transparent;border-image:linear-gradient(90deg,transparent,#5a3a1a,#8a6a30,#5a3a1a,transparent) 1}
+.shop-gold{text-align:center;color:#ffcc44;font-size:9px;margin-bottom:10px;animation:goldShine 3s ease-in-out infinite;letter-spacing:1px}
+.shop-tabs{display:flex;gap:6px;margin-bottom:10px;justify-content:center}
+.shop-tab{background:linear-gradient(180deg,#1e150d,#120c08);color:#6a5a40;border:1px solid #3a2a18;padding:5px 14px;font-family:'Press Start 2P',monospace;font-size:6px;cursor:pointer;text-transform:uppercase;letter-spacing:1px;transition:all .25s;position:relative}
+.shop-tab.active{color:#ffcc44;border-color:#8a6a30;background:linear-gradient(180deg,#2a1c0e,#1a1008);box-shadow:0 2px 0 #d4af37,0 4px 12px rgba(180,100,0,.2)}
+.shop-tab:hover{color:#cc9933;border-color:#5a3a1a;background:linear-gradient(180deg,#251a0e,#180e08);text-shadow:0 0 4px rgba(200,120,0,.3)}
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;max-height:340px;overflow-y:auto;padding-right:4px}
+.shop-grid::-webkit-scrollbar{width:6px}
+.shop-grid::-webkit-scrollbar-track{background:#0e0906;border-radius:3px}
+.shop-grid::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#5a3a1a,#3a2510);border-radius:3px}
+.shop-grid::-webkit-scrollbar-thumb:hover{background:#8a6a30}
+.shop-item{background:linear-gradient(180deg,#1a130c,#100a06);border:1px solid #2a1e14;padding:8px 10px;cursor:pointer;transition:all .25s;position:relative}
+.shop-item:hover{border-color:#8a6a30;background:linear-gradient(180deg,#221a0f,#16100a);box-shadow:0 0 12px rgba(180,100,0,.15);transform:translateY(-1px)}
+.shop-item.owned{opacity:.35;cursor:default;border-color:#3a3020}
+.shop-item.owned:hover{transform:none;box-shadow:none}
+.shop-item.locked{opacity:.4;cursor:not-allowed;filter:grayscale(.4)}
+.shop-item.locked:hover{transform:none;box-shadow:none;border-color:#2a1e14}
+.shop-item-name{font-size:7px;color:#d4c4a0;margin-bottom:3px;letter-spacing:.5px}
+.shop-item-stats{font-size:5px;color:#55aadd;margin-bottom:3px;letter-spacing:.5px}
+.shop-item-cost{font-size:6px;color:#ffcc44;text-shadow:0 0 4px rgba(200,150,0,.3)}
+.shop-item-tier{display:inline-block;font-size:5px;padding:1px 5px;border-radius:2px;margin-left:4px;font-weight:bold;text-shadow:0 0 4px currentColor}
+.shop-close{position:absolute;top:8px;right:12px;color:#884433;font-size:10px;cursor:pointer;background:none;border:none;font-family:'Press Start 2P',monospace;transition:all .2s;text-shadow:0 0 4px rgba(0,0,0,.5)}
+.shop-close:hover{color:#ff4433;text-shadow:0 0 8px rgba(255,50,30,.5)}
 #wave-banner{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:200;pointer-events:none;text-align:center;opacity:0;transition:opacity 0.5s}
 #wave-banner.show{opacity:1}
 .wave-title{font-size:24px;color:#9a8340;text-shadow:0 0 15px rgba(150,130,60,.5),2px 2px 0 #000;letter-spacing:4px;text-transform:uppercase}
