@@ -42,10 +42,11 @@ canvas{image-rendering:pixelated}
 #boss-hp-bar{width:200px;height:12px;background:#0a0808;border:1px solid #3a1010;margin:4px auto;position:relative;box-shadow:inset 0 1px 4px rgba(0,0,0,.6)}
 #boss-hp-fill{height:100%;background:linear-gradient(90deg,#cc2020,#6a0808);transition:width 0.4s}
 #boss-hp-text{position:absolute;top:0;left:0;width:100%;height:100%;font-size:6px;line-height:14px;text-align:center;color:#fff;text-shadow:1px 1px 0 #000;font-family:'Press Start 2P',monospace;z-index:1;pointer-events:none}
-#shop-zone{position:absolute;left:20px;bottom:60px;z-index:15;display:none}
+@keyframes forgeFlicker{0%,100%{filter:brightness(1) drop-shadow(0 0 4px rgba(255,100,0,.3))}25%{filter:brightness(1.05) drop-shadow(0 0 6px rgba(255,120,0,.4))}50%{filter:brightness(1.1) drop-shadow(0 0 8px rgba(255,80,0,.5))}75%{filter:brightness(1.02) drop-shadow(0 0 5px rgba(255,100,0,.35))}}
+#shop-zone{position:absolute;left:20px;bottom:55px;z-index:15;display:none}
 #shop-zone.open{display:block}
-#shop-zone canvas{width:80px;height:80px;display:block}
-#shop-label{font-size:6px;color:#d4af37;text-align:center;text-shadow:1px 1px 0 #000}
+#shop-zone canvas{width:128px;height:72px;display:block;animation:forgeFlicker 2s ease-in-out infinite}
+#shop-label{font-size:7px;color:#d4af37;text-align:center;text-shadow:0 0 6px rgba(200,120,0,.4),1px 1px 0 #000;letter-spacing:2px}
 #hud{position:fixed;top:8px;left:8px;z-index:100;background:linear-gradient(180deg,rgba(12,12,28,.95),rgba(8,8,18,.98));border:1px solid #2a2418;padding:8px 12px;font-size:7px;line-height:2;max-width:380px;box-shadow:0 2px 12px rgba(0,0,0,.6)}
 .hud-title{color:#9a8340;font-size:9px;letter-spacing:3px;margin-bottom:4px;text-transform:uppercase;border-bottom:1px solid #1a1810;padding-bottom:4px}
 #season-hud{position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:100;background:linear-gradient(180deg,rgba(12,12,28,.95),rgba(8,8,18,.98));border:1px solid #2a2418;padding:6px 16px;font-size:8px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.6);letter-spacing:1px}
@@ -214,7 +215,7 @@ canvas{image-rendering:pixelated}
 <div id="game-container">
 <canvas id="bg-canvas"></canvas>
 <canvas id="fx-canvas"></canvas>
-<div id="shop-zone"><canvas id="shop-canvas" width="32" height="32"></canvas><div id="shop-label">SHOP (!shop)</div></div>
+<div id="shop-zone"><canvas id="shop-canvas" width="32" height="18"></canvas><div id="shop-label">FORGE (!shop)</div></div>
 </div>
 <div id="boss-zone">
 <div id="boss-name"></div><div id="boss-mod-tag"></div><div id="boss-phase"></div>
@@ -1334,14 +1335,61 @@ static drawBossGolem(ctx,s){
 
 static drawShop(ctx,s){
     const c=(x,y,col)=>{ctx.fillStyle=col;ctx.fillRect(x*s,y*s,s,s)};
-    for(let x=3;x<=12;x++){c(x,4,'#8B4513');c(x,5,'#A0522D')}
-    for(let x=2;x<=13;x++){c(x,6,'#8B4513')}
-    c(4,3,'#8B4513');c(5,2,'#8B4513');c(6,1,'#8B4513');c(7,0,'#FFD700');c(8,0,'#FFD700');c(9,1,'#8B4513');c(10,2,'#8B4513');c(11,3,'#8B4513');
-    c(7,1,'#cc2222');c(8,1,'#cc2222');c(7,2,'#cc2222');c(8,2,'#cc2222');
-    for(let x=2;x<=13;x++){c(x,7,'#654321');c(x,8,'#5a3a1a')}
-    c(4,6,'#ff4444');c(5,6,'#4444ff');c(9,6,'#44ff44');c(10,6,'#ffaa00');
-    c(2,6,'#654321');c(2,7,'#654321');c(2,8,'#654321');c(2,9,'#5a3a1a');c(2,10,'#5a3a1a');
-    c(13,6,'#654321');c(13,7,'#654321');c(13,8,'#654321');c(13,9,'#5a3a1a');c(13,10,'#5a3a1a');
+    // Chimney top + smoke hints
+    c(6,0,'#555');c(7,0,'#555');c(8,0,'#555');c(9,0,'#555');
+    c(6,1,'#4a4a4a');c(7,1,'#4a4a4a');c(8,1,'#4a4a4a');c(9,1,'#4a4a4a');
+    // Chimney body
+    for(let y=2;y<=6;y++){c(5,y,'#5a3a2a');c(6,y,'#4a2a1a');c(7,y,'#4a2a1a');c(8,y,'#4a2a1a');c(9,y,'#4a2a1a');c(10,y,'#5a3a2a')}
+    // Fire glow in chimney
+    c(7,4,'#ff6600');c(8,4,'#ff4400');c(7,5,'#ff8800');c(8,5,'#ffaa00');c(7,6,'#ffcc00');c(8,6,'#ff8800');
+    c(6,5,'#cc3300');c(9,5,'#cc3300');c(6,6,'#ff5500');c(9,6,'#ff5500');
+    // Flame tips
+    c(7,3,'#ff4400');c(8,3,'#ff6600');c(7,2,'#ff220088');c(8,2,'#ff440088');
+    // Roof / hood
+    for(let x=3;x<=12;x++){c(x,7,'#5a3a2a')}
+    for(let x=2;x<=13;x++){c(x,8,'#6a4430')}
+    c(2,7,'#6a4430');c(13,7,'#6a4430');
+    // Stone base walls
+    const stone=['#555','#5a5a5a','#505050','#585858'];
+    for(let y=9;y<=14;y++){for(let x=1;x<=14;x++){c(x,y,stone[(x+y)%4])}}
+    // Front opening (dark interior)
+    for(let y=10;y<=14;y++){for(let x=5;x<=10;x++){c(x,y,'#1a0a0a')}}
+    // Fire inside forge
+    c(6,13,'#ff6600');c(7,13,'#ffaa00');c(8,13,'#ff8800');c(9,13,'#ff5500');
+    c(6,12,'#ff4400');c(7,12,'#ffcc22');c(8,12,'#ffbb00');c(9,12,'#ff4400');
+    c(7,11,'#ff6600');c(8,11,'#ff8800');
+    // Embers / sparks
+    c(5,11,'#ff330088');c(10,11,'#ff440088');c(7,10,'#ff660066');c(8,10,'#ff880066');
+    // Anvil (right side)
+    c(17,14,'#3a3a3a');c(18,14,'#3a3a3a');c(19,14,'#3a3a3a');c(20,14,'#3a3a3a');
+    c(16,13,'#4a4a4a');c(17,13,'#555');c(18,13,'#555');c(19,13,'#555');c(20,13,'#4a4a4a');c(21,13,'#4a4a4a');
+    c(17,12,'#666');c(18,12,'#6a6a6a');c(19,12,'#666');c(20,12,'#666');
+    // Anvil horn
+    c(16,12,'#555');c(15,12,'#4a4a4a');
+    // Anvil base/pedestal
+    c(18,15,'#5a3a2a');c(19,15,'#5a3a2a');c(18,16,'#4a2a1a');c(19,16,'#4a2a1a');
+    // Hammer on anvil
+    c(17,11,'#8a6a30');c(18,11,'#8a6a30');c(19,11,'#777');c(19,10,'#777');c(19,9,'#777');
+    // Bellows (left side)
+    c(22,16,'#6a4430');c(23,16,'#6a4430');c(24,16,'#6a4430');
+    c(22,15,'#7a5440');c(23,15,'#8a6450');c(24,15,'#7a5440');
+    c(23,14,'#6a4430');
+    // Ground stones
+    for(let x=0;x<=31;x++){c(x,17,stone[x%4])}
+    // Weapon rack (left side far)
+    c(25,10,'#5a3a2a');c(25,11,'#5a3a2a');c(25,12,'#5a3a2a');c(25,13,'#5a3a2a');c(25,14,'#5a3a2a');
+    c(26,10,'#5a3a2a');c(26,14,'#5a3a2a');
+    // Swords on rack
+    c(26,11,'#aaa');c(26,12,'#aaa');c(26,13,'#ccc');
+    c(27,11,'#888');c(27,12,'#999');
+    // Hanging shield
+    c(28,11,'#8a6a30');c(29,11,'#8a6a30');c(28,12,'#aa8040');c(29,12,'#aa8040');c(28,13,'#8a6a30');c(29,13,'#8a6a30');
+    // Water barrel (far right)
+    c(30,14,'#4a3020');c(30,15,'#5a3a2a');c(30,16,'#4a3020');
+    c(31,14,'#4a3020');c(31,15,'#5a3a2a');c(31,16,'#4a3020');
+    c(30,13,'#3366aa');c(31,13,'#3366aa');
+    // Tongs near anvil
+    c(16,14,'#666');c(16,15,'#666');c(15,15,'#555');c(15,16,'#555');
 }
 }//end PX
 // ================================================================
@@ -3076,7 +3124,7 @@ setInterval(rouletteEvent,1200000); // Every 20 minutes
 if(CONFIG.testMode)setTimeout(rouletteEvent,120000);
 
 setTimeout(()=>{
-    const sce=document.getElementById('shop-canvas');if(sce){const sc=sce.getContext('2d');PX.drawShop(sc,2)}
+    const sce=document.getElementById('shop-canvas');if(sce){const sc=sce.getContext('2d');PX.drawShop(sc,1)}
     document.getElementById('shop-zone').classList.add('open');
     drawBG();
     // Try to load saved game
