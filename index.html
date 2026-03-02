@@ -287,7 +287,7 @@ canvas{image-rendering:pixelated}
 // ================================================================
 // CONFIG
 // ================================================================
-const CONFIG={channel:'sir_elking',testMode:true,maxChars:25,autoAtkInterval:2500,seasonDuration:300000};
+const CONFIG={channel:'sir_elking',testMode:true,botToken:'',maxChars:25,autoAtkInterval:2500,seasonDuration:300000};
 let isFullscreen=false,currentSeason=0,seasonStartTime=Date.now();
 const SEASONS=[
 {name:'HIVER',emoji:'❄️',sky1:'#4a5f7f',sky2:'#2c3e50',ground:'#ddeeff',tree:'#aabbcc',particle:'#ffffff',paysanXP:0.5,defBonus:3,atkBonus:0,healBonus:0,manaRegen:0,desc:'DEF +3 · Paysans -50% XP'},
@@ -1610,6 +1610,8 @@ function shopBuy(username,key){
     c.popup(eq.name+'!','popup popup-gold');spawnP(c.element,'#d4af37',8);
     if(eq.tier>=4){spawnP(c.element,'#ffffff',10);showBanner(`${eq.emoji} ${eq.name}!`,`${c.username} s'équipe!`,2000)}
     game.log(`${username} équipe ${eq.name} T${eq.tier} (-${eq.cost}g)`,'log-gold');
+    const statsStr=Object.entries(eq.stats).map(([k,v])=>`+${v}${k.toUpperCase()}`).join(' ');
+    chatSay(`${eq.emoji} @${username} forge ${eq.name} [T${eq.tier}] | ${statsStr} | -${eq.cost}g (reste ${c.gold}g)`);
     renderShop();
 }
 function shopBuyConsum(username,key){
@@ -1628,6 +1630,7 @@ function shopBuyConsum(username,key){
     }
     c.updateBars();c.popup(item.name+'!','popup popup-gold');spawnP(c.element,'#d4af37',6);
     game.log(`${username} achète ${item.name} (-${item.cost}g)`,'log-gold');
+    chatSay(`${item.emoji} @${username} achète ${item.name} | ${item.desc} | -${item.cost}g (reste ${c.gold}g)`);
     renderShop();
 }
 
@@ -3275,17 +3278,21 @@ window.addEventListener('resize',()=>setTimeout(drawBG,100));
 // ================================================================
 // TWITCH CONNECTION
 // ================================================================
+let _twitchClient=null;
+function chatSay(msg){if(_twitchClient&&CONFIG.botToken)_twitchClient.say(CONFIG.channel,msg).catch(()=>{})}
 function initTwitch(){
     if(typeof tmi==='undefined')return;
     if(CONFIG.channel==='VOTRE_CHANNEL_ICI')return;
-    const client=new tmi.Client({channels:[CONFIG.channel]});
-    client.connect().then(()=>{console.log('Twitch: '+CONFIG.channel);game.log('📡 Twitch connecté: '+CONFIG.channel,'log-info')}).catch(e=>{console.error(e);game.log('❌ Twitch: erreur connexion','log-dmg')});
-    client.on('message',(ch,tags,msg,self)=>{
+    const opts={channels:[CONFIG.channel]};
+    if(CONFIG.botToken){opts.identity={username:CONFIG.channel,password:'oauth:'+CONFIG.botToken.replace('oauth:','')}}
+    _twitchClient=new tmi.Client(opts);
+    _twitchClient.connect().then(()=>{console.log('Twitch: '+CONFIG.channel+(CONFIG.botToken?' (auth)':' (anon)'));game.log('📡 Twitch connecté: '+CONFIG.channel+(CONFIG.botToken?' ✓ Chat actif':''),'log-info')}).catch(e=>{console.error(e);game.log('❌ Twitch: erreur connexion','log-dmg')});
+    _twitchClient.on('message',(ch,tags,msg,self)=>{
         if(self)return;const u=tags['display-name']||tags.username;
         const m=msg.trim().toLowerCase();if(!m.startsWith('!'))return;
         const parts=m.split(' '),cmd=parts[0].substring(1),args=parts.slice(1);
         const valid=['class','attaque','soin','sort','defense','esquive','special','stats','couleur','shop','marche','evolution','evoluer','reclass','do','notdo','skill','help','commandes','succes','achievements','classement','top','leaderboard','don','give','duel','info','buffs','recap','equip','equipement'];
-        if(valid.includes(cmd)){console.log(`CMD: ${u} !${cmd} ${args.join(' ')}`);game.processCmd(u,cmd,args)}
+        if(valid.includes(cmd)){console.log(`CMD: ${u} !${cmd} ${args.join(' ')}`);const r=game.processCmd(u,cmd,args);if(r&&CONFIG.botToken)chatSay(`@${u} ${r}`)}
     });
 }
 
