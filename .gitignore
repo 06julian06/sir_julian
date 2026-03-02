@@ -1,2 +1,4 @@
 check_brackets.ps1
+check.ps1
+*.tmp
 .claude/
