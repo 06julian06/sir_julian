@@ -1333,6 +1333,172 @@ static drawBossGolem(ctx,s){
     ctx.globalAlpha=0.4;R(10,58,8,2,ru);R(46,58,8,2,ru);ctx.globalAlpha=1;
 }
 
+static drawBossPhoenix(ctx,s){
+    const c=(x,y,col)=>{ctx.fillStyle=col;ctx.fillRect(x*s,y*s,s,s)};
+    const R=(x,y,w,h,col)=>{ctx.fillStyle=col;ctx.fillRect(x*s,y*s,w*s,h*s)};
+    // Flame aura
+    ctx.globalAlpha=0.15;R(4,0,56,60,'#ff4400');ctx.globalAlpha=1;
+    // Body - fiery bird
+    R(22,20,20,22,'#cc3300');R(24,22,16,18,'#ff4400');R(26,24,12,14,'#ff6600');
+    // Core glow
+    R(28,28,8,8,'#ffaa00');R(30,30,4,4,'#ffcc44');
+    // Head
+    R(26,10,12,10,'#ff4400');R(28,12,8,6,'#ff6600');
+    // Eyes - white hot
+    R(28,13,3,3,'#ffffff');R(33,13,3,3,'#ffffff');c(29,14,'#ffcc00');c(34,14,'#ffcc00');
+    // Beak
+    R(30,18,4,2,'#ff8800');c(34,18,'#ffaa00');c(35,19,'#ffaa00');
+    // Crown flames
+    c(28,9,'#ff0000');c(30,8,'#ff4400');c(32,7,'#ff6600');c(34,8,'#ff4400');c(36,9,'#ff0000');
+    c(29,7,'#ff8800');c(31,6,'#ffaa00');c(33,6,'#ff8800');c(35,7,'#ff4400');
+    c(30,5,'#ffcc00');c(32,4,'#ffcc00');c(34,5,'#ffcc00');
+    // Wings spread - LEFT
+    R(4,16,18,4,'#cc3300');R(6,18,14,3,'#ff4400');R(2,14,16,3,'#ff4400');
+    R(0,12,12,3,'#ff6600');c(0,11,'#ff8800');c(2,10,'#ff8800');c(4,9,'#ffaa00');
+    // Wing feathers left
+    c(1,15,'#ffaa00');c(3,15,'#ff6600');c(5,14,'#ffcc00');c(7,13,'#ff8800');
+    // Wings spread - RIGHT
+    R(42,16,18,4,'#cc3300');R(44,18,14,3,'#ff4400');R(46,14,16,3,'#ff4400');
+    R(52,12,12,3,'#ff6600');c(63,11,'#ff8800');c(61,10,'#ff8800');c(59,9,'#ffaa00');
+    // Wing feathers right
+    c(62,15,'#ffaa00');c(60,15,'#ff6600');c(58,14,'#ffcc00');c(56,13,'#ff8800');
+    // Tail flames
+    R(28,42,8,4,'#ff4400');R(26,46,12,3,'#ff6600');R(24,49,16,2,'#ff8800');
+    c(24,51,'#ffaa00');c(28,52,'#ffcc00');c(32,51,'#ffaa00');c(36,52,'#ff8800');c(38,51,'#ff6600');
+    // Ember particles
+    ctx.globalAlpha=0.7;
+    c(10,4,'#ffcc00');c(50,6,'#ffcc00');c(15,2,'#ff8800');c(48,3,'#ff8800');
+    c(8,8,'#ffaa00');c(55,5,'#ffaa00');c(20,1,'#ffcc00');c(44,0,'#ffcc00');
+    ctx.globalAlpha=1;
+    // Talons
+    R(24,40,4,4,'#aa2200');R(36,40,4,4,'#aa2200');
+    c(24,44,'#cc4400');c(25,44,'#cc4400');c(37,44,'#cc4400');c(38,44,'#cc4400');
+}
+static drawBossKraken(ctx,s){
+    const c=(x,y,col)=>{ctx.fillStyle=col;ctx.fillRect(x*s,y*s,s,s)};
+    const R=(x,y,w,h,col)=>{ctx.fillStyle=col;ctx.fillRect(x*s,y*s,w*s,h*s)};
+    const dk='#1a3355',md='#2a5577',lt='#3a7799',sl='#55ccaa';
+    // Head - massive dome
+    R(16,4,32,20,dk);R(18,6,28,16,md);R(20,8,24,12,lt);
+    // Eyes - huge menacing
+    R(20,10,10,8,dk);R(36,10,10,8,dk);
+    R(22,12,6,4,'#ffcc00');R(38,12,6,4,'#ffcc00');
+    R(24,13,3,2,'#000');R(40,13,3,2,'#000');
+    // Brow ridge
+    R(18,8,12,2,'#0e2244');R(36,8,12,2,'#0e2244');
+    // Mouth
+    R(24,22,16,4,dk);R(26,23,12,2,'#0e2244');
+    // Fangs
+    c(27,26,'#ddd');c(28,27,'#ddd');c(36,26,'#ddd');c(35,27,'#ddd');
+    // Tentacles - 8 of them curling
+    // Left tentacles
+    R(4,24,14,5,dk);R(2,26,10,4,md);R(0,28,8,3,lt);c(0,31,sl);c(1,32,sl);c(2,31,sl);
+    R(8,30,10,4,dk);R(6,32,8,3,md);R(4,34,6,3,lt);c(3,37,sl);c(4,38,sl);
+    R(12,36,8,4,dk);R(10,38,6,4,md);R(8,40,5,3,lt);c(7,43,sl);c(8,44,sl);
+    R(18,26,6,8,dk);R(16,32,5,6,md);R(14,36,4,4,lt);
+    // Right tentacles
+    R(46,24,14,5,dk);R(52,26,10,4,md);R(56,28,8,3,lt);c(63,31,sl);c(62,32,sl);c(61,31,sl);
+    R(46,30,10,4,dk);R(50,32,8,3,md);R(54,34,6,3,lt);c(60,37,sl);c(59,38,sl);
+    R(44,36,8,4,dk);R(48,38,6,4,md);R(51,40,5,3,lt);c(56,43,sl);c(55,44,sl);
+    R(40,26,6,8,dk);R(43,32,5,6,md);R(46,36,4,4,lt);
+    // Suction cups
+    ctx.globalAlpha=0.6;
+    c(3,29,sl);c(5,33,sl);c(9,37,sl);c(60,29,sl);c(58,33,sl);c(54,37,sl);
+    c(7,41,sl);c(11,39,sl);c(53,41,sl);c(49,39,sl);
+    ctx.globalAlpha=1;
+    // Slime drip
+    c(24,28,'#55ccaa55');c(38,28,'#55ccaa55');
+    // Water splash
+    ctx.globalAlpha=0.3;R(0,44,64,4,'#2a5577');ctx.globalAlpha=1;
+}
+static drawBossWraith(ctx,s){
+    const c=(x,y,col)=>{ctx.fillStyle=col;ctx.fillRect(x*s,y*s,s,s)};
+    const R=(x,y,w,h,col)=>{ctx.fillStyle=col;ctx.fillRect(x*s,y*s,w*s,h*s)};
+    // Shadow aura
+    ctx.globalAlpha=0.1;R(8,0,48,60,'#4400aa');ctx.globalAlpha=1;
+    // Hood/cloak top
+    R(18,4,28,14,'#1a0a2a');R(20,6,24,10,'#2a1040');R(22,8,20,6,'#331155');
+    // Face void
+    R(24,10,16,8,'#000');
+    // Eyes - ghostly purple
+    R(26,12,4,3,'#8833cc');R(34,12,4,3,'#8833cc');
+    R(27,13,2,1,'#cc66ff');R(35,13,2,1,'#cc66ff');
+    // Wispy mouth
+    ctx.globalAlpha=0.5;R(30,16,4,2,'#6622aa');ctx.globalAlpha=1;
+    // Shoulders
+    R(12,18,40,6,'#1a0a2a');R(14,20,36,3,'#2a1040');
+    // Cloak body - flowing
+    R(16,24,32,20,'#1a0a2a');R(18,26,28,16,'#2a1040');R(20,28,24,12,'#1a0a2a');
+    // Cloak wisps bottom
+    R(14,44,4,6,'#1a0a2a');R(20,46,3,4,'#2a1040');R(28,44,8,6,'#1a0a2a');
+    R(38,46,3,4,'#2a1040');R(44,44,4,6,'#1a0a2a');
+    c(14,50,'#1a0a2a');c(16,51,'#2a1040');c(30,50,'#1a0a2a');c(44,50,'#1a0a2a');c(46,51,'#2a1040');
+    // Arms spectral
+    R(8,22,8,16,'#1a0a2a');R(10,24,4,12,'#2a1040');
+    R(48,22,8,16,'#1a0a2a');R(50,24,4,12,'#2a1040');
+    // Hands - skeletal claws
+    R(6,36,6,2,'#554466');c(5,37,'#776688');c(6,38,'#554466');c(8,38,'#554466');c(10,38,'#554466');
+    R(52,36,6,2,'#554466');c(59,37,'#776688');c(58,38,'#554466');c(56,38,'#554466');c(54,38,'#554466');
+    // Spectral chain
+    ctx.globalAlpha=0.4;
+    c(24,30,'#6622aa');c(26,32,'#8833cc');c(28,30,'#6622aa');c(30,32,'#8833cc');
+    c(32,30,'#6622aa');c(34,32,'#8833cc');c(36,30,'#6622aa');c(38,32,'#8833cc');
+    ctx.globalAlpha=1;
+    // Soul orbs floating
+    ctx.globalAlpha=0.6;
+    R(10,6,4,4,'#6622aa');R(11,7,2,2,'#cc66ff');
+    R(50,8,4,4,'#6622aa');R(51,9,2,2,'#cc66ff');
+    R(8,14,3,3,'#4400aa');R(53,12,3,3,'#4400aa');
+    ctx.globalAlpha=1;
+}
+static drawBossCerberus(ctx,s){
+    const c=(x,y,col)=>{ctx.fillStyle=col;ctx.fillRect(x*s,y*s,s,s)};
+    const R=(x,y,w,h,col)=>{ctx.fillStyle=col;ctx.fillRect(x*s,y*s,w*s,h*s)};
+    const dk='#2a1a1a',md='#4a2a2a',lt='#6a3a3a',fi='#ff4400';
+    // CENTER HEAD (main, larger)
+    R(22,4,20,14,dk);R(24,6,16,10,md);
+    R(26,8,4,4,'#ff2200');R(34,8,4,4,'#ff2200');// Eyes
+    R(27,9,2,2,'#ffcc00');R(35,9,2,2,'#ffcc00');// Pupils
+    R(28,16,8,4,dk);c(29,17,'#ddd');c(31,17,'#ddd');c(33,17,'#ddd');c(35,17,'#ddd');// Mouth+fangs
+    // LEFT HEAD
+    R(2,8,16,12,dk);R(4,10,12,8,md);
+    R(6,12,3,3,'#ff2200');R(12,12,3,3,'#ff2200');// Eyes
+    R(7,13,1,1,'#ffcc00');R(13,13,1,1,'#ffcc00');
+    R(4,18,10,3,dk);c(5,19,'#ddd');c(7,19,'#ddd');c(9,19,'#ddd');c(11,19,'#ddd');// Mouth+fangs
+    // Ears left head
+    c(3,7,dk);c(4,6,md);c(16,7,dk);c(15,6,md);
+    // RIGHT HEAD
+    R(46,8,16,12,dk);R(48,10,12,8,md);
+    R(50,12,3,3,'#ff2200');R(56,12,3,3,'#ff2200');// Eyes
+    R(51,13,1,1,'#ffcc00');R(57,13,1,1,'#ffcc00');
+    R(50,18,10,3,dk);c(51,19,'#ddd');c(53,19,'#ddd');c(55,19,'#ddd');c(57,19,'#ddd');
+    // Ears right head
+    c(47,7,dk);c(48,6,md);c(60,7,dk);c(59,6,md);
+    // Crown spikes center head
+    c(26,3,fi);c(30,2,fi);c(34,3,fi);c(28,1,fi);c(32,0,fi);c(36,1,fi);
+    // NECKS connecting to body
+    R(16,18,6,8,dk);R(18,20,4,4,md);// Left neck
+    R(42,18,6,8,dk);R(42,20,4,4,md);// Right neck
+    R(26,18,12,8,dk);R(28,20,8,4,md);// Center neck
+    // BODY - massive
+    R(14,26,36,18,dk);R(16,28,32,14,md);R(18,30,28,10,lt);
+    // Chest scar/flames
+    R(28,32,8,6,fi);ctx.globalAlpha=0.5;R(30,34,4,2,'#ffcc00');ctx.globalAlpha=1;
+    // Front legs
+    R(14,44,10,12,dk);R(16,46,6,8,md);
+    R(38,44,10,12,dk);R(40,46,6,8,md);
+    // Paws with claws
+    R(12,54,6,2,lt);R(40,54,6,2,lt);
+    c(12,56,'#aaa');c(14,56,'#aaa');c(16,56,'#aaa');
+    c(40,56,'#aaa');c(42,56,'#aaa');c(44,56,'#aaa');
+    // Tail - spiked
+    R(48,36,8,4,dk);R(54,34,6,3,md);R(58,32,4,2,lt);
+    c(62,31,fi);c(63,30,fi);c(62,33,fi);
+    // Drool/flames from mouths
+    ctx.globalAlpha=0.5;
+    c(30,20,fi);c(32,21,fi);c(8,21,fi);c(10,22,fi);c(54,21,fi);c(56,22,fi);
+    ctx.globalAlpha=1;
+}
 static drawShop(ctx,s){
     const c=(x,y,col)=>{ctx.fillStyle=col;ctx.fillRect(x*s,y*s,s,s)};
     // Chimney top + smoke hints
@@ -2029,7 +2195,11 @@ class Boss{
             goblin:{name:'ROI GOBELIN',hp:1800,atk:22,gold:35,draw:'drawBossGoblinKing'},
             lich:{name:'LICHE ÉTERNELLE',hp:2800,atk:32,gold:55,draw:'drawBossLich'},
             hydra:{name:'HYDRE À 3 TÊTES',hp:3500,atk:28,gold:65,draw:'drawBossHydra'},
-            golem:{name:'GOLEM DE RUNE',hp:4000,atk:20,gold:70,draw:'drawBossGolem'}
+            golem:{name:'GOLEM DE RUNE',hp:4000,atk:20,gold:70,draw:'drawBossGolem'},
+            phoenix:{name:'PHÉNIX INFERNAL',hp:2200,atk:25,gold:45,draw:'drawBossPhoenix'},
+            kraken:{name:'KRAKEN ABYSSAL',hp:3200,atk:30,gold:55,draw:'drawBossKraken'},
+            wraith:{name:'SPECTRE ANCIEN',hp:1800,atk:38,gold:50,draw:'drawBossWraith'},
+            cerberus:{name:'CERBÈRE DES ENFERS',hp:3800,atk:35,gold:65,draw:'drawBossCerberus'}
         };
         const d=data[this.type];
         const hpS=1+(this.wave-1)*.25,atkS=1+(this.wave-1)*.12;
@@ -2317,7 +2487,7 @@ function checkAchievements(c,game){
 class GameManager{
     constructor(){
         this.characters={};this.boss=null;this.combatLog=[];
-        this.bossTypes=['demon','dragon','slime','darkknight','goblin','lich','hydra','golem'];this.bossIdx=0;
+        this.bossTypes=['demon','dragon','slime','darkknight','goblin','lich','hydra','golem','phoenix','kraken','wraith','cerberus'];this.bossIdx=0;
         this.wave=0;this.totalBossKills=0;
         this.shopOpen=true;this.blackMarketOpen=false;
         this.goldMulti=1;this.allies=[];this.dragonEgg=0;
@@ -3110,7 +3280,9 @@ function rouletteEvent(){
             spawnP(winner.element,'#d4af37',15);spawnP(winner.element,'#ffffff',10);
             winner.popup('ROULETTE!','popup popup-crit');
             critFlash();screenShake(false);
-            game.log(`ROULETTE: ${winner.username} gagne ${isEquip?EQUIPMENT[itemKey].name:CONSUMABLES[itemKey]?.name||itemKey}!`,'log-event');
+            const itemName=isEquip?EQUIPMENT[itemKey].name:(CONSUMABLES[itemKey]?.name||itemKey);
+            game.log(`ROULETTE: ${winner.username} gagne ${itemName}!`,'log-event');
+            chatSay(`🎰 ROULETTE! @${winner.username} remporte ${itemName}! GG!`);
             setTimeout(()=>ov.remove(),3000);
             return;
         }
