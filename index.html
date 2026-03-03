@@ -287,7 +287,7 @@ canvas{image-rendering:pixelated}
 // ================================================================
 // CONFIG
 // ================================================================
-const CONFIG={channel:'sir_elking',testMode:true,botToken:'',maxChars:25,autoAtkInterval:2500,seasonDuration:300000};
+const CONFIG={channel:'sir_elking',testMode:false,botToken:'',maxChars:25,autoAtkInterval:2500,seasonDuration:300000}; // botToken: mets ton token ici localement (ne PAS commit sur GitHub)
 let isFullscreen=false,currentSeason=0,seasonStartTime=Date.now();
 const SEASONS=[
 {name:'HIVER',emoji:'❄️',sky1:'#4a5f7f',sky2:'#2c3e50',ground:'#ddeeff',tree:'#aabbcc',particle:'#ffffff',paysanXP:0.5,defBonus:3,atkBonus:0,healBonus:0,manaRegen:0,desc:'DEF +3 · Paysans -50% XP'},
@@ -2550,7 +2550,30 @@ class GameManager{
     spawnBoss(){
         this._bossDefeating=false;
         this.bossIdx++;this.wave++;
-        // 25% chance of army encounter instead of solo boss
+        // Progressive wave system:
+        // Waves 1-4: small monster packs (easy)
+        // Wave 5,15,25...: MINI-BOSS (medium)
+        // Waves 6-9,11-14...: medium monster packs
+        // Wave 10,20,30...: MEGA BOSS (hard, scales with wave)
+        const waveInCycle=((this.wave-1)%10)+1; // 1-10 repeating
+        const tier=Math.floor((this.wave-1)/10); // 0,1,2,3... difficulty tier
+        const WAVE_PACKS=[
+            // Tier escalation for small packs (waves 1-4, 6-9)
+            [{name:'GOBELINS ÉCLAIREURS',count:2+tier,hpEach:40,atk:5,gold:15,emoji:'👺'},
+             {name:'RATS DES ÉGOUTS',count:3+tier,hpEach:20,atk:3,gold:10,emoji:'🐀'},
+             {name:'SQUELETTES ERRANTS',count:2+tier,hpEach:35,atk:6,gold:12,emoji:'💀'}],
+            [{name:'BANDE DE GOBELINS',count:4+tier*2,hpEach:50,atk:8,gold:20,emoji:'👺'},
+             {name:'MEUTE DE LOUPS',count:3+tier,hpEach:60,atk:10,gold:18,emoji:'🐺'},
+             {name:'BANDITS DES BOIS',count:3+tier,hpEach:55,atk:9,gold:22,emoji:'🗡'}],
+            [{name:'ORCS PILLARDS',count:4+tier*2,hpEach:70,atk:12,gold:25,emoji:'👹'},
+             {name:'HARPIES SAUVAGES',count:5+tier,hpEach:50,atk:10,gold:20,emoji:'🦅'},
+             {name:'SPECTRES MINEURS',count:3+tier,hpEach:65,atk:14,gold:28,emoji:'👻'}],
+            [{name:'HORDE DE GOBELINS',count:6+tier*3,hpEach:60,atk:10,gold:30,emoji:'👺'},
+             {name:'TROUPE DE TROLLS',count:3+tier,hpEach:100,atk:18,gold:35,emoji:'🧌'},
+             {name:'LÉGION SQUELETTES',count:8+tier*2,hpEach:45,atk:8,gold:25,emoji:'💀'}]
+        ];
+        const MINI_BOSSES=['slime','goblin','darkknight'];
+        const MEGA_BOSSES=['demon','dragon','lich','hydra','golem','phoenix','kraken','wraith','cerberus'];
         const ARMIES=[
             {name:'HORDE DE GOBELINS',count:30,hpEach:60,atk:8,gold:80,emoji:'👺'},
             {name:'BANDE D\'ORCS',count:10,hpEach:200,atk:20,gold:100,emoji:'👹'},
@@ -2563,7 +2586,42 @@ class GameManager{
             {name:'GARDE NOIRE',count:6,hpEach:500,atk:40,gold:150,emoji:'🖤'},
             {name:'INVASION SPECTRALE',count:18,hpEach:100,atk:18,gold:95,emoji:'👻'}
         ];
-        if(Math.random()<0.25&&this.wave>1){
+        let mod=null;
+        if(waveInCycle===10){
+            // === MEGA BOSS (wave 10,20,30...) ===
+            const type=MEGA_BOSSES[Math.floor(Math.random()*MEGA_BOSSES.length)];
+            mod=BOSS_MODS[Math.floor(Math.random()*BOSS_MODS.length)]; // Always a modifier
+            this.boss=new Boss(type,this.wave,mod);
+            // Mega scaling: x1.5 HP, x1.2 ATK on top of normal scaling
+            this.boss.maxHp=Math.floor(this.boss.maxHp*1.5);this.boss.hp=this.boss.maxHp;
+            this.boss.atk=Math.floor(this.boss.atk*1.2);
+            const pc=Math.max(1,Object.values(this.characters).filter(c=>c.alive).length);
+            const scale=0.5+0.4*pc;this.boss.maxHp=Math.floor(this.boss.maxHp*scale);this.boss.hp=this.boss.maxHp;this.boss.atk=Math.floor(this.boss.atk*(0.7+0.15*pc));
+            Object.values(this.characters).forEach(c=>{c.totalDmg=0;c.totalHeal=0});
+            const modInfo=mod?` [${mod.emoji} ${mod.name}]`:'';
+            this.log(`💀 MEGA BOSS! ${this.boss.name}${modInfo} (${this.boss.maxHp} PV)`,'log-special');
+            chatSay(`💀 MEGA BOSS VAGUE ${this.wave}! ${this.boss.name} - ${this.boss.maxHp} PV! Préparez-vous!`);
+            bossIntroOverlay(this.boss.name,this.boss.maxHp,this.wave,mod,false);
+            showBanner(`💀 VAGUE ${this.wave} - MEGA BOSS! 💀`,`${this.boss.name} - ${this.boss.maxHp} PV`,5000);
+            screenShake(true);
+        } else if(waveInCycle===5){
+            // === MINI-BOSS (wave 5,15,25...) ===
+            const type=MINI_BOSSES[Math.floor(Math.random()*MINI_BOSSES.length)];
+            mod=Math.random()<0.4?BOSS_MODS[Math.floor(Math.random()*BOSS_MODS.length)]:null;
+            this.boss=new Boss(type,this.wave,mod);
+            // Mini scaling: x0.6 HP, x0.7 ATK (weaker)
+            this.boss.maxHp=Math.floor(this.boss.maxHp*0.6);this.boss.hp=this.boss.maxHp;
+            this.boss.atk=Math.floor(this.boss.atk*0.7);
+            const pc=Math.max(1,Object.values(this.characters).filter(c=>c.alive).length);
+            const scale=0.5+0.4*pc;this.boss.maxHp=Math.floor(this.boss.maxHp*scale);this.boss.hp=this.boss.maxHp;this.boss.atk=Math.floor(this.boss.atk*(0.7+0.15*pc));
+            Object.values(this.characters).forEach(c=>{c.totalDmg=0;c.totalHeal=0});
+            const modInfo=mod?` [${mod.emoji} ${mod.name}]`:'';
+            this.log(`⚔ Mini-Boss! ${this.boss.name}${modInfo} (${this.boss.maxHp} PV)`,'log-special');
+            chatSay(`⚔ Mini-Boss Vague ${this.wave}! ${this.boss.name} approche!`);
+            bossIntroOverlay(this.boss.name,this.boss.maxHp,this.wave,mod,false);
+            showBanner(`⚔ VAGUE ${this.wave} - MINI-BOSS ⚔`,`${this.boss.name} - ${this.boss.maxHp} PV`,3000);
+        } else if(Math.random()<0.15&&this.wave>10){
+            // === RARE ARMY EVENT (15% chance after wave 10) ===
             // ARMY ENCOUNTER
             const army=ARMIES[Math.floor(Math.random()*ARMIES.length)];
             const waveScale=1+(this.wave-1)*0.2;
@@ -2651,18 +2709,27 @@ class GameManager{
             bossIntroOverlay(`${army.emoji} ${army.name}`,totalHp,this.wave,null,true);
             showBanner(`⚔ VAGUE ${this.wave} - ARMÉE! ⚔`,`${army.count}x ${army.name}`,4000);
         } else {
-            // SOLO BOSS (normal)
-            const type=this.bossTypes[Math.floor(Math.random()*this.bossTypes.length)];
-            const mod=Math.random()<0.7?BOSS_MODS[Math.floor(Math.random()*BOSS_MODS.length)]:null;
-            this.boss=new Boss(type,this.wave,mod);
-            // Scale boss by player count (1p=base, 5p=x2.5, 10p=x4.5, 20p=x8.5)
+            // === MEUTE DE MONSTRES (vagues 1-4, 6-9 du cycle) ===
+            const packIdx=waveInCycle<=4?(waveInCycle-1):Math.min(3,waveInCycle-6);
+            const packs=WAVE_PACKS[packIdx];
+            const pack=packs[Math.floor(Math.random()*packs.length)];
+            const waveScale=1+tier*0.3+this.wave*0.05;
+            // Visual: petit boss (goblin/slime/darkknight), stats: du pack
+            const packTypes=['goblin','slime','darkknight'];
+            const type=packTypes[Math.floor(Math.random()*packTypes.length)];
+            this.boss=new Boss(type,this.wave,null);
+            const totalHp=Math.floor(pack.count*pack.hpEach*waveScale);
+            this.boss.maxHp=totalHp;this.boss.hp=totalHp;
+            this.boss.atk=Math.floor(pack.atk*Math.ceil(pack.count*0.3)*waveScale);
+            this.boss.name=`${pack.emoji} ${pack.name} (x${pack.count})`;
+            this.boss.baseGold=pack.gold;
             const pc=Math.max(1,Object.values(this.characters).filter(c=>c.alive).length);
             const scale=0.5+0.4*pc;this.boss.maxHp=Math.floor(this.boss.maxHp*scale);this.boss.hp=this.boss.maxHp;this.boss.atk=Math.floor(this.boss.atk*(0.7+0.15*pc));
+            this.boss.render();
             Object.values(this.characters).forEach(c=>{c.totalDmg=0;c.totalHeal=0});
-            const modInfo=mod?` [${mod.emoji} ${mod.name}: ${mod.desc}]`:'';
-            this.log(`⚔ ${this.boss.name} (${this.boss.maxHp} PV)${modInfo}`,'log-special');
-            bossIntroOverlay(this.boss.name,this.boss.maxHp,this.wave,mod,false);
-            showBanner(`⚔ VAGUE ${this.wave} ⚔`,`${this.boss.name} - ${this.boss.maxHp} PV`,4000);
+            this.log(`${pack.emoji} ${pack.name} x${pack.count} approche! (${this.boss.maxHp} PV)`,'log-info');
+            bossIntroOverlay(pack.name,this.boss.maxHp,this.wave,null,false);
+            showBanner(`⚔ VAGUE ${this.wave} ⚔`,`${pack.name} x${pack.count}`,3000);
         }
         Object.values(this.characters).forEach(c=>{if(c.alive)c.positionByRole()});
         this._lastSynergy=false;checkSynergies(this);
