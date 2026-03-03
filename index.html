@@ -2544,7 +2544,8 @@ class GameManager{
         cls=cls||'apprenti';if(!CLASS_DATA[cls])cls='apprenti';
         this.characters[username]=new Character(username,cls);
         this.log(`${username} → ${CLASS_DATA[cls].name}!`,'log-info');
-        return`${username} → ${CLASS_DATA[cls].name}!`;
+        chatSay(`⚔ Bienvenue @${username}! ${CLASS_DATA[cls].name} créé! Tape !help pour les commandes 🎮`);
+        return`Création effectuée! ${CLASS_DATA[cls].name} 🎮 | !help pour les commandes`;
     }
 
     spawnBoss(){
@@ -2787,12 +2788,12 @@ class GameManager{
                 if(!c)return;const col=(args[0]||'').toLowerCase();
                 if(!col||col==='liste'||col==='list'){
                     const colorList=Object.entries(COLORS).map(([n,h])=>`<span style="color:${h}">${n}</span>`).join(' ');
-                    this.log(`🎨 Couleurs: ${colorList} · ou #hexcode`,'log-info');return null;
+                    this.log(`🎨 Couleurs: ${colorList} · ou #hexcode`,'log-info');return`Couleurs dispo: ${Object.keys(COLORS).join(', ')} ou #hexcode`;
                 }
                 if(COLORS[col]){c.customColor=COLORS[col];c.redraw();this.log(`🎨 ${username} → <span style="color:${COLORS[col]}">${col}</span>`,'log-info')}
                 else if(col.match(/^#[0-9a-f]{6}$/)){c.customColor=col;c.redraw();this.log(`🎨 ${username} → <span style="color:${col}">${col}</span>`,'log-info')}
                 else return`Couleurs: ${Object.keys(COLORS).join(', ')} ou #hexcode (ex: !couleur liste)`;
-                return null;
+                return`🎨 Couleur changée!`;
             }
             case 'attaque':{
                 if(!this.boss||!this.boss.alive)return'Pas de boss!';
@@ -2820,7 +2821,7 @@ class GameManager{
                 if(!c||!c.alive)return null;
                 if(c._stunned)return`${username} est étourdi!`;
                 if(!c.useMana(20))return'Pas assez de mana!';
-                const h=c.heal(20+c.level*3);if(h>0)this.log(`${username} +${h} PV`,'log-heal');c.xp+=2;return null;
+                const h=c.heal(20+c.level*3);if(h>0)this.log(`${username} +${h} PV`,'log-heal');c.xp+=2;return`💚 +${h} PV (${c.hp}/${c.maxHp})`;
             }
             case 'sort':{
                 if(!this.boss||!this.boss.alive)return'Pas de boss!';
@@ -2835,7 +2836,7 @@ class GameManager{
             }
             case 'defense':case 'esquive':{
                 if(!c||!c.alive)return null;c.defending=true;spawnP(c.element,'#6688cc',5);this.log(`${username} en défense!`,'log-info');
-                setTimeout(()=>{if(c)c.defending=false},5000);return null;
+                setTimeout(()=>{if(c)c.defending=false},5000);return`🛡 En défense! (5s)`;
             }
             case 'special':{
                 if(!this.boss||!this.boss.alive)return'Pas de boss!';
@@ -2855,7 +2856,7 @@ class GameManager{
                 const eqNames=Object.entries(c.equipment||{}).filter(([,v])=>v&&EQUIPMENT[v]).map(([,v])=>`${EQUIPMENT[v].emoji}T${EQUIPMENT[v].tier}`);
                 if(eqNames.length)sLines.push({t:`Équip: ${eqNames.join(' ')} (${eqCount}/5)`,c:'#5588cc'});
                 if(!c.alive)sLines.push({t:`Mort (${c._deathCause||'Boss'})`,c:'#cc4444'});
-                showSB(sLines,5000);return null;
+                showSB(sLines,5000);return`${cd.name} Nv.${c.level} | ❤${c.hp}/${c.maxHp} ⚔${c.atk} 🛡${c.def} | 💰${c.gold}g 💀${c.kills}kills`;
             }
             case 'shop':case 'marche':{
                 if(!c)return'!class pour rejoindre!';
@@ -2863,7 +2864,7 @@ class GameManager{
                 // !marche noir → black market tab
                 if(item==='noir'){
                     if(!this.blackMarketOpen)return'Le Marché Noir est fermé!';
-                    openShopOverlay(username,'noir');return null;
+                    openShopOverlay(username,'noir');return`🏪 Marché Noir ouvert! (💰${c.gold}g)`;
                 }
                 // !shop <item_key> → direct buy via chat
                 if(item&&EQUIPMENT[item]){shopBuy(username,item);return null}
@@ -2872,18 +2873,19 @@ class GameManager{
                     if(allC[item]){shopBuyConsum(username,item);return null}
                     // Slot browsing shortcut
                     const slotMap={arme:'weapon',weapon:'weapon',armure:'armor',armor:'armor',botte:'boots',bottes:'boots',boots:'boots',amulette:'amulet',amulet:'amulet',anneau:'ring',ring:'ring'};
-                    if(slotMap[item]){openShopOverlay(username,'equip');return null}
+                    if(slotMap[item]){openShopOverlay(username,'equip');return`🔨 Forge ouverte! (💰${c.gold}g)`}
                     return`Item inconnu! !shop pour ouvrir la boutique`;
                 }
                 // !shop → open visual overlay
-                openShopOverlay(username,'equip');return null;
+                openShopOverlay(username,'equip');return`🔨 Forge ouverte! (💰${c.gold}g) | !shop <item> pour acheter`;
             }
             case 'equip':case 'equipement':{
                 if(!c)return'!class pour rejoindre!';
                 const eLines=[{t:`━━ Équipement de ${username} ━━`,c:'#d4af37'}];
                 c.getEquipSummary().forEach(l=>eLines.push({t:l,c:'#88aaff'}));
                 eLines.push({t:`Total: ATK:${c.atk} DEF:${c.def} SPD:${c.spd} CRIT:${c.crit}%`,c:'#ffcc44'});
-                showSB(eLines,5000);return null;
+                const eqCount=Object.values(c.equipment||{}).filter(Boolean).length;
+                showSB(eLines,5000);return`🛡 Équipement (${eqCount}/5) | ATK:${c.atk} DEF:${c.def} SPD:${c.spd} CRIT:${c.crit}%`;
             }
             case 'evoluer':case 'evolution':{
                 if(!c)return null;
@@ -3025,7 +3027,7 @@ class GameManager{
                 else{helpLines.push({t:'REJOINDRE: !class [guerrier/mage/archer/pretre/voleur/druide/paysan]',c:'#44cc44'})}
                 helpLines.push({t:'Combo x3+ = bonus · Revive auto 30s · Roulette 20min',c:'#555'});
                 showSB(helpLines,8000);
-                return null;
+                return`📜 Commandes: !attaque !soin !sort !skill !defense !special !shop !stats !evoluer !reclass !duel !don !couleur`;
             }
             case 'succes':case 'achievements':{
                 if(!c)return'!class pour rejoindre!';
@@ -3038,8 +3040,8 @@ class GameManager{
                 showSB(aLines,6000);
                 return`🏆 Succès affichés!`;
             }
-            case 'do':{if(this.eventActive)this.voteEvent('do',username);return null}
-            case 'notdo':{if(this.eventActive)this.voteEvent('notdo',username);return null}
+            case 'do':{if(this.eventActive){this.voteEvent('do',username);return`✅ Vote accepté!`}return'Pas d\'event en cours!'}
+            case 'notdo':{if(this.eventActive){this.voteEvent('notdo',username);return`❌ Vote refusé!`}return'Pas d\'event en cours!'}
             case 'classement':case 'top':case 'leaderboard':{
                 const all=Object.values(this.characters);
                 if(all.length===0)return'Aucun joueur!';
@@ -3121,12 +3123,12 @@ class GameManager{
                     const eqIcons=Object.entries(c.equipment||{}).filter(([,v])=>v&&EQUIPMENT[v]).map(([,v])=>`${EQUIPMENT[v].emoji}T${EQUIPMENT[v].tier}`);
                     const rLines=[{t:`━━ ${c.username} ━━`,c:'#9a8340'},{t:`❤ ${c.hp}/${c.maxHp} PV · 💎 ${c.mana}/${c.maxMana} MP`,c:'#44cc44'},{t:`⚔ ATK:${c.atk} 🛡 DEF:${c.def} 💨 SPD:${c.spd} 🎯 CRIT:${c.crit}%`,c:'#5588cc'},{t:`💰 ${c.gold}g · 💀 ${c.kills} kills · DMG: ${c.totalDmg}`,c:'#bb9933'},{t:`${CLASS_DATA[c.className]?.name||c.className} Nv.${c.level} (${c.xp}/${c.xpNext} XP)`,c:'#888'}];
                     if(eqIcons.length)rLines.push({t:`Équip: ${eqIcons.join(' ')}`,c:'#5588cc'});
-                    showSB(rLines,5000);return null;
+                    showSB(rLines,5000);return`📋 ${CLASS_DATA[c.className]?.name} Nv.${c.level} | ❤${c.hp}/${c.maxHp} ⚔${c.atk} | 💰${c.gold}g`;
                 }
                 const ago=Math.floor((Date.now()-c._deathTime)/1000);
                 const reviveIn=Math.max(0,30-ago);
                 const rLines=[{t:`━━ ☠ MORT ━━`,c:'#cc0000'},{t:`${c.username} (${CLASS_DATA[c.className]?.name||c.className} Nv.${c.level})`,c:'#ff6666'},{t:`Tué par: ${c._deathCause||'Boss'}`,c:'#ff4444'},{t:`Il y a ${ago}s · Revive dans ${reviveIn}s`,c:'#ff8844'},{t:`⚔ DMG: ${c.totalDmg} · ❤ Heal: ${c.totalHeal} · 💀 Kills: ${c.kills}`,c:'#aaa'},{t:`💰 ${c.gold}g restants`,c:'#ffcc44'}];
-                showSB(rLines,5000);return null;
+                showSB(rLines,5000);return`☠ MORT! Revive dans ${reviveIn}s`;
             }
         }
         return null;
@@ -3229,17 +3231,20 @@ class GameManager{
         this.allies=this.allies.filter(a=>{if(a.dur===-1)return true;a.dur-=15000;return a.dur>0});
         // Event chance removed: streamer triggers manually via panel
         // Boss countdown with cinematic warning
-        let cd=10;
-        this.log('⏳ Prochain boss dans 10s...','log-info');
+        let cd=45;
+        this.log('⏳ Prochain boss dans 45s...','log-info');
+        chatSay(`⏳ Prochaine vague dans 45s! Préparez-vous!`);
         const cdI=setInterval(()=>{cd--;
-            if(cd===5)showBanner('⏳ BOSS IMMINENT','Préparez-vous!',1500);
+            if(cd===30)this.log('⏳ Boss dans 30s...','log-info');
+            if(cd===15)showBanner('⏳ BOSS APPROCHE','15 secondes!',1500);
+            if(cd===10){showBanner('⏳ BOSS IMMINENT','10 secondes!',1500);chatSay(`⚠ Vague ${this.wave+1} dans 10s!`)}
             if(cd<=3&&cd>0){
                 showBanner(`⚠ ${cd} ⚠`,'',800);screenShake(false);bossWarningFlash();
                 this.log(`⚠ Boss dans ${cd}s!`,'log-dmg');
             }
             if(cd<=0)clearInterval(cdI);
         },1000);
-        setTimeout(()=>this.spawnBoss(),12000);
+        setTimeout(()=>this.spawnBoss(),47000);
         // Reset totalDmg/totalHeal for next boss + clear defeat flag after delay
         setTimeout(()=>{Object.values(this.characters).forEach(c=>{c.totalDmg=0;c.totalHeal=0});this._bossDefeating=false},2000);
     }
