@@ -3231,12 +3231,15 @@ class GameManager{
         this.allies=this.allies.filter(a=>{if(a.dur===-1)return true;a.dur-=15000;return a.dur>0});
         // Event chance removed: streamer triggers manually via panel
         // Boss countdown with cinematic warning
-        let cd=45;
-        this.log('⏳ Prochain boss dans 45s...','log-info');
-        chatSay(`⏳ Prochaine vague dans 45s! Préparez-vous!`);
+        let cd=900;
+        this.log('⏳ Prochaine vague dans 15 min...','log-info');
+        chatSay(`⏳ Prochaine vague dans 15 min! Préparez-vous!`);
         const cdI=setInterval(()=>{cd--;
-            if(cd===30)this.log('⏳ Boss dans 30s...','log-info');
-            if(cd===15)showBanner('⏳ BOSS APPROCHE','15 secondes!',1500);
+            if(cd===600)chatSay(`⏳ Prochaine vague dans 10 min!`);
+            if(cd===300){chatSay(`⏳ Prochaine vague dans 5 min!`);this.log('⏳ Boss dans 5 min...','log-info')}
+            if(cd===120)chatSay(`⏳ Prochaine vague dans 2 min!`);
+            if(cd===60){showBanner('⏳ BOSS APPROCHE','1 minute!',2000);chatSay(`⚠ Vague ${this.wave+1} dans 1 min!`)}
+            if(cd===30){showBanner('⏳ BOSS IMMINENT','30 secondes!',1500);chatSay(`⚠ Vague ${this.wave+1} dans 30s!`)}
             if(cd===10){showBanner('⏳ BOSS IMMINENT','10 secondes!',1500);chatSay(`⚠ Vague ${this.wave+1} dans 10s!`)}
             if(cd<=3&&cd>0){
                 showBanner(`⚠ ${cd} ⚠`,'',800);screenShake(false);bossWarningFlash();
@@ -3244,7 +3247,7 @@ class GameManager{
             }
             if(cd<=0)clearInterval(cdI);
         },1000);
-        setTimeout(()=>this.spawnBoss(),47000);
+        setTimeout(()=>this.spawnBoss(),902000);
         // Reset totalDmg/totalHeal for next boss + clear defeat flag after delay
         setTimeout(()=>{Object.values(this.characters).forEach(c=>{c.totalDmg=0;c.totalHeal=0});this._bossDefeating=false},2000);
     }
