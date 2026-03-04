@@ -8,15 +8,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
 body{width:1920px;height:1080px;overflow:hidden;background:transparent;font-family:'Press Start 2P',monospace;color:#b89b4a}
-#game-container{position:absolute;bottom:0;left:0;width:100%;height:220px;transition:height 0.8s;overflow:hidden}
+#game-container{position:absolute;bottom:0;left:0;width:100%;height:160px;transition:height 0.8s;overflow:hidden}
 #game-container.fullscreen{height:1080px}
 canvas{image-rendering:pixelated}
 #bg-canvas,#fx-canvas{position:absolute;top:0;left:0;width:100%;height:100%}
-#bg-canvas{z-index:0;opacity:.6}#fx-canvas{z-index:2;pointer-events:none}
+#bg-canvas{z-index:0}#fx-canvas{z-index:2;pointer-events:none}
 #mode-toggle{display:none}
 .character{position:absolute;bottom:45px;z-index:20;transition:left 2s ease-in-out}
 .character.melee{z-index:22}.character.ranged{z-index:18}
-.character canvas{width:64px;height:64px;display:block}
+.character canvas{width:48px;height:48px;display:block}
 .character.tier-1 canvas{filter:drop-shadow(0 0 2px #888)}
 .character.tier-2 canvas{filter:drop-shadow(0 0 3px #55aaff)}
 .character.tier-3 canvas{filter:drop-shadow(0 0 4px #aa55ff)}
@@ -33,22 +33,22 @@ canvas{image-rendering:pixelated}
 .char-lvl{position:absolute;top:-20px;right:-8px;font-size:5px;color:#5588aa;text-shadow:1px 1px 0 #000}
 .char-shield{position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:10px;opacity:0;transition:opacity 0.3s}
 .char-shield.on{opacity:1}
-#boss-zone{position:fixed;right:60px;bottom:20px;z-index:25;text-align:center;display:none}
+#boss-zone{position:fixed;right:40px;bottom:10px;z-index:25;text-align:center;display:none}
 #boss-zone.active{display:block}
-#boss-zone canvas{width:200px;height:200px;display:block;margin:0 auto}
+#boss-zone canvas{width:140px;height:140px;display:block;margin:0 auto}
 #boss-name{font-size:10px;color:#aa2222;text-shadow:0 0 6px rgba(120,0,0,.4),2px 2px 0 #000;letter-spacing:3px;text-transform:uppercase}
 #boss-phase{font-size:7px;color:#cc5500;text-shadow:1px 1px 0 #000;margin:2px 0}
-#boss-hp-bar{width:200px;height:12px;background:#0a0808;border:1px solid #3a1010;margin:4px auto;position:relative;box-shadow:inset 0 1px 4px rgba(0,0,0,.6)}
+#boss-hp-bar{width:150px;height:10px;background:#0a0808;border:1px solid #3a1010;margin:3px auto;position:relative;box-shadow:inset 0 1px 4px rgba(0,0,0,.6)}
 #boss-hp-fill{height:100%;background:linear-gradient(90deg,#cc2020,#6a0808);transition:width 0.4s}
 #boss-hp-text{position:absolute;top:0;left:0;width:100%;height:100%;font-size:6px;line-height:14px;text-align:center;color:#fff;text-shadow:1px 1px 0 #000;font-family:'Press Start 2P',monospace;z-index:1;pointer-events:none}
 @keyframes forgeFlicker{0%,100%{filter:brightness(1) drop-shadow(0 0 4px rgba(255,100,0,.3))}25%{filter:brightness(1.05) drop-shadow(0 0 6px rgba(255,120,0,.4))}50%{filter:brightness(1.1) drop-shadow(0 0 8px rgba(255,80,0,.5))}75%{filter:brightness(1.02) drop-shadow(0 0 5px rgba(255,100,0,.35))}}
-#shop-zone{position:absolute;left:20px;bottom:55px;z-index:15;display:none}
+#shop-zone{position:absolute;left:15px;bottom:45px;z-index:15;display:none}
 #shop-zone.open{display:block}
-#shop-zone canvas{width:128px;height:72px;display:block;animation:forgeFlicker 2s ease-in-out infinite}
+#shop-zone canvas{width:90px;height:50px;display:block;animation:forgeFlicker 2s ease-in-out infinite}
 #shop-label{font-size:7px;color:#d4af37;text-align:center;text-shadow:0 0 6px rgba(200,120,0,.4),1px 1px 0 #000;letter-spacing:2px}
-#hud{position:fixed;top:8px;left:8px;z-index:100;background:linear-gradient(180deg,rgba(12,12,28,.55),rgba(8,8,18,.5));border:1px solid rgba(42,36,24,.4);padding:8px 12px;font-size:7px;line-height:2;max-width:380px;box-shadow:none}
-.hud-title{color:#9a8340;font-size:9px;letter-spacing:3px;margin-bottom:4px;text-transform:uppercase;border-bottom:1px solid #1a1810;padding-bottom:4px}
-#season-hud{position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:100;background:linear-gradient(180deg,rgba(12,12,28,.45),rgba(8,8,18,.4));border:1px solid rgba(42,36,24,.3);padding:6px 16px;font-size:8px;text-align:center;box-shadow:none;letter-spacing:1px}
+#hud{position:fixed;top:6px;left:6px;z-index:100;background:rgba(8,8,18,.4);border:1px solid rgba(42,36,24,.3);padding:5px 8px;font-size:6px;line-height:1.8;max-width:280px;box-shadow:none;border-radius:2px}
+.hud-title{color:#9a8340;font-size:7px;letter-spacing:2px;margin-bottom:2px;text-transform:uppercase;border-bottom:1px solid rgba(26,24,16,.3);padding-bottom:2px}
+#season-hud{position:fixed;top:6px;left:50%;transform:translateX(-50%);z-index:100;background:rgba(8,8,18,.35);border:1px solid rgba(42,36,24,.25);padding:4px 12px;font-size:7px;text-align:center;box-shadow:none;letter-spacing:1px;border-radius:2px}
 #combat-log{display:none}
 .log-dmg{color:#cc4444}.log-heal{color:#44aa44}.log-special{color:#cc7722}.log-info{color:#5577aa}.log-gold{color:#aa8833}.log-mvp{color:#cc55aa}.log-event{color:#9944aa}
 #event-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:300;display:none;background:linear-gradient(180deg,rgba(15,10,30,.97),rgba(8,6,18,.99));border:1px solid #3a2060;padding:20px 30px;text-align:center;max-width:500px;min-width:350px;box-shadow:0 0 40px rgba(100,30,180,.2)}
@@ -1583,11 +1583,8 @@ function drawBG(){
     const cont=document.getElementById('game-container'),bgC=document.getElementById('bg-canvas');
     const h=cont.offsetHeight,w=1920;bgC.width=w;bgC.height=h;
     const bg=bgC.getContext('2d');const sn=SEASONS[currentSeason];
-    // Sky gradient with season colors
-    const sky=bg.createLinearGradient(0,0,0,h);
-    if(isFullscreen){sky.addColorStop(0,'#05051a');sky.addColorStop(.3,sn.sky1);sky.addColorStop(.7,sn.sky2);sky.addColorStop(1,'#1a1a2e')}
-    else{sky.addColorStop(0,sn.sky1);sky.addColorStop(1,sn.sky2)}
-    bg.fillStyle=sky;bg.fillRect(0,0,w,h);
+    // Clear canvas (transparent sky - game visible behind)
+    bg.clearRect(0,0,w,h);
     if(isFullscreen){
         // Stars
         for(let i=0;i<120;i++){bg.fillStyle=`rgba(255,255,255,${.2+Math.random()*.7})`;bg.beginPath();bg.arc(Math.random()*w,Math.random()*h*.4,.5+Math.random()*1.5,0,Math.PI*2);bg.fill()}
@@ -1613,11 +1610,13 @@ function drawBG(){
         // Castle silhouette
         drawCastle(bg,w,h);
     }
-    // Ground with season
+    // Ground with season (semi-transparent to see game behind)
     const gY=h-55;
+    bg.globalAlpha=0.5;
     const grd=bg.createLinearGradient(0,gY,0,h);
     grd.addColorStop(0,sn.ground);grd.addColorStop(.2,shade(sn.ground,-20));grd.addColorStop(1,shade(sn.ground,-40));
     bg.fillStyle=grd;bg.fillRect(0,gY,w,55);
+    bg.globalAlpha=0.6;
     // Grass tufts
     for(let i=0;i<200;i++){
         const x=Math.random()*w,hh=3+Math.random()*8;
@@ -1634,8 +1633,9 @@ function drawBG(){
         bg.fillStyle=shade(sn.ground,-15);bg.beginPath();
         bg.moveTo(rx-rw/4,gY);bg.quadraticCurveTo(rx,gY-rh+1,rx+rw/4,gY);bg.closePath();bg.fill();
     });
+    bg.globalAlpha=1;
     // Dirt path (subtle)
-    bg.fillStyle=shade(sn.ground,-10);bg.globalAlpha=0.3;
+    bg.fillStyle=shade(sn.ground,-10);bg.globalAlpha=0.2;
     bg.fillRect(0,gY+15,w,8);bg.globalAlpha=1;
     // Torches
     [100,350,600,850,1100,1350,1600,1850].forEach(tx=>{
@@ -3699,8 +3699,7 @@ setInterval(()=>{
     const al=game.allies.length?` 🤝${game.allies.length}`:'';
     document.getElementById('hud-content').innerHTML=
         `${wi}${ph} | ${ac}/${cc} joueurs${bm}${al}<br>`+
-        `Boss: ${bi}<br>`+
-        `<span style="font-size:5px;color:#888">!class · !attaque · !soin · !sort · !skill · !defense · !special<br>!couleur · !shop · !stats · !evoluer · !reclass · !succes · !help<br>!classement · !don · !duel · !info · !buffs · !recap</span>`;
+        `Boss: ${bi}`;
     // Season HUD with timer
     const sn=SEASONS[currentSeason];
     const elapsed=Date.now()-seasonStartTime;
