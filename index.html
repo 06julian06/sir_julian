@@ -3167,6 +3167,8 @@ class GameManager{
         showBanner('VICTOIRE!',`${this.boss.name} terrassé!`,3500);
         // Loot monster drops equipment instead of normal rewards
         if(this.boss._isLoot){this.onLootDrop();this.boss.element.style.display='none';this._bossDefeating=false;return}
+        // Gold monster drops gold instead of normal rewards
+        if(this.boss._isGold){this.onGoldDrop();this.boss.element.style.display='none';this._bossDefeating=false;return}
         // Wave milestone rewards (every 5 waves)
         if(this.wave>0&&this.wave%5===0){
             const bonus=this.wave*10;const bonusXp=this.wave*5;
@@ -3363,6 +3365,105 @@ class GameManager{
             }
         });
     }
+    // GOLD MONSTER (streamer-only: !goldmonster)
+    spawnGoldMonster(){
+        if(this.boss&&this.boss.alive)return this.log('❌ Boss déjà en cours!','log-dmg');
+        const goldMonsters=[
+            {name:'💰 Gobelin Avare',hp:150,emoji:'💰',gold:[30,80]},
+            {name:'🪙 Trésorier Maudit',hp:300,emoji:'🪙',gold:[60,150]},
+            {name:'👑 Roi des Pièces',hp:500,emoji:'👑',gold:[100,300]},
+            {name:'🐉 Wyrm Doré',hp:700,emoji:'🐉',gold:[200,500]},
+            {name:'💎 Elemental d\'Or',hp:400,emoji:'💎',gold:[80,200]}
+        ];
+        const gm=goldMonsters[Math.floor(Math.random()*goldMonsters.length)];
+        const waveScale=1+this.wave*0.08;
+        const totalHp=Math.floor(gm.hp*waveScale);
+        this.boss=new Boss('goblin',this.wave,null);
+        this.boss.maxHp=totalHp;this.boss.hp=totalHp;
+        this.boss.atk=Math.floor(3*waveScale);
+        this.boss.name=`${gm.emoji} ${gm.name}`;
+        this.boss.baseGold=0;
+        this.boss._isGold=true;this.boss._goldRange=gm.gold;
+        this.boss.element.querySelector('.boss-name').textContent=this.boss.name;
+        this.boss.updateBar();this.boss.element.style.display='flex';
+        screenShake(false);bossWarningFlash();
+        showBanner('💰 MONSTRE D\'OR!',`${gm.name} - Tuez-le pour de l'or!`,3000);
+        this.log(`💰 ${gm.name} apparaît! HP: ${totalHp} - Pluie d'or garantie!`,'log-event');
+        chatSay(`💰 MONSTRE D'OR: ${gm.name}! Tuez-le pour gagner plein d'or! !attaque !sort !skill`);
+        this.bossAtkLoop=setInterval(()=>{if(!this.boss||!this.boss.alive)return clearInterval(this.bossAtkLoop);this.bossDamage()},4000);
+    }
+    onGoldDrop(){
+        const range=this.boss._goldRange||[50,150];
+        const alive=Object.values(this.characters).filter(c=>c.alive);
+        const dead=Object.values(this.characters).filter(c=>!c.alive);
+        alive.forEach(c=>{
+            const gold=range[0]+Math.floor(Math.random()*(range[1]-range[0]+1));
+            const bonus=Math.floor(gold*(c.totalDmg||0)/Math.max(1,alive.reduce((s,x)=>s+(x.totalDmg||0),0)));
+            const total=gold+bonus;
+            c.gold+=total;c.popup(`+${total}g`,'popup popup-gold');
+            spawnP(c.element,'#d4af37',15);
+            chatSay(`💰 @${c.username} ramasse ${total}g!`);
+        });
+        dead.forEach(c=>{
+            const gold=Math.floor(range[0]*0.3);
+            c.gold+=gold;c.popup(`+${gold}g`,'popup popup-gold');
+        });
+        this.log(`💰 Pluie d'or! ${alive.length} joueurs récompensés!`,'log-gold');
+    }
+
+    // TEAM DUEL (streamer-only: !teamduel N or !teamduel @p1 @p2 vs @p3 @p4)
+    teamDuel(args){
+        const alive=Object.values(this.characters).filter(c=>c.alive);
+        if(alive.length<2){this.log('❌ Pas assez de joueurs vivants!','log-dmg');return}
+        // Parse: !teamduel 2 = 2v2 random, !teamduel 3 = 3v3, etc.
+        // Or: !teamduel p1 p2 vs p3 p4 = custom teams
+        const vsIdx=args.indexOf('vs');
+        let team1=[],team2=[];
+        if(vsIdx>0){
+            // Custom teams: !teamduel p1 p2 vs p3 p4
+            const t1names=args.slice(0,vsIdx).map(n=>n.replace('@','').toLowerCase());
+            const t2names=args.slice(vsIdx+1).map(n=>n.replace('@','').toLowerCase());
+            team1=t1names.map(n=>alive.find(c=>c.username.toLowerCase()===n)).filter(Boolean);
+            team2=t2names.map(n=>alive.find(c=>c.username.toLowerCase()===n)).filter(Boolean);
+            if(team1.length===0||team2.length===0){chatSay('❌ Joueurs introuvables!');return}
+        }else{
+            // Random teams: !teamduel N
+            const size=Math.min(parseInt(args[0])||1,Math.floor(alive.length/2));
+            if(size<1){chatSay('❌ Usage: !teamduel <taille> ou !teamduel p1 p2 vs p3 p4');return}
+            const pool=[...alive].sort(()=>Math.random()-0.5);
+            team1=pool.slice(0,size);team2=pool.slice(size,size*2);
+            if(team2.length<1){chatSay('❌ Pas assez de joueurs pour un duel '+size+'v'+size+'!');return}
+        }
+        const t1names=team1.map(c=>c.username).join(', ');
+        const t2names=team2.map(c=>c.username).join(', ');
+        const label=`${team1.length}v${team2.length}`;
+        showBanner(`⚔ DUEL ${label}!`,`${t1names} VS ${t2names}`,3000);
+        screenShake(true);critFlash();
+        chatSay(`⚔ DUEL ${label}: [${t1names}] VS [${t2names}]!`);
+        // Simulate 3 rounds
+        let t1hp=team1.reduce((s,c)=>s+c.hp,0);
+        let t2hp=team2.reduce((s,c)=>s+c.hp,0);
+        let t1atk=team1.reduce((s,c)=>s+c.atk,0);
+        let t2atk=team2.reduce((s,c)=>s+c.atk,0);
+        let t1def=team1.reduce((s,c)=>s+c.def,0);
+        let t2def=team2.reduce((s,c)=>s+c.def,0);
+        for(let i=0;i<3;i++){
+            const dmg1=Math.max(1,t1atk+Math.floor(Math.random()*15*team1.length)-t2def);
+            const dmg2=Math.max(1,t2atk+Math.floor(Math.random()*15*team2.length)-t1def);
+            t2hp-=dmg1;t1hp-=dmg2;
+            this.log(`⚔ R${i+1}: Équipe 1 inflige ${dmg1} | Équipe 2 inflige ${dmg2}`,'log-special');
+        }
+        const winners=t1hp>=t2hp?team1:team2;
+        const losers=t1hp>=t2hp?team2:team1;
+        const goldPerWinner=30+this.wave*5;
+        const xpPerWinner=15+this.wave*2;
+        winners.forEach(c=>{c.gold+=goldPerWinner;c.xp+=xpPerWinner;c.popup('VICTOIRE!','popup popup-crit');spawnP(c.element,'#d4af37',15);c.checkLevelUp()});
+        losers.forEach(c=>{c.popup('DÉFAITE','popup popup-dmg');spawnP(c.element,'#ff4444',8)});
+        const wNames=winners.map(c=>'@'+c.username).join(' ');
+        this.log(`🏆 Équipe [${winners.map(c=>c.username).join(', ')}] gagne le duel ${label}! +${goldPerWinner}g +${xpPerWinner}XP!`,'log-special');
+        chatSay(`🏆 VICTOIRE ${label}: ${wNames} gagnent! +${goldPerWinner}g +${xpPerWinner}XP chacun!`);
+    }
+
     // FORCED DUEL (streamer-only: !forceduel player1 player2)
     forceDuel(p1name,p2name){
         const c1=Object.values(this.characters).find(c=>c.username.toLowerCase()===p1name);
@@ -3650,6 +3751,11 @@ function initTwitch(){
                 else chatSay(`@${u} Usage: !forceduel <joueur1> <joueur2>`)
             }
             else if(cmd==='bossnow'){game.spawnBoss();chatSay(`👹 Boss invoqué par @${u}!`)}
+            else if(cmd==='goldmonster'){game.spawnGoldMonster();chatSay(`💰 Monstre d'Or invoqué par @${u}!`)}
+            else if(cmd==='teamduel'){
+                if(args.length<1)chatSay(`@${u} Usage: !teamduel <taille> ou !teamduel p1 p2 vs p3 p4`);
+                else game.teamDuel(args);
+            }
         }
     });
     // Remove character when viewer leaves the channel
