@@ -22,7 +22,7 @@ canvas{image-rendering:pixelated}
 .character.tier-3 canvas{filter:drop-shadow(0 0 4px #aa55ff)}
 .character.tier-4 canvas{filter:drop-shadow(0 0 5px #ff8833)}
 .character.tier-5 canvas{filter:drop-shadow(0 0 6px #ff4444) drop-shadow(0 0 12px #ff220044)}
-.char-name{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:6px;color:#aa8833;white-space:nowrap;text-shadow:1px 1px 0 #000,-1px 1px 0 #000,1px -1px 0 #000,-1px -1px 0 #000}
+.char-name{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:8px;font-weight:bold;color:#ffdd66;white-space:nowrap;text-shadow:1px 1px 0 #000,-1px 1px 0 #000,1px -1px 0 #000,-1px -1px 0 #000,0 0 4px rgba(255,200,50,0.5);letter-spacing:0.5px}
 .char-bars{position:absolute;top:-12px;left:50%;transform:translateX(-50%);width:54px}
 .bar{width:100%;height:6px;background:#111;border:1px solid #333;margin-bottom:1px;position:relative;overflow:hidden}
 .bar-fill{height:100%;transition:width 0.3s}
@@ -2671,8 +2671,10 @@ class GameManager{
         cls=cls||'apprenti';if(!CLASS_DATA[cls])cls='apprenti';
         this.characters[username]=new Character(username,cls);
         this.log(`${username} → ${CLASS_DATA[cls].name}!`,'log-info');
-        chatSay(`⚔ Un héros se lève! @${username} rejoint l'aventure en tant que ${CLASS_DATA[cls].name}! 🔥 Prêt à combattre? !attaque !help 🎮`);
-        return`Création effectuée! ${CLASS_DATA[cls].name} 🎮 | !help pour les commandes`;
+        const cd=CLASS_DATA[cls];
+        chatSay(`⚔🔥 BIENVENUE dans Sir-MMORPG, @${username}! Tu es un ${cd.name} (${cd.role==='melee'?'Corps-à-corps':'Distance'}) ⚔${cd.atk} 🛡${cd.def} ❤${cd.hp} | Spécial: ${cd.special.name} — ${cd.special.desc}`);
+        chatSay(`📜 @${username} Commandes: !attaque !sort !skill !special (combat) | !shop (boutique) | !evoluer (Nv.${cd.evoLevel}) | !design 1/2/3 (look) | !couleur (couleur) | !duel (défi) | !help 🎮`);
+        return`Bienvenue dans Sir-MMORPG! ${cd.name} créé 🎮 | !help pour tout savoir`;
     }
 
     spawnBoss(){
@@ -2922,6 +2924,16 @@ class GameManager{
                 else return`Couleurs: ${Object.keys(COLORS).join(', ')} ou #hexcode (ex: !couleur liste)`;
                 return`🎨 Couleur changée!`;
             }
+            case 'design':case 'look':case 'style':{
+                if(!c)return'!class pour rejoindre!';
+                const d=parseInt(args[0]);
+                if(!d||d<1||d>3)return`🎭 Choisis ton design: !design 1, !design 2 ou !design 3 (ton design actuel: ${c.variant})`;
+                c.variant=d;c.redraw();
+                spawnP(c.element,'#d4af37',8);c.popup(`Design ${d}!`,'popup popup-gold');
+                this.log(`🎭 ${username} change de design → Style ${d}`,'log-info');
+                chatSay(`🎭 @${username} change de look! Design ${d}/3 — Essaye aussi !couleur pour personnaliser! 🎨`);
+                return`🎭 Design ${d} appliqué!`;
+            }
             case 'attaque':{
                 if(!this.boss||!this.boss.alive)return'Pas de boss!';
                 if(!c||!c.alive)return'KO!';
@@ -3160,7 +3172,8 @@ class GameManager{
                 helpLines.push({t:'INFO: !stats · !classement · !info [classe] · !recap',c:'#5588cc'});
                 helpLines.push({t:'PROG: !evoluer [classe] · !reclass · !succes',c:'#55aa55'});
                 helpLines.push({t:'SOCIAL: !don <pseudo> <or> · !duel <pseudo>',c:'#cc5588'});
-                helpLines.push({t:'EVENT: !do / !notdo · !buffs · !couleur [nom/hex]',c:'#8855cc'});
+                helpLines.push({t:'PERSO: !design 1/2/3 (look) · !couleur [nom/hex]',c:'#8855cc'});
+                helpLines.push({t:'EVENT: !do / !notdo · !buffs',c:'#8855cc'});
                 if(c){const cd=CLASS_DATA[c.className];if(cd.evolutions&&cd.evolutions.length)helpLines.push({t:`Evo: !evoluer ${cd.evolutions.join('/')} (Nv.${cd.evoLevel})`,c:'#44cc44'})}
                 else{helpLines.push({t:'REJOINDRE: !class apprenti/paysan/chat/ecuyer/brigand/herboriste/barde',c:'#44cc44'})}
                 helpLines.push({t:'Combo x3+ = bonus · Revive auto 30s · Roulette 20min',c:'#555'});
@@ -3947,7 +3960,7 @@ function initTwitch(){
         if(self)return;const u=tags['display-name']||tags.username;
         const m=msg.trim().toLowerCase();if(!m.startsWith('!'))return;
         const parts=m.split(' '),cmd=parts[0].substring(1),args=parts.slice(1);
-        const valid=['class','attaque','soin','sort','defense','esquive','special','stats','couleur','shop','marche','evolution','evoluer','reclass','do','notdo','skill','help','commandes','succes','achievements','classement','top','leaderboard','don','give','duel','info','buffs','recap','equip','equipement'];
+        const valid=['class','attaque','soin','sort','defense','esquive','special','stats','couleur','design','look','style','shop','marche','evolution','evoluer','reclass','do','notdo','skill','help','commandes','succes','achievements','classement','top','leaderboard','don','give','duel','info','buffs','recap','equip','equipement'];
         if(valid.includes(cmd)){console.log(`CMD: ${u} !${cmd} ${args.join(' ')}`);const r=game.processCmd(u,cmd,args);if(r&&CONFIG.botToken)chatSay(`@${u} ${r}`)}
         // Streamer-only commands (broadcaster or mod)
         const isBroadcaster=tags.badges&&(tags.badges.broadcaster||tags.badges.moderator);
@@ -3998,6 +4011,28 @@ function startPeriodicGuide(){
     },1200000);
     // First guide after 2 min
     setTimeout(()=>{if(_twitchClient&&CONFIG.botToken)chatSay(msgs[0])},120000);
+    // STREAMER PANEL — private command reminder every 5 min (visible only in overlay log)
+    setInterval(()=>{
+        const pc=Object.keys(game.characters).length;
+        const lines=[
+            `━━ 🎮 PANEL STREAMER ━━`,
+            `👥 ${pc} joueur${pc>1?'s':''} actifs | Vague ${game.wave}`,
+            `📋 COMMANDES STREAMER:`,
+            `!event — Lancer un événement aléatoire`,
+            `!bossnow — Invoquer un boss immédiatement`,
+            `!loot — Invoquer un monstre butin`,
+            `!goldmonster — Invoquer un monstre d'or`,
+            `!forceduel j1 j2 — Forcer un duel`,
+            `!teamduel N — Duel d'équipe NvN`,
+            `━━━━━━━━━━━━━━━━━━━━━━━`
+        ];
+        lines.forEach(l=>game.log(l,'log-special'));
+    },300000);
+    // First panel after 30s
+    setTimeout(()=>{
+        game.log('━━ 🎮 PANEL STREAMER ━━','log-special');
+        game.log('!event !bossnow !loot !goldmonster !forceduel !teamduel','log-special');
+    },30000);
 }
 
 // ================================================================
