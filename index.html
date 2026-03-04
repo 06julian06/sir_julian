@@ -3594,7 +3594,7 @@ if(CONFIG.testMode){
     setTimeout(()=>{game.blackMarketOpen=true;game.log('☠ MARCHÉ NOIR OUVERT!','log-event')},45000);
 }
 
-const tmiS=document.createElement('script');tmiS.src='https://cdn.jsdelivr.net/npm/tmi.js@1.8.5/index.min.js';tmiS.onload=()=>initTwitch();tmiS.onerror=()=>{console.log('jsdelivr bloqué, essai unpkg...');const t2=document.createElement('script');t2.src='https://unpkg.com/tmi.js@1.8.5/index.min.js';t2.onload=()=>initTwitch();t2.onerror=()=>{console.log('unpkg bloqué, essai cdnjs...');const t3=document.createElement('script');t3.src='https://cdnjs.cloudflare.com/ajax/libs/tmi.js/1.8.5/tmi.min.js';t3.onload=()=>initTwitch();t3.onerror=()=>console.log('tmi.js offline - tous les CDN bloqués');document.head.appendChild(t3)};document.head.appendChild(t2)};document.head.appendChild(tmiS);
+const tmiS=document.createElement('script');tmiS.src='tmi.min.js';tmiS.onload=()=>initTwitch();tmiS.onerror=()=>{console.log('tmi.min.js local non trouvé, essai CDN...');const t2=document.createElement('script');t2.src='https://github.com/tmijs/tmi.js/releases/download/v1.8.5/tmi.min.js';t2.onload=()=>initTwitch();t2.onerror=()=>{console.log('GitHub bloqué, essai jsdelivr...');const t3=document.createElement('script');t3.src='https://cdn.jsdelivr.net/gh/tmijs/cdn@master/latest/1.x/tmi.min.js';t3.onload=()=>initTwitch();t3.onerror=()=>console.log('tmi.js offline - tous les CDN bloqués');document.head.appendChild(t3)};document.head.appendChild(t2)};document.head.appendChild(tmiS);
 </script>
 </body>
 </html>
