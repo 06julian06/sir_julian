@@ -311,28 +311,28 @@ const CLASS_DATA={
 // TIER 0 - STARTER
 apprenti:{name:'Apprenti',tier:0,hp:80,atk:6,def:5,spd:3,crit:5,role:'melee',mana:50,
     special:{name:'Essai',desc:'Attaque x1.5',cd:10000},color:'#998877',
-    evolutions:['guerrier','mage','archer','pretre','voleur','druide'],evoLevel:3,
+    evolutions:['guerrier','mage','archer'],evoLevel:3,
     sprite:'apprenti'},
 
 // TIER 1 - BASE CLASSES
 guerrier:{name:'Guerrier',tier:1,hp:160,atk:14,def:12,spd:3,crit:15,role:'melee',mana:40,
     special:{name:'Fureur',desc:'ATK x2',cd:14000},color:'#cc3333',
-    evolutions:['berserker','chevalier'],evoLevel:8,sprite:'guerrier'},
+    evolutions:['berserker','chevalier','gladiateur'],evoLevel:8,sprite:'guerrier'},
 mage:{name:'Mage',tier:1,hp:90,atk:20,def:4,spd:4,crit:20,role:'ranged',mana:100,
     special:{name:'Météore',desc:'AoE massif',cd:18000},color:'#3355bb',
-    evolutions:['archimage','necromancien'],evoLevel:8,sprite:'mage'},
+    evolutions:['archimage','necromancien','sorcier'],evoLevel:8,sprite:'mage'},
 archer:{name:'Archer',tier:1,hp:110,atk:16,def:6,spd:8,crit:30,role:'ranged',mana:60,
     special:{name:'Pluie',desc:'5 flèches',cd:16000},color:'#339933',
-    evolutions:['sniper','ranger'],evoLevel:8,sprite:'archer'},
+    evolutions:['sniper','ranger','chasseur'],evoLevel:8,sprite:'archer'},
 pretre:{name:'Prêtre',tier:1,hp:100,atk:8,def:7,spd:4,crit:8,role:'ranged',mana:120,
     special:{name:'Bénédiction',desc:'Heal groupe',cd:18000},color:'#eeee66',
-    evolutions:['saint','oracle'],evoLevel:8,sprite:'pretre'},
+    evolutions:['saint','oracle','templier'],evoLevel:8,sprite:'pretre'},
 voleur:{name:'Voleur',tier:1,hp:100,atk:15,def:4,spd:10,crit:35,role:'melee',mana:50,
     special:{name:'Assassinat',desc:'Crit x3',cd:14000},color:'#7733aa',
-    evolutions:['assassin','ninja'],evoLevel:8,sprite:'voleur'},
+    evolutions:['assassin','ninja','pirate'],evoLevel:8,sprite:'voleur'},
 druide:{name:'Druide',tier:1,hp:120,atk:12,def:8,spd:5,crit:12,role:'ranged',mana:90,
     special:{name:'Nature',desc:'Heal+Épines',cd:16000},color:'#22aa44',
-    evolutions:['gardien','dragon'],evoLevel:8,sprite:'druide'},
+    evolutions:['gardien','dragon','chamane'],evoLevel:8,sprite:'druide'},
 
 // TIER 2 - ADVANCED
 berserker:{name:'Berserker',tier:2,hp:200,atk:22,def:6,spd:5,crit:25,role:'melee',mana:30,
@@ -371,6 +371,25 @@ gardien:{name:'Gardien',tier:2,hp:180,atk:14,def:14,spd:4,crit:10,role:'melee',m
 dragon:{name:'Dragon',tier:2,hp:250,atk:28,def:16,spd:6,crit:20,role:'melee',mana:80,
     special:{name:'Souffle',desc:'Feu AoE massif',cd:18000},color:'#ff4400',
     evolutions:['dragon_ancien'],evoLevel:15,sprite:'dragon_form'},
+// NEW TIER 2 (3rd evolution paths)
+gladiateur:{name:'Gladiateur',tier:2,hp:190,atk:20,def:10,spd:7,crit:25,role:'melee',mana:40,
+    special:{name:'Arena',desc:'ATK +50% 10s',cd:18000},color:'#cc6633',
+    evolutions:['paladin'],evoLevel:15,sprite:'guerrier'},
+sorcier:{name:'Sorcier',tier:2,hp:95,atk:26,def:5,spd:5,crit:22,role:'ranged',mana:140,
+    special:{name:'Malédiction',desc:'Boss -30% ATK/DEF',cd:20000},color:'#6633aa',
+    evolutions:['liche'],evoLevel:15,sprite:'mage'},
+chasseur:{name:'Chasseur',tier:2,hp:120,atk:20,def:8,spd:9,crit:35,role:'ranged',mana:65,
+    special:{name:'Piège',desc:'Stun boss 3s +dmg',cd:18000},color:'#886633',
+    evolutions:['maitre_chasse'],evoLevel:15,sprite:'archer'},
+templier:{name:'Templier',tier:2,hp:150,atk:14,def:14,spd:3,crit:10,role:'melee',mana:100,
+    special:{name:'Sacrement',desc:'Heal+Shield groupe',cd:22000},color:'#ccaa44',
+    evolutions:['archange'],evoLevel:15,sprite:'pretre'},
+pirate:{name:'Pirate',tier:2,hp:115,atk:18,def:6,spd:8,crit:30,role:'melee',mana:45,
+    special:{name:'Pillage',desc:'Vol gold au boss',cd:16000},color:'#885522',
+    evolutions:['shinobi'],evoLevel:15,sprite:'voleur'},
+chamane:{name:'Chamane',tier:2,hp:140,atk:16,def:10,spd:5,crit:15,role:'ranged',mana:110,
+    special:{name:'Esprits',desc:'Invoque esprits alliés',cd:22000},color:'#448866',
+    evolutions:['ancien'],evoLevel:15,sprite:'druide'},
 
 // TIER 3 - MASTER (final)
 paladin:{name:'Paladin',tier:3,hp:280,atk:20,def:22,spd:4,crit:15,role:'melee',mana:80,
@@ -414,7 +433,7 @@ titan_nature:{name:'Titan de Nature',tier:4,hp:600,atk:35,def:35,spd:3,crit:20,r
 // SPECIAL - Paysan (hidden OP)
 paysan:{name:'Paysan',tier:0,hp:130,atk:10,def:9,spd:4,crit:12,role:'melee',mana:30,
     special:{name:'Récolte',desc:'Vol PV',cd:11000},color:'#8B7355',
-    evolutions:['guerrier','mage','archer','pretre','voleur','druide'],evoLevel:3,sprite:'paysan'}
+    evolutions:['pretre','voleur','druide'],evoLevel:3,sprite:'paysan'}
 };
 
 const DEFAULT_COLORS={};
@@ -2351,7 +2370,7 @@ class Boss{
 const EVENTS=[
 {id:1,title:'🎭 BARDE HORRIBLE',desc:'Un barde joue horriblement faux...',
  doText:'Écouter (-20% moral)',notdoText:'Ignorer (vole 30g)',
- doFn:(g)=>{g.log('🎵 La musique est atroce... Moral -20% 2min','log-event');/*debuff*/},
+ doFn:(g)=>{Object.values(g.characters).forEach(c=>{const atkLoss=Math.floor(c.atk*0.2);const defLoss=Math.floor(c.def*0.2);c.atk-=atkLoss;c.def-=defLoss;setTimeout(()=>{c.atk+=atkLoss;c.def+=defLoss;c.updateBars()},120000)});g.log('🎵 Musique atroce! ATK/DEF -20% pendant 2min!','log-event')},
  notdoFn:(g)=>{Object.values(g.characters).forEach(c=>c.gold=Math.max(0,c.gold-30));g.log('💰 Le barde vole 30g à chacun!','log-event')}},
 {id:2,title:'🤡 BOUFFON DU ROI',desc:'Un bouffon propose ses services...',
  doText:'Recruter 10 bouffons',notdoText:'Refuser',
@@ -2779,9 +2798,9 @@ class GameManager{
         switch(cmd){
             case 'class':{
                 const cls=(args[0]||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-                if(!cls)return`!class <nom> | Dispo: apprenti, guerrier, mage, archer, pretre, voleur, druide, paysan`;
-                if(!CLASS_DATA[cls])return`Classe "${cls}" inconnue! Dispo: apprenti, guerrier, mage, archer, pretre, voleur, druide, paysan`;
-                if(CLASS_DATA[cls].tier>1)return`!class = Tier 0-1 seulement! Utilisez !evoluer pour les classes avancées.`;
+                if(!cls)return`!class <nom> | Dispo: apprenti, paysan`;
+                if(!CLASS_DATA[cls])return`Classe "${cls}" inconnue! Dispo: apprenti, paysan`;
+                if(CLASS_DATA[cls].tier>0)return`Seuls apprenti et paysan sont disponibles! Utilise !evoluer pour évoluer.`;
                 return this.addChar(username,cls);
             }
             case 'couleur':{
@@ -2926,7 +2945,7 @@ class GameManager{
                 const cls=(args[0]||'').toLowerCase();
                 if(!cls)return`!reclass <classe> - Reset niv.0 mais x2 XP!`;
                 if(!CLASS_DATA[cls])return`Classe inconnue!`;
-                if(CLASS_DATA[cls].tier>1)return`Reclass vers classes Tier 0-1 seulement!`;
+                if(CLASS_DATA[cls].tier>0)return`Reclass vers apprenti ou paysan seulement!`;
                 const oldG=c.gold,oldK=c.kills,oldMul=c.xpMulti,col=c.customColor;
                 const oldEquip=c.equipment?{...c.equipment}:{};const oldCC=c.classChanges||0;
                 c.remove();
@@ -2951,9 +2970,9 @@ class GameManager{
                 const tier=cd.tier||0;
                 // Class-specific skills based on base type
                 const sprMap={apprenti:'app',paysan:'pay',guerrier:'war',mage:'mag',archer:'arc',pretre:'cle',voleur:'rog',druide:'dru',paladin:'pal',
-                    berserker:'war',chevalier:'war',champion:'war',archimage:'mag',necromancien:'mag',elementaliste:'mag',liche:'mag',
-                    sniper:'arc',ranger:'arc',tireur_elite:'arc',maitre_chasse:'arc',saint:'cle',oracle:'cle',archange:'cle',sage:'cle',
-                    assassin:'rog',ninja:'rog',maitre_ombre:'rog',shinobi:'rog',gardien:'dru',ancien:'dru',
+                    berserker:'war',chevalier:'war',champion:'war',gladiateur:'war',archimage:'mag',necromancien:'mag',elementaliste:'mag',liche:'mag',sorcier:'mag',
+                    sniper:'arc',ranger:'arc',tireur_elite:'arc',maitre_chasse:'arc',chasseur:'arc',saint:'cle',oracle:'cle',archange:'cle',sage:'cle',templier:'cle',
+                    assassin:'rog',ninja:'rog',maitre_ombre:'rog',shinobi:'rog',pirate:'rog',gardien:'dru',ancien:'dru',chamane:'dru',
                     dragon_form:'dru',dragon_ancien:'dru',dragon:'dru',
                     dieu_guerre:'war',archonte:'mag',oeil_faucon:'arc',divin:'cle',spectre:'rog',titan_nature:'dru'};
                 const bType=sprMap[c.className]||'war';
@@ -3024,7 +3043,7 @@ class GameManager{
                 helpLines.push({t:'SOCIAL: !don <pseudo> <or> · !duel <pseudo>',c:'#cc5588'});
                 helpLines.push({t:'EVENT: !do / !notdo · !buffs · !couleur [nom/hex]',c:'#8855cc'});
                 if(c){const cd=CLASS_DATA[c.className];if(cd.evolutions&&cd.evolutions.length)helpLines.push({t:`Evo: !evoluer ${cd.evolutions.join('/')} (Nv.${cd.evoLevel})`,c:'#44cc44'})}
-                else{helpLines.push({t:'REJOINDRE: !class [guerrier/mage/archer/pretre/voleur/druide/paysan]',c:'#44cc44'})}
+                else{helpLines.push({t:'REJOINDRE: !class apprenti ou !class paysan',c:'#44cc44'})}
                 helpLines.push({t:'Combo x3+ = bonus · Revive auto 30s · Roulette 20min',c:'#555'});
                 showSB(helpLines,8000);
                 return`📜 Commandes: !attaque !soin !sort !skill !defense !special !shop !stats !evoluer !reclass !duel !don !couleur`;
@@ -3146,6 +3165,8 @@ class GameManager{
         this.log(`🎉 ${this.boss.name} vaincu!`,'log-special');killStreakCheck();
         victoryFlash();
         showBanner('VICTOIRE!',`${this.boss.name} terrassé!`,3500);
+        // Loot monster drops equipment instead of normal rewards
+        if(this.boss._isLoot){this.onLootDrop();this.boss.element.style.display='none';this._bossDefeating=false;return}
         // Wave milestone rewards (every 5 waves)
         if(this.wave>0&&this.wave%5===0){
             const bonus=this.wave*10;const bonusXp=this.wave*5;
@@ -3172,9 +3193,11 @@ class GameManager{
                 c.hp=c.maxHp;c.mana=c.maxMana;c.popup('LEVEL UP!','popup popup-lvl');spawnP(c.element,'#44ff44',12);spawnP(c.element,'#ffffff',6);c.element.classList.remove('lvl-up-glow');void c.element.offsetWidth;c.element.classList.add('lvl-up-glow');setTimeout(()=>c.element.classList.remove('lvl-up-glow'),1200);
                 if(c.level%5===0){showBanner(`⭐ Nv.${c.level}!`,`${c.username} progresse!`,2000);spawnP(c.element,'#d4af37',15)}
                 this.log(`${c.username} → Nv.${c.level}!`,'log-info');
+                chatSay(`⬆ @${c.username} passe Nv.${c.level}! ${CLASS_DATA[c.className]?.name||c.className} ⚔${c.atk} 🛡${c.def} ❤${c.maxHp}`);
                 const cd=CLASS_DATA[c.className];
                 if(cd.evolutions&&cd.evolutions.length&&c.level>=cd.evoLevel){
                     this.log(`${c.username} peut évoluer! (!evoluer ${cd.evolutions.join('/')})`,`log-special`);
+                    chatSay(`🌟 @${c.username} peut ÉVOLUER! Tape !evoluer ${cd.evolutions.join(' ou !evoluer ')}`);
                 }
             }
             if(!c.alive){c.alive=true;c.hp=c.maxHp;c.mana=c.maxMana;c.element.classList.remove('char-dead');c.element.style.opacity='1';c.element.classList.add('anim-idle');c.updateBars();spawnP(c.element,'#ffdd44',8);c.popup('REVIVE!','popup popup-lvl')}
@@ -3287,6 +3310,82 @@ class GameManager{
         if(doWins){this.currentEvent.doFn(this);this.log(`✅ DO gagne! ${this.currentEvent.doText}`,'log-event')}
         else{this.currentEvent.notdoFn(this);this.log(`❌ NOTDO gagne! ${this.currentEvent.notdoText}`,'log-event')}
         this.currentEvent=null;
+    }
+
+    // LOOT MONSTER (streamer-only: !loot)
+    spawnLootMonster(){
+        if(this.boss&&this.boss.alive)return this.log('❌ Boss déjà en cours!','log-dmg');
+        const lootTables=[
+            {name:'🧳 Coffre Mimique',hp:200,emoji:'🧳',tier:[1,2]},
+            {name:'🐲 Dragon Doré',hp:500,emoji:'🐲',tier:[2,3]},
+            {name:'👻 Spectre du Trésor',hp:350,emoji:'👻',tier:[1,2,3]},
+            {name:'🗿 Golem de Cristal',hp:600,emoji:'🗿',tier:[3,4]},
+            {name:'🦇 Chauve-souris Dorée',hp:150,emoji:'🦇',tier:[1,2]}
+        ];
+        const lm=lootTables[Math.floor(Math.random()*lootTables.length)];
+        const waveScale=1+this.wave*0.08;
+        const totalHp=Math.floor(lm.hp*waveScale);
+        this.boss=new Boss('goblin',this.wave,null);
+        this.boss.maxHp=totalHp;this.boss.hp=totalHp;
+        this.boss.atk=Math.floor(5*waveScale);
+        this.boss.name=`${lm.emoji} ${lm.name}`;
+        this.boss.baseGold=50;
+        this.boss._isLoot=true;this.boss._lootTiers=lm.tier;
+        this.boss.element.querySelector('.boss-name').textContent=this.boss.name;
+        this.boss.updateBar();this.boss.element.style.display='flex';
+        screenShake(false);bossWarningFlash();
+        showBanner('💎 MONSTRE BUTIN!',`${lm.name} - Tuez-le pour du loot!`,3000);
+        this.log(`💎 ${lm.name} apparaît! HP: ${totalHp} - Loot garanti!`,'log-event');
+        chatSay(`💎 MONSTRE BUTIN: ${lm.name}! Tuez-le pour gagner de l'équipement! !attaque !sort !skill`);
+        // Boss attacks but weaker
+        this.bossAtkLoop=setInterval(()=>{if(!this.boss||!this.boss.alive)return clearInterval(this.bossAtkLoop);this.bossDamage()},4000);
+    }
+    onLootDrop(){
+        const tiers=this.boss._lootTiers||[1,2];
+        const tier=tiers[Math.floor(Math.random()*tiers.length)];
+        const lootPool=Object.entries(EQUIPMENT).filter(([,v])=>v.tier===tier);
+        const alive=Object.values(this.characters).filter(c=>c.alive);
+        alive.forEach(c=>{
+            const pick=lootPool[Math.floor(Math.random()*lootPool.length)];
+            if(!pick)return;
+            const[key,item]=pick;
+            const curKey=c.equipment[item.slot];
+            const curTier=curKey&&EQUIPMENT[curKey]?EQUIPMENT[curKey].tier:0;
+            if(item.tier>curTier){
+                if(curKey&&EQUIPMENT[curKey]){Object.entries(EQUIPMENT[curKey].stats).forEach(([st,v])=>{if(st==='maxHp'){c.maxHp-=v}else if(st==='maxMana'){c.maxMana-=v}else{c[st]-=v}})}
+                c.equipment[item.slot]=key;
+                Object.entries(item.stats).forEach(([st,v])=>{if(st==='maxHp'){c.maxHp+=v;c.hp+=v}else if(st==='maxMana'){c.maxMana+=v;c.mana+=v}else{c[st]=(c[st]||0)+v}});
+                c.updateBars();c.popup(`${item.emoji}${item.name}!`,'popup popup-crit');
+                spawnP(c.element,'#d4af37',10);
+                chatSay(`🎁 @${c.username} obtient ${item.emoji} ${item.name} T${item.tier}!`);
+            }else{
+                const gold=item.cost;c.gold+=gold;c.popup(`+${gold}g`,'popup popup-gold');
+            }
+        });
+    }
+    // FORCED DUEL (streamer-only: !forceduel player1 player2)
+    forceDuel(p1name,p2name){
+        const c1=Object.values(this.characters).find(c=>c.username.toLowerCase()===p1name);
+        const c2=Object.values(this.characters).find(c=>c.username.toLowerCase()===p2name);
+        if(!c1||!c2){this.log('❌ Joueur introuvable!','log-dmg');return}
+        if(!c1.alive||!c2.alive){this.log('❌ Un joueur est KO!','log-dmg');return}
+        showBanner('⚔ DUEL FORCÉ!',`${c1.username} VS ${c2.username}`,3000);
+        screenShake(true);critFlash();
+        // 3 rounds of combat
+        let hp1=c1.hp,hp2=c2.hp;
+        for(let i=0;i<3;i++){
+            const dmg1=Math.max(1,c1.atk+Math.floor(Math.random()*10)-c2.def);
+            const dmg2=Math.max(1,c2.atk+Math.floor(Math.random()*10)-c1.def);
+            hp2-=dmg1;hp1-=dmg2;
+            this.log(`⚔ R${i+1}: ${c1.username} -${dmg1} → ${c2.username} | ${c2.username} -${dmg2} → ${c1.username}`,'log-special');
+        }
+        const winner=hp1>=hp2?c1:c2;const loser=hp1>=hp2?c2:c1;
+        const prize=Math.min(loser.gold,50+this.wave*5);loser.gold-=prize;winner.gold+=prize;
+        winner.xp+=20;
+        spawnP(winner.element,'#d4af37',20);spawnP(loser.element,'#ff4444',10);
+        winner.popup('VICTOIRE!','popup popup-crit');loser.popup('DÉFAITE','popup popup-dmg');
+        this.log(`🏆 ${winner.username} gagne le duel! +${prize}g +20XP!`,'log-special');
+        chatSay(`🏆 DUEL: @${winner.username} bat @${loser.username}! +${prize}g +20XP!`);
     }
 
     log(text,cls){this.combatLog.unshift({text,cls,time:Date.now()});if(this.combatLog.length>25)this.combatLog.pop();this.renderLog()}
@@ -3533,14 +3632,57 @@ function initTwitch(){
     const opts={channels:[CONFIG.channel]};
     if(CONFIG.botToken){opts.identity={username:CONFIG.channel,password:'oauth:'+CONFIG.botToken.replace('oauth:','')}}
     _twitchClient=new tmi.Client(opts);
-    _twitchClient.connect().then(()=>{console.log('Twitch: '+CONFIG.channel+(CONFIG.botToken?' (auth)':' (anon)'));game.log('📡 Twitch connecté: '+CONFIG.channel+(CONFIG.botToken?' ✓ Chat actif':''),'log-info')}).catch(e=>{console.error(e);game.log('❌ Twitch: erreur connexion','log-dmg')});
+    _twitchClient.connect().then(()=>{console.log('Twitch: '+CONFIG.channel+(CONFIG.botToken?' (auth)':' (anon)'));game.log('📡 Twitch connecté: '+CONFIG.channel+(CONFIG.botToken?' ✓ Chat actif':''),'log-info');startPeriodicGuide()}).catch(e=>{console.error(e);game.log('❌ Twitch: erreur connexion','log-dmg')});
     _twitchClient.on('message',(ch,tags,msg,self)=>{
         if(self)return;const u=tags['display-name']||tags.username;
         const m=msg.trim().toLowerCase();if(!m.startsWith('!'))return;
         const parts=m.split(' '),cmd=parts[0].substring(1),args=parts.slice(1);
         const valid=['class','attaque','soin','sort','defense','esquive','special','stats','couleur','shop','marche','evolution','evoluer','reclass','do','notdo','skill','help','commandes','succes','achievements','classement','top','leaderboard','don','give','duel','info','buffs','recap','equip','equipement'];
         if(valid.includes(cmd)){console.log(`CMD: ${u} !${cmd} ${args.join(' ')}`);const r=game.processCmd(u,cmd,args);if(r&&CONFIG.botToken)chatSay(`@${u} ${r}`)}
+        // Streamer-only commands (broadcaster or mod)
+        const isBroadcaster=tags.badges&&(tags.badges.broadcaster||tags.badges.moderator);
+        if(isBroadcaster){
+            if(cmd==='event'){game.triggerEvent();chatSay(`🎲 Event lancé par @${u}!`)}
+            else if(cmd==='loot'){game.spawnLootMonster();chatSay(`💎 Monstre Butin invoqué par @${u}!`)}
+            else if(cmd==='forceduel'){
+                const p1=(args[0]||'').toLowerCase(),p2=(args[1]||'').toLowerCase();
+                if(p1&&p2){game.forceDuel(p1,p2);chatSay(`⚔ DUEL FORCÉ: ${p1} vs ${p2}!`)}
+                else chatSay(`@${u} Usage: !forceduel <joueur1> <joueur2>`)
+            }
+            else if(cmd==='bossnow'){game.spawnBoss();chatSay(`👹 Boss invoqué par @${u}!`)}
+        }
     });
+    // Remove character when viewer leaves the channel
+    _twitchClient.on('part',(ch,username)=>{
+        const u=username.charAt(0).toUpperCase()+username.slice(1);
+        const key=Object.keys(game.characters).find(k=>k.toLowerCase()===username.toLowerCase());
+        if(key&&game.characters[key]){
+            game.characters[key].remove();
+            delete game.characters[key];
+            game.log(`👋 ${key} a quitté le stream`,'log-info');
+        }
+    });
+}
+
+// ================================================================
+// PERIODIC CHAT GUIDE (every 20 min)
+// ================================================================
+function startPeriodicGuide(){
+    if(!CONFIG.botToken)return;
+    const msgs=[
+        `⚔ TWITCH RPG ⚔ Crée ton perso avec !class apprenti ou !class paysan 🎮 Évolue au Nv.3!`,
+        `📜 COMMANDES: !attaque !soin !sort !skill !defense !special !shop !stats !equip !evoluer !couleur !duel !don !recap !help`,
+        `💡 ASTUCES: Combo x3+ = bonus DMG | !shop pour équipement | !evoluer pour changer de classe | !couleur pour personnaliser`
+    ];
+    let idx=0;
+    setInterval(()=>{
+        if(_twitchClient&&CONFIG.botToken){
+            chatSay(msgs[idx]);
+            idx=(idx+1)%msgs.length;
+        }
+    },1200000);
+    // First guide after 2 min
+    setTimeout(()=>{if(_twitchClient&&CONFIG.botToken)chatSay(msgs[0])},120000);
 }
 
 // ================================================================
