@@ -2988,23 +2988,33 @@ class GameManager{
             case 'shop':case 'marche':{
                 if(!c)return'!class pour rejoindre!';
                 const item=(args[0]||'').toLowerCase();
-                // !marche noir → black market tab
+                // !marche noir → list black market in chat
                 if(item==='noir'){
                     if(!this.blackMarketOpen)return'Le Marché Noir est fermé!';
-                    openShopOverlay(username,'noir');return`🏪 Marché Noir ouvert! (💰${c.gold}g)`;
+                    const bmList=Object.entries(BLACK_MARKET).map(([k,v])=>`${v.emoji}${v.name}(${v.cost}g)`).join(' | ');
+                    chatSay(`🏪 MARCHÉ NOIR: ${bmList} — !shop <item> pour acheter!`);
+                    return null;
                 }
-                // !shop <item_key> → direct buy via chat
+                // !shop <item_key> → direct buy via chat (no vote needed)
                 if(item&&EQUIPMENT[item]){shopBuy(username,item);return null}
                 if(item){
                     const allC=this.blackMarketOpen?{...CONSUMABLES,...BLACK_MARKET}:CONSUMABLES;
                     if(allC[item]){shopBuyConsum(username,item);return null}
                     // Slot browsing shortcut
                     const slotMap={arme:'weapon',weapon:'weapon',armure:'armor',armor:'armor',botte:'boots',bottes:'boots',boots:'boots',amulette:'amulet',amulet:'amulet',anneau:'ring',ring:'ring'};
-                    if(slotMap[item]){openShopOverlay(username,'equip');return`🔨 Forge ouverte! (💰${c.gold}g)`}
-                    return`Item inconnu! !shop pour ouvrir la boutique`;
+                    if(slotMap[item]){
+                        const slot=slotMap[item];
+                        const items=Object.entries(EQUIPMENT).filter(([,v])=>v.slot===slot).map(([k,v])=>{
+                            const owned=c.equipment[slot]===k?'✅':'';
+                            return`${v.emoji}${v.name} T${v.tier}(${v.cost}g)${owned}`;
+                        }).join(' | ');
+                        chatSay(`⚒ ${SLOT_NAMES[slot].toUpperCase()}: ${items}`);
+                        return null;
+                    }
+                    return`Item inconnu! !shop arme/armure/botte/amulette/anneau ou !shop <item>`;
                 }
-                // !shop → open visual overlay
-                openShopOverlay(username,'equip');return`🔨 Forge ouverte! (💰${c.gold}g) | !shop <item> pour acheter`;
+                // !shop → VOTE system (need 3 viewers to agree)
+                return this.shopVote(username);
             }
             case 'equip':case 'equipement':{
                 if(!c)return'!class pour rejoindre!';
@@ -3422,6 +3432,47 @@ class GameManager{
         if(doWins){this.currentEvent.doFn(this);this.log(`✅ DO gagne! ${this.currentEvent.doText}`,'log-event')}
         else{this.currentEvent.notdoFn(this);this.log(`❌ NOTDO gagne! ${this.currentEvent.notdoText}`,'log-event')}
         this.currentEvent=null;
+    }
+
+    // SHOP VOTE SYSTEM (3 viewers must agree)
+    shopVote(username){
+        const now=Date.now();
+        // Reset if expired (60s)
+        if(!this._shopVote||now-this._shopVote.time>60000){
+            this._shopVote={voters:[username],time:now,needed:3};
+            chatSay(`🛒🔥 @${username} veut ouvrir la BOUTIQUE! ${this._shopVote.needed-1} autres votes nécessaires! Tapez !shop pour voter! ⚒`);
+            return null;
+        }
+        // Already voted
+        if(this._shopVote.voters.includes(username)){
+            return`Tu as déjà voté! (${this._shopVote.voters.length}/${this._shopVote.needed}) — En attente...`;
+        }
+        // Add vote
+        this._shopVote.voters.push(username);
+        const remaining=this._shopVote.needed-this._shopVote.voters.length;
+        if(remaining>0){
+            chatSay(`🛒 @${username} vote pour la boutique! Encore ${remaining} vote${remaining>1?'s':''}! Tapez !shop! ⚒`);
+            return null;
+        }
+        // VOTE PASSED! Show shop in chat
+        this._shopVote=null;
+        chatSay(`🛒🔥 BOUTIQUE OUVERTE! Les héros ont voté!`);
+        // List equipment by slot
+        const slots=['weapon','armor','boots','amulet','ring'];
+        slots.forEach(slot=>{
+            const items=Object.entries(EQUIPMENT).filter(([,v])=>v.slot===slot)
+                .map(([k,v])=>`${v.emoji}${v.name} T${v.tier}(${v.cost}g)`).join(' | ');
+            chatSay(`⚒ ${SLOT_NAMES[slot]}: ${items}`);
+        });
+        // List consumables
+        const consList=Object.entries(CONSUMABLES).map(([k,v])=>`${v.emoji}${v.name}(${v.cost}g)`).join(' | ');
+        chatSay(`🧪 Consommables: ${consList}`);
+        if(this.blackMarketOpen){
+            const bmList=Object.entries(BLACK_MARKET).map(([k,v])=>`${v.emoji}${v.name}(${v.cost}g)`).join(' | ');
+            chatSay(`🏪 Marché Noir: ${bmList}`);
+        }
+        chatSay(`💡 Pour acheter: !shop <nom_item> (ex: !shop epee_fer)`);
+        return null;
     }
 
     // LOOT MONSTER (streamer-only: !loot)
