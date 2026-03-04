@@ -8,7 +8,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
 body{width:1920px;height:1080px;overflow:hidden;background:transparent;font-family:'Press Start 2P',monospace;color:#b89b4a}
-#game-container{position:absolute;bottom:0;left:0;width:100%;height:160px;transition:height 0.8s;overflow:hidden}
+#game-container{position:absolute;bottom:0;left:0;width:100%;height:220px;transition:height 0.8s;overflow:hidden}
 #game-container.fullscreen{height:1080px}
 canvas{image-rendering:pixelated}
 #bg-canvas,#fx-canvas{position:absolute;top:0;left:0;width:100%;height:100%}
@@ -16,7 +16,7 @@ canvas{image-rendering:pixelated}
 #mode-toggle{display:none}
 .character{position:absolute;bottom:45px;z-index:20;transition:left 2s ease-in-out}
 .character.melee{z-index:22}.character.ranged{z-index:18}
-.character canvas{width:48px;height:48px;display:block}
+.character canvas{width:64px;height:64px;display:block}
 .character.tier-1 canvas{filter:drop-shadow(0 0 2px #888)}
 .character.tier-2 canvas{filter:drop-shadow(0 0 3px #55aaff)}
 .character.tier-3 canvas{filter:drop-shadow(0 0 4px #aa55ff)}
@@ -33,22 +33,22 @@ canvas{image-rendering:pixelated}
 .char-lvl{position:absolute;top:-20px;right:-8px;font-size:5px;color:#5588aa;text-shadow:1px 1px 0 #000}
 .char-shield{position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:10px;opacity:0;transition:opacity 0.3s}
 .char-shield.on{opacity:1}
-#boss-zone{position:fixed;right:40px;bottom:10px;z-index:25;text-align:center;display:none}
+#boss-zone{position:fixed;right:60px;bottom:20px;z-index:25;text-align:center;display:none}
 #boss-zone.active{display:block}
-#boss-zone canvas{width:140px;height:140px;display:block;margin:0 auto}
+#boss-zone canvas{width:200px;height:200px;display:block;margin:0 auto}
 #boss-name{font-size:10px;color:#aa2222;text-shadow:0 0 6px rgba(120,0,0,.4),2px 2px 0 #000;letter-spacing:3px;text-transform:uppercase}
 #boss-phase{font-size:7px;color:#cc5500;text-shadow:1px 1px 0 #000;margin:2px 0}
-#boss-hp-bar{width:150px;height:10px;background:#0a0808;border:1px solid #3a1010;margin:3px auto;position:relative;box-shadow:inset 0 1px 4px rgba(0,0,0,.6)}
+#boss-hp-bar{width:200px;height:12px;background:#0a0808;border:1px solid #3a1010;margin:4px auto;position:relative;box-shadow:inset 0 1px 4px rgba(0,0,0,.6)}
 #boss-hp-fill{height:100%;background:linear-gradient(90deg,#cc2020,#6a0808);transition:width 0.4s}
 #boss-hp-text{position:absolute;top:0;left:0;width:100%;height:100%;font-size:6px;line-height:14px;text-align:center;color:#fff;text-shadow:1px 1px 0 #000;font-family:'Press Start 2P',monospace;z-index:1;pointer-events:none}
 @keyframes forgeFlicker{0%,100%{filter:brightness(1) drop-shadow(0 0 4px rgba(255,100,0,.3))}25%{filter:brightness(1.05) drop-shadow(0 0 6px rgba(255,120,0,.4))}50%{filter:brightness(1.1) drop-shadow(0 0 8px rgba(255,80,0,.5))}75%{filter:brightness(1.02) drop-shadow(0 0 5px rgba(255,100,0,.35))}}
-#shop-zone{position:absolute;left:15px;bottom:45px;z-index:15;display:none}
+#shop-zone{position:absolute;left:20px;bottom:55px;z-index:15;display:none}
 #shop-zone.open{display:block}
-#shop-zone canvas{width:90px;height:50px;display:block;animation:forgeFlicker 2s ease-in-out infinite}
+#shop-zone canvas{width:128px;height:72px;display:block;animation:forgeFlicker 2s ease-in-out infinite}
 #shop-label{font-size:7px;color:#d4af37;text-align:center;text-shadow:0 0 6px rgba(200,120,0,.4),1px 1px 0 #000;letter-spacing:2px}
-#hud{position:fixed;top:6px;left:6px;z-index:100;background:rgba(8,8,18,.4);border:1px solid rgba(42,36,24,.3);padding:5px 8px;font-size:6px;line-height:1.8;max-width:280px;box-shadow:none;border-radius:2px}
-.hud-title{color:#9a8340;font-size:7px;letter-spacing:2px;margin-bottom:2px;text-transform:uppercase;border-bottom:1px solid rgba(26,24,16,.3);padding-bottom:2px}
-#season-hud{position:fixed;top:6px;left:50%;transform:translateX(-50%);z-index:100;background:rgba(8,8,18,.35);border:1px solid rgba(42,36,24,.25);padding:4px 12px;font-size:7px;text-align:center;box-shadow:none;letter-spacing:1px;border-radius:2px}
+#hud{position:fixed;top:8px;left:8px;z-index:100;background:linear-gradient(180deg,rgba(12,12,28,.95),rgba(8,8,18,.98));border:1px solid #2a2418;padding:8px 12px;font-size:7px;line-height:2;max-width:380px;box-shadow:0 2px 12px rgba(0,0,0,.6)}
+.hud-title{color:#9a8340;font-size:9px;letter-spacing:3px;margin-bottom:4px;text-transform:uppercase;border-bottom:1px solid #1a1810;padding-bottom:4px}
+#season-hud{position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:100;background:linear-gradient(180deg,rgba(12,12,28,.95),rgba(8,8,18,.98));border:1px solid #2a2418;padding:6px 16px;font-size:8px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.6);letter-spacing:1px}
 #combat-log{display:none}
 .log-dmg{color:#cc4444}.log-heal{color:#44aa44}.log-special{color:#cc7722}.log-info{color:#5577aa}.log-gold{color:#aa8833}.log-mvp{color:#cc55aa}.log-event{color:#9944aa}
 #event-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:300;display:none;background:linear-gradient(180deg,rgba(15,10,30,.97),rgba(8,6,18,.99));border:1px solid #3a2060;padding:20px 30px;text-align:center;max-width:500px;min-width:350px;box-shadow:0 0 40px rgba(100,30,180,.2)}
@@ -193,7 +193,7 @@ canvas{image-rendering:pixelated}
 #dps-meter.active{display:block}
 .dps-entry{display:flex;justify-content:space-between;gap:6px;margin:1px 0}
 .dps-bar{height:4px;background:linear-gradient(90deg,#cc3333,#ff6644);margin-top:1px;transition:width 0.5s}
-#streamer-panel{position:fixed;top:80px;left:8px;z-index:150;background:linear-gradient(180deg,rgba(12,12,28,.55),rgba(8,8,18,.5));border:1px solid rgba(26,26,34,.4);padding:8px;font-size:6px;width:160px;max-height:500px;overflow-y:auto;display:none;box-shadow:none}
+#streamer-panel{position:fixed;top:80px;left:8px;z-index:150;background:linear-gradient(180deg,rgba(12,12,28,.96),rgba(8,8,18,.99));border:1px solid #1a1a22;padding:8px;font-size:6px;width:160px;max-height:500px;overflow-y:auto;display:none;box-shadow:0 4px 20px rgba(0,0,0,.6)}
 #streamer-panel.open{display:block}
 #streamer-panel .sp-title{color:#9a8340;font-size:7px;letter-spacing:2px;margin-bottom:6px;text-align:center;text-transform:uppercase}
 #streamer-panel .sp-section{border-top:1px solid #333;padding:4px 0;margin-top:4px}
@@ -205,8 +205,8 @@ canvas{image-rendering:pixelated}
 .sp-btn.red{border-color:#8b0000;color:#ff4444}.sp-btn.red:hover{background:#8b0000;color:#fff}
 .sp-btn.green{border-color:#2d5016;color:#44ff44}.sp-btn.green:hover{background:#2d5016;color:#fff}
 .sp-btn.purple{border-color:#6633aa;color:#cc66ff}.sp-btn.purple:hover{background:#6633aa;color:#fff}
-#panel-toggle{position:fixed;top:80px;left:8px;z-index:151;background:rgba(12,12,28,.45);color:#9a8340;border:1px solid rgba(42,36,24,.3);padding:4px 8px;font-family:'Press Start 2P',monospace;font-size:6px;cursor:pointer}
-#panel-toggle:hover{background:rgba(42,36,24,.5);color:#d4af37;border-color:rgba(90,74,40,.4)}
+#panel-toggle{position:fixed;top:80px;left:8px;z-index:151;background:rgba(12,12,28,.95);color:#9a8340;border:1px solid #2a2418;padding:4px 8px;font-family:'Press Start 2P',monospace;font-size:6px;cursor:pointer}
+#panel-toggle:hover{background:#2a2418;color:#d4af37;border-color:#5a4a28}
 </style>
 </head>
 <body>
@@ -1610,13 +1610,11 @@ function drawBG(){
         // Castle silhouette
         drawCastle(bg,w,h);
     }
-    // Ground with season (semi-transparent to see game behind)
+    // Ground with season
     const gY=h-55;
-    bg.globalAlpha=0.5;
     const grd=bg.createLinearGradient(0,gY,0,h);
     grd.addColorStop(0,sn.ground);grd.addColorStop(.2,shade(sn.ground,-20));grd.addColorStop(1,shade(sn.ground,-40));
     bg.fillStyle=grd;bg.fillRect(0,gY,w,55);
-    bg.globalAlpha=0.6;
     // Grass tufts
     for(let i=0;i<200;i++){
         const x=Math.random()*w,hh=3+Math.random()*8;
@@ -1633,9 +1631,8 @@ function drawBG(){
         bg.fillStyle=shade(sn.ground,-15);bg.beginPath();
         bg.moveTo(rx-rw/4,gY);bg.quadraticCurveTo(rx,gY-rh+1,rx+rw/4,gY);bg.closePath();bg.fill();
     });
-    bg.globalAlpha=1;
     // Dirt path (subtle)
-    bg.fillStyle=shade(sn.ground,-10);bg.globalAlpha=0.2;
+    bg.fillStyle=shade(sn.ground,-10);bg.globalAlpha=0.3;
     bg.fillRect(0,gY+15,w,8);bg.globalAlpha=1;
     // Torches
     [100,350,600,850,1100,1350,1600,1850].forEach(tx=>{
@@ -3699,7 +3696,8 @@ setInterval(()=>{
     const al=game.allies.length?` 🤝${game.allies.length}`:'';
     document.getElementById('hud-content').innerHTML=
         `${wi}${ph} | ${ac}/${cc} joueurs${bm}${al}<br>`+
-        `Boss: ${bi}`;
+        `Boss: ${bi}<br>`+
+        `<span style="font-size:5px;color:#888">!class · !attaque · !soin · !sort · !skill · !defense · !special<br>!couleur · !shop · !stats · !evoluer · !reclass · !succes · !help<br>!classement · !don · !duel · !info · !buffs · !recap</span>`;
     // Season HUD with timer
     const sn=SEASONS[currentSeason];
     const elapsed=Date.now()-seasonStartTime;
@@ -3724,7 +3722,33 @@ window.addEventListener('resize',()=>setTimeout(drawBG,100));
 // TWITCH CONNECTION
 // ================================================================
 let _twitchClient=null;
-function chatSay(msg){if(_twitchClient&&CONFIG.botToken)_twitchClient.say(CONFIG.channel,msg).catch(()=>{})}
+// Anti-duplicate: only one instance sends chat messages (first to claim wins)
+const _instanceId=Date.now()+'_'+Math.random().toString(36).slice(2);
+const _chatLock='rpg_chat_lock';
+const _lastMsgs=[];
+function _claimChatLock(){
+    const lock=localStorage.getItem(_chatLock);
+    const now=Date.now();
+    // Lock expires after 10s or if this instance owns it
+    if(!lock||lock===_instanceId||(now-parseInt(lock.split('|')[1]||0))>10000){
+        localStorage.setItem(_chatLock,_instanceId+'|'+now);
+        return true;
+    }
+    return lock.startsWith(_instanceId);
+}
+// Refresh lock every 5s
+setInterval(()=>{const l=localStorage.getItem(_chatLock);if(l&&l.startsWith(_instanceId))localStorage.setItem(_chatLock,_instanceId+'|'+Date.now())},5000);
+function chatSay(msg){
+    if(!_twitchClient||!CONFIG.botToken)return;
+    if(!_claimChatLock())return; // Only one instance talks
+    // Dedup: skip if same message sent in last 3s
+    const now=Date.now();
+    const key=msg.slice(0,80);
+    if(_lastMsgs.find(m=>m.k===key&&now-m.t<3000))return;
+    _lastMsgs.push({k:key,t:now});
+    if(_lastMsgs.length>20)_lastMsgs.shift();
+    _twitchClient.say(CONFIG.channel,msg).catch(()=>{});
+}
 function initTwitch(){
     if(typeof tmi==='undefined')return;
     if(CONFIG.channel==='VOTRE_CHANNEL_ICI')return;
