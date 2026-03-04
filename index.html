@@ -1904,7 +1904,7 @@ function shopBuy(username,key){
     if(eq.tier>=4){spawnP(c.element,'#ffffff',10);showBanner(`${eq.emoji} ${eq.name}!`,`${c.username} s'équipe!`,2000)}
     game.log(`${username} équipe ${eq.name} T${eq.tier} (-${eq.cost}g)`,'log-gold');
     const statsStr=Object.entries(eq.stats).map(([k,v])=>`+${v}${k.toUpperCase()}`).join(' ');
-    chatSay(`${eq.emoji} @${username} forge ${eq.name} [T${eq.tier}] | ${statsStr} | -${eq.cost}g (reste ${c.gold}g)`);
+    chatSay(`${eq.emoji}🔥 @${username} forge ${eq.name} [T${eq.tier}]! ${statsStr} | La puissance augmente! 💰-${eq.cost}g — !shop pour s'équiper aussi! ⚒`);
     renderShop();
 }
 function shopBuyConsum(username,key){
@@ -1923,7 +1923,7 @@ function shopBuyConsum(username,key){
     }
     c.updateBars();c.popup(item.name+'!','popup popup-gold');spawnP(c.element,'#d4af37',6);
     game.log(`${username} achète ${item.name} (-${item.cost}g)`,'log-gold');
-    chatSay(`${item.emoji} @${username} achète ${item.name} | ${item.desc} | -${item.cost}g (reste ${c.gold}g)`);
+    chatSay(`${item.emoji}✨ @${username} utilise ${item.name}! ${item.desc} | 💰-${item.cost}g — Malin! !shop pour voir la boutique 🛒`);
     renderShop();
 }
 
@@ -2671,7 +2671,7 @@ class GameManager{
         cls=cls||'apprenti';if(!CLASS_DATA[cls])cls='apprenti';
         this.characters[username]=new Character(username,cls);
         this.log(`${username} → ${CLASS_DATA[cls].name}!`,'log-info');
-        chatSay(`⚔ Bienvenue @${username}! ${CLASS_DATA[cls].name} créé! Tape !help pour les commandes 🎮`);
+        chatSay(`⚔ Un héros se lève! @${username} rejoint l'aventure en tant que ${CLASS_DATA[cls].name}! 🔥 Prêt à combattre? !attaque !help 🎮`);
         return`Création effectuée! ${CLASS_DATA[cls].name} 🎮 | !help pour les commandes`;
     }
 
@@ -2728,7 +2728,7 @@ class GameManager{
             Object.values(this.characters).forEach(c=>{c.totalDmg=0;c.totalHeal=0});
             const modInfo=mod?` [${mod.emoji} ${mod.name}]`:'';
             this.log(`💀 MEGA BOSS! ${this.boss.name}${modInfo} (${this.boss.maxHp} PV)`,'log-special');
-            chatSay(`💀 MEGA BOSS VAGUE ${this.wave}! ${this.boss.name} - ${this.boss.maxHp} PV! Préparez-vous!`);
+            chatSay(`💀🔥 ALERTE MEGA BOSS! Vague ${this.wave} — ${this.boss.name} débarque avec ${this.boss.maxHp} PV! Tous ensemble ou vous mourrez! !attaque !sort !skill !special 💀⚔`);
             bossIntroOverlay(this.boss.name,this.boss.maxHp,this.wave,mod,false);
             showBanner(`💀 VAGUE ${this.wave} - MEGA BOSS! 💀`,`${this.boss.name} - ${this.boss.maxHp} PV`,5000);
             screenShake(true);
@@ -2745,7 +2745,7 @@ class GameManager{
             Object.values(this.characters).forEach(c=>{c.totalDmg=0;c.totalHeal=0});
             const modInfo=mod?` [${mod.emoji} ${mod.name}]`:'';
             this.log(`⚔ Mini-Boss! ${this.boss.name}${modInfo} (${this.boss.maxHp} PV)`,'log-special');
-            chatSay(`⚔ Mini-Boss Vague ${this.wave}! ${this.boss.name} approche!`);
+            chatSay(`⚔💥 MINI-BOSS Vague ${this.wave}! ${this.boss.name} attaque! Montrez-lui qui domine! !attaque !sort !skill 🔥`);
             bossIntroOverlay(this.boss.name,this.boss.maxHp,this.wave,mod,false);
             showBanner(`⚔ VAGUE ${this.wave} - MINI-BOSS ⚔`,`${this.boss.name} - ${this.boss.maxHp} PV`,3000);
         } else if(Math.random()<0.15&&this.wave>10){
@@ -3045,7 +3045,7 @@ class GameManager{
                 critFlash();screenShake(false);
                 showBanner(`⬆ ÉVOLUTION!`,`${username} → ${CLASS_DATA[choice].name}`,3000);
                 this.log(`⬆ ${username} évolue → ${CLASS_DATA[choice].name}!`,'log-special');
-                chatSay(`🌟 ÉVOLUTION! @${username} devient ${CLASS_DATA[choice].name} (T${CLASS_DATA[choice].tier})! ⚔${nc.atk} 🛡${nc.def} ❤${nc.maxHp}`);
+                chatSay(`🔥🌟 ÉVOLUTION LÉGENDAIRE! @${username} se transforme en ${CLASS_DATA[choice].name} (T${CLASS_DATA[choice].tier})! ⚔${nc.atk} 🛡${nc.def} ❤${nc.maxHp} — La puissance grandit! 💪`);
                 return`${username} → ${CLASS_DATA[choice].name}!`;
             }
             case 'reclass':{
@@ -3199,6 +3199,7 @@ class GameManager{
                 c.gold-=amt;tc.gold+=amt;
                 tc.popup(`+${amt}g`,'popup popup-gold');c.popup(`-${amt}g`,'popup popup-dmg');
                 this.log(`💝 ${username} donne ${amt}g à ${tc.username}!`,'log-gold');
+                chatSay(`💝 Généreux! @${username} offre ${amt}g à @${tc.username}! L'entraide fait la force! 🤝`);
                 return`${username} → ${amt}g → ${tc.username}!`;
             }
             case 'duel':{
@@ -3304,11 +3305,11 @@ class GameManager{
                 c.hp=c.maxHp;c.mana=c.maxMana;c.popup('LEVEL UP!','popup popup-lvl');spawnP(c.element,'#44ff44',12);spawnP(c.element,'#ffffff',6);c.element.classList.remove('lvl-up-glow');void c.element.offsetWidth;c.element.classList.add('lvl-up-glow');setTimeout(()=>c.element.classList.remove('lvl-up-glow'),1200);
                 if(c.level%5===0){showBanner(`⭐ Nv.${c.level}!`,`${c.username} progresse!`,2000);spawnP(c.element,'#d4af37',15)}
                 this.log(`${c.username} → Nv.${c.level}!`,'log-info');
-                chatSay(`⬆ @${c.username} passe Nv.${c.level}! ${CLASS_DATA[c.className]?.name||c.className} ⚔${c.atk} 🛡${c.def} ❤${c.maxHp}`);
+                chatSay(`⬆🔥 @${c.username} monte Nv.${c.level}! ${CLASS_DATA[c.className]?.name||c.className} devient plus fort! ⚔${c.atk} 🛡${c.def} ❤${c.maxHp} — Qui sera le prochain? 💪`);
                 const cd=CLASS_DATA[c.className];
                 if(cd.evolutions&&cd.evolutions.length&&c.level>=cd.evoLevel){
                     this.log(`${c.username} peut évoluer! (!evoluer ${cd.evolutions.join('/')})`,`log-special`);
-                    chatSay(`🌟 @${c.username} peut ÉVOLUER! Tape !evoluer ${cd.evolutions.join(' ou !evoluer ')}`);
+                    chatSay(`🌟🔥 @${c.username} est PRÊT À ÉVOLUER! Choisis ta destinée: !evoluer ${cd.evolutions.join(' / !evoluer ')} — Deviens plus puissant! 💥`);
                 }
             }
             if(!c.alive){c.alive=true;c.hp=c.maxHp;c.mana=c.maxMana;c.element.classList.remove('char-dead');c.element.style.opacity='1';c.element.classList.add('anim-idle');c.updateBars();spawnP(c.element,'#ffdd44',8);c.popup('REVIVE!','popup popup-lvl')}
@@ -3367,14 +3368,14 @@ class GameManager{
         // Boss countdown with cinematic warning
         let cd=900;
         this.log('⏳ Prochaine vague dans 15 min...','log-info');
-        chatSay(`⏳ Prochaine vague dans 15 min! Préparez-vous!`);
+        chatSay(`⏳ Prochaine vague dans 15 min! Profitez-en: !shop pour s'équiper, !evoluer pour évoluer! 🛒⚒`);
         const cdI=setInterval(()=>{cd--;
-            if(cd===600)chatSay(`⏳ Prochaine vague dans 10 min!`);
-            if(cd===300){chatSay(`⏳ Prochaine vague dans 5 min!`);this.log('⏳ Boss dans 5 min...','log-info')}
-            if(cd===120)chatSay(`⏳ Prochaine vague dans 2 min!`);
-            if(cd===60){showBanner('⏳ BOSS APPROCHE','1 minute!',2000);chatSay(`⚠ Vague ${this.wave+1} dans 1 min!`)}
-            if(cd===30){showBanner('⏳ BOSS IMMINENT','30 secondes!',1500);chatSay(`⚠ Vague ${this.wave+1} dans 30s!`)}
-            if(cd===10){showBanner('⏳ BOSS IMMINENT','10 secondes!',1500);chatSay(`⚠ Vague ${this.wave+1} dans 10s!`)}
+            if(cd===600)chatSay(`⏳ Prochaine vague dans 10 min! !shop pour s'armer, !evoluer pour évoluer! 🛒`);
+            if(cd===300){chatSay(`⏳🔥 5 MINUTES avant le boss! Équipez-vous: !shop | Évoluez: !evoluer | Préparez-vous au COMBAT! ⚔`);this.log('⏳ Boss dans 5 min...','log-info')}
+            if(cd===120)chatSay(`⏳⚠ 2 MINUTES! Le boss approche! Derniers achats: !shop | Soignez-vous: !soin 🔥`);
+            if(cd===60){showBanner('⏳ BOSS APPROCHE','1 minute!',2000);chatSay(`⚠🔥 BOSS dans 1 MINUTE! Dernière chance de !shop ou !soin! Préparez vos armes! ⚔💪`)}
+            if(cd===30){showBanner('⏳ BOSS IMMINENT','30 secondes!',1500);chatSay(`⚠💀 30 SECONDES! Le boss arrive!! !attaque !sort !skill dès qu'il spawn! 🔥`)}
+            if(cd===10){showBanner('⏳ BOSS IMMINENT','10 secondes!',1500);chatSay(`⚠💀🔥 10 SECONDES!!! LE BOSS ARRIVE!!! PRÊTS?! ⚔⚔⚔`)}
             if(cd<=3&&cd>0){
                 showBanner(`⚠ ${cd} ⚠`,'',800);screenShake(false);bossWarningFlash();
                 this.log(`⚠ Boss dans ${cd}s!`,'log-dmg');
@@ -3447,7 +3448,7 @@ class GameManager{
         screenShake(false);bossWarningFlash();
         showBanner('💎 MONSTRE BUTIN!',`${lm.name} - Tuez-le pour du loot!`,3000);
         this.log(`💎 ${lm.name} apparaît! HP: ${totalHp} - Loot garanti!`,'log-event');
-        chatSay(`💎 MONSTRE BUTIN: ${lm.name}! Tuez-le pour gagner de l'équipement! !attaque !sort !skill`);
+        chatSay(`💎⚔ ALERTE MONSTRE BUTIN: ${lm.name} apparaît! Du loot ÉPIQUE vous attend! Tous ensemble: !attaque !sort !skill — Foncez! 🔥`);
         // Boss attacks but weaker
         this.bossAtkLoop=setInterval(()=>{if(!this.boss||!this.boss.alive)return clearInterval(this.bossAtkLoop);this.bossDamage()},4000);
     }
@@ -3468,7 +3469,7 @@ class GameManager{
                 Object.entries(item.stats).forEach(([st,v])=>{if(st==='maxHp'){c.maxHp+=v;c.hp+=v}else if(st==='maxMana'){c.maxMana+=v;c.mana+=v}else{c[st]=(c[st]||0)+v}});
                 c.updateBars();c.popup(`${item.emoji}${item.name}!`,'popup popup-crit');
                 spawnP(c.element,'#d4af37',10);
-                chatSay(`🎁 @${c.username} obtient ${item.emoji} ${item.name} T${item.tier}!`);
+                chatSay(`🎁🔥 LOOT! @${c.username} récupère ${item.emoji} ${item.name} T${item.tier}! Quelle chance! 💎`);
             }else{
                 const gold=item.cost;c.gold+=gold;c.popup(`+${gold}g`,'popup popup-gold');
             }
@@ -3498,7 +3499,7 @@ class GameManager{
         screenShake(false);bossWarningFlash();
         showBanner('💰 MONSTRE D\'OR!',`${gm.name} - Tuez-le pour de l'or!`,3000);
         this.log(`💰 ${gm.name} apparaît! HP: ${totalHp} - Pluie d'or garantie!`,'log-event');
-        chatSay(`💰 MONSTRE D'OR: ${gm.name}! Tuez-le pour gagner plein d'or! !attaque !sort !skill`);
+        chatSay(`💰🔥 PLUIE D'OR! ${gm.name} débarque chargé de trésors! Frappez-le avant qu'il s'enfuie! !attaque !sort !skill — Devenez RICHES! 💎`);
         this.bossAtkLoop=setInterval(()=>{if(!this.boss||!this.boss.alive)return clearInterval(this.bossAtkLoop);this.bossDamage()},4000);
     }
     onGoldDrop(){
@@ -3511,7 +3512,7 @@ class GameManager{
             const total=gold+bonus;
             c.gold+=total;c.popup(`+${total}g`,'popup popup-gold');
             spawnP(c.element,'#d4af37',15);
-            chatSay(`💰 @${c.username} ramasse ${total}g!`);
+            chatSay(`💰✨ @${c.username} empoche ${total}g! Ka-ching! 🤑`);
         });
         dead.forEach(c=>{
             const gold=Math.floor(range[0]*0.3);
@@ -3548,7 +3549,7 @@ class GameManager{
         const label=`${team1.length}v${team2.length}`;
         showBanner(`⚔ DUEL ${label}!`,`${t1names} VS ${t2names}`,3000);
         screenShake(true);critFlash();
-        chatSay(`⚔ DUEL ${label}: [${t1names}] VS [${t2names}]!`);
+        chatSay(`⚔🔥 DUEL D'ÉQUIPE ${label}! [${t1names}] VS [${t2names}] — Qui va dominer?! Prenez vos paris! 💥`);
         // Simulate 3 rounds
         let t1hp=team1.reduce((s,c)=>s+c.hp,0);
         let t2hp=team2.reduce((s,c)=>s+c.hp,0);
@@ -3570,7 +3571,7 @@ class GameManager{
         losers.forEach(c=>{c.popup('DÉFAITE','popup popup-dmg');spawnP(c.element,'#ff4444',8)});
         const wNames=winners.map(c=>'@'+c.username).join(' ');
         this.log(`🏆 Équipe [${winners.map(c=>c.username).join(', ')}] gagne le duel ${label}! +${goldPerWinner}g +${xpPerWinner}XP!`,'log-special');
-        chatSay(`🏆 VICTOIRE ${label}: ${wNames} gagnent! +${goldPerWinner}g +${xpPerWinner}XP chacun!`);
+        chatSay(`🏆🔥 DOMINATION ${label}! ${wNames} écrasent l'adversaire! +${goldPerWinner}g +${xpPerWinner}XP chacun! GG! 💪`);
     }
 
     // FORCED DUEL (streamer-only: !forceduel player1 player2)
@@ -3595,7 +3596,7 @@ class GameManager{
         spawnP(winner.element,'#d4af37',20);spawnP(loser.element,'#ff4444',10);
         winner.popup('VICTOIRE!','popup popup-crit');loser.popup('DÉFAITE','popup popup-dmg');
         this.log(`🏆 ${winner.username} gagne le duel! +${prize}g +20XP!`,'log-special');
-        chatSay(`🏆 DUEL: @${winner.username} bat @${loser.username}! +${prize}g +20XP!`);
+        chatSay(`🏆⚔ VICTOIRE ÉCRASANTE! @${winner.username} terrasse @${loser.username}! +${prize}g +20XP! Qui ose le défier? !duel 💪🔥`);
     }
 
     log(text,cls){this.combatLog.unshift({text,cls,time:Date.now()});if(this.combatLog.length>25)this.combatLog.pop();this.renderLog()}
@@ -3666,7 +3667,7 @@ function rouletteEvent(){
             critFlash();screenShake(false);
             const itemName=isEquip?EQUIPMENT[itemKey].name:(CONSUMABLES[itemKey]?.name||itemKey);
             game.log(`ROULETTE: ${winner.username} gagne ${itemName}!`,'log-event');
-            chatSay(`🎰 ROULETTE! @${winner.username} remporte ${itemName}! GG!`);
+            chatSay(`🎰🔥 JACKPOT! @${winner.username} remporte ${itemName}! La chance sourit aux braves! GG! 🍀💎`);
             setTimeout(()=>ov.remove(),3000);
             return;
         }
@@ -3788,10 +3789,10 @@ setInterval(()=>{
         if(eligible.length<=3){
             eligible.forEach(c=>{
                 const cd=CLASS_DATA[c.className];
-                chatSay(`🌟 @${c.username} peut évoluer! Tape !evoluer ${cd.evolutions.join(' ou !evoluer ')}`);
+                chatSay(`🌟💥 @${c.username}, tu es assez fort pour ÉVOLUER! Choisis: !evoluer ${cd.evolutions.join(' / !evoluer ')} — Ne rate pas ta montée en puissance! 🔥`);
             });
         }else{
-            chatSay(`🌟 ${eligible.length} joueurs peuvent évoluer! Tapez !evoluer <classe> pour monter en puissance!`);
+            chatSay(`🌟🔥 ${eligible.length} héros sont PRÊTS À ÉVOLUER! Tapez !evoluer <classe> pour débloquer votre vraie puissance! Ne restez pas faibles! 💪💥`);
         }
     }
 },300000);
@@ -3900,15 +3901,15 @@ function initTwitch(){
         // Streamer-only commands (broadcaster or mod)
         const isBroadcaster=tags.badges&&(tags.badges.broadcaster||tags.badges.moderator);
         if(isBroadcaster){
-            if(cmd==='event'){game.triggerEvent();chatSay(`🎲 Event lancé par @${u}!`)}
-            else if(cmd==='loot'){game.spawnLootMonster();chatSay(`💎 Monstre Butin invoqué par @${u}!`)}
+            if(cmd==='event'){game.triggerEvent();chatSay(`🎲🔥 EVENT SPÉCIAL lancé par @${u}! Que va-t-il se passer?! 😱`)}
+            else if(cmd==='loot'){game.spawnLootMonster();chatSay(`💎🔥 Monstre BUTIN invoqué par @${u}! Du loot ÉPIQUE en jeu! Foncez! ⚔`)}
             else if(cmd==='forceduel'){
                 const p1=(args[0]||'').toLowerCase(),p2=(args[1]||'').toLowerCase();
-                if(p1&&p2){game.forceDuel(p1,p2);chatSay(`⚔ DUEL FORCÉ: ${p1} vs ${p2}!`)}
+                if(p1&&p2){game.forceDuel(p1,p2);chatSay(`⚔💥 DUEL FORCÉ! ${p1} vs ${p2}! Qui va survivre?! Prenez vos paris! 🔥`)}
                 else chatSay(`@${u} Usage: !forceduel <joueur1> <joueur2>`)
             }
-            else if(cmd==='bossnow'){game.spawnBoss();chatSay(`👹 Boss invoqué par @${u}!`)}
-            else if(cmd==='goldmonster'){game.spawnGoldMonster();chatSay(`💰 Monstre d'Or invoqué par @${u}!`)}
+            else if(cmd==='bossnow'){game.spawnBoss();chatSay(`👹🔥 BOSS invoqué par @${u}! Préparez-vous au COMBAT! !attaque !sort !skill ⚔`)}
+            else if(cmd==='goldmonster'){game.spawnGoldMonster();chatSay(`💰🔥 MONSTRE D'OR invoqué par @${u}! Frappez-le pour devenir RICHES! 🤑⚔`)}
             else if(cmd==='teamduel'){
                 if(args.length<1)chatSay(`@${u} Usage: !teamduel <taille> ou !teamduel p1 p2 vs p3 p4`);
                 else game.teamDuel(args);
@@ -3933,9 +3934,9 @@ function initTwitch(){
 function startPeriodicGuide(){
     if(!CONFIG.botToken)return;
     const msgs=[
-        `⚔ TWITCH RPG ⚔ Crée ton perso: !class apprenti/paysan/chat/ecuyer/brigand/herboriste/barde 🎮 Évolue au Nv.3!`,
-        `📜 COMMANDES: !attaque !soin !sort !skill !defense !special !shop !stats !equip !evoluer !couleur !duel !don !recap !help`,
-        `💡 ASTUCES: Combo x3+ = bonus DMG | !shop pour équipement | !evoluer pour changer de classe | !couleur pour personnaliser`
+        `⚔🔥 TWITCH RPG ⚔ Rejoins le combat! !class apprenti/paysan/chat/ecuyer/brigand/herboriste/barde — Évolue au Nv.3 et deviens LÉGENDAIRE! 🎮💪`,
+        `📜 TU VEUX DOMINER? !attaque !sort !skill !special pour combattre | !shop pour t'équiper | !evoluer pour monter en puissance | !duel pour défier! 🔥`,
+        `💡 ASTUCE PRO: Combo x3+ = GROS bonus DMG 💥 | !shop = équipement surpuissant ⚒ | !evoluer = nouvelle classe! Qui sera le N°1? 🏆`
     ];
     let idx=0;
     setInterval(()=>{
