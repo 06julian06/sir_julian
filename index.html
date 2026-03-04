@@ -245,13 +245,13 @@ canvas{image-rendering:pixelated}
 <div class="sp-section">
 <div class="sp-label">SIMULER COMMANDE CHAT</div>
 <input id="sp-chat-user" placeholder="Pseudo" value="Streamer" style="width:80px">
-<input id="sp-chat-cmd" placeholder="!class guerrier" style="width:140px" onkeydown="if(event.key==='Enter'){document.getElementById('sp-chat-go').click()}">
+<input id="sp-chat-cmd" placeholder="!class apprenti" style="width:140px" onkeydown="if(event.key==='Enter'){document.getElementById('sp-chat-go').click()}">
 <button id="sp-chat-go" class="sp-btn green" onclick="const u=document.getElementById('sp-chat-user').value||'Streamer';const m=document.getElementById('sp-chat-cmd').value.trim();if(!m)return;const parts=m.replace(/^!/,'').split(' ');const cmd=parts[0].toLowerCase();const args=parts.slice(1);game.processCmd(u,cmd,args);document.getElementById('sp-chat-cmd').value=''">▶ ENVOYER</button>
 </div>
 <div class="sp-section">
 <div class="sp-label">CRÉER HÉROS</div>
 <input id="sp-name" placeholder="Nom du héros">
-<select id="sp-class"><option value="apprenti">Apprenti</option><option value="guerrier">Guerrier</option><option value="mage">Mage</option><option value="archer">Archer</option><option value="pretre">Prêtre</option><option value="voleur">Voleur</option><option value="druide">Druide</option><option value="paysan">Paysan</option></select>
+<select id="sp-class"><option value="apprenti">Apprenti</option><option value="paysan">Paysan</option></select>
 <button class="sp-btn green" onclick="const n=document.getElementById('sp-name').value||'Héros_'+Math.floor(Math.random()*999);game.addChar(n,document.getElementById('sp-class').value);document.getElementById('sp-name').value=''">+ CRÉER</button>
 </div>
 <div class="sp-section">
@@ -3822,10 +3822,10 @@ if(CONFIG.testMode){
     tmI.style.cssText='position:fixed;bottom:4px;left:50%;transform:translateX(-50%);z-index:999;font-size:6px;color:#ff4444;font-family:"Press Start 2P",monospace;text-shadow:1px 1px 0 #000;opacity:.5';
     tmI.textContent='⚠ TEST MODE ⚠';document.body.appendChild(tmI);
     const tu=[
-        {n:'Chevalier_Rouge',c:'guerrier'},{n:'Gandalf_TV',c:'mage'},{n:'Legolas_Live',c:'archer'},
-        {n:'PretreSSaint',c:'pretre'},{n:'Shadow_Dagger',c:'voleur'},{n:'DruideFou',c:'druide'},
-        {n:'Fermier_Joe',c:'paysan'},{n:'ApprentiBob',c:'apprenti'},{n:'IceWizard',c:'mage'},
-        {n:'HealBot3000',c:'pretre'}
+        {n:'Chevalier_Rouge',c:'apprenti'},{n:'Gandalf_TV',c:'apprenti'},{n:'Legolas_Live',c:'paysan'},
+        {n:'PretreSSaint',c:'paysan'},{n:'Shadow_Dagger',c:'apprenti'},{n:'DruideFou',c:'paysan'},
+        {n:'Fermier_Joe',c:'paysan'},{n:'ApprentiBob',c:'apprenti'},{n:'IceWizard',c:'apprenti'},
+        {n:'HealBot3000',c:'paysan'}
     ];
     setTimeout(()=>{tu.forEach((u,i)=>setTimeout(()=>{game.addChar(u.n,u.c);
         const cols=Object.keys(COLORS);game.processCmd(u.n,'couleur',[cols[Math.floor(Math.random()*cols.length)]]);
