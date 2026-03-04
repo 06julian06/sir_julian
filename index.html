@@ -245,13 +245,13 @@ canvas{image-rendering:pixelated}
 <div class="sp-section">
 <div class="sp-label">SIMULER COMMANDE CHAT</div>
 <input id="sp-chat-user" placeholder="Pseudo" value="Streamer" style="width:80px">
-<input id="sp-chat-cmd" placeholder="!class apprenti" style="width:140px" onkeydown="if(event.key==='Enter'){document.getElementById('sp-chat-go').click()}">
+<input id="sp-chat-cmd" placeholder="!class brigand" style="width:140px" onkeydown="if(event.key==='Enter'){document.getElementById('sp-chat-go').click()}">
 <button id="sp-chat-go" class="sp-btn green" onclick="const u=document.getElementById('sp-chat-user').value||'Streamer';const m=document.getElementById('sp-chat-cmd').value.trim();if(!m)return;const parts=m.replace(/^!/,'').split(' ');const cmd=parts[0].toLowerCase();const args=parts.slice(1);game.processCmd(u,cmd,args);document.getElementById('sp-chat-cmd').value=''">▶ ENVOYER</button>
 </div>
 <div class="sp-section">
 <div class="sp-label">CRÉER HÉROS</div>
 <input id="sp-name" placeholder="Nom du héros">
-<select id="sp-class"><option value="apprenti">Apprenti</option><option value="paysan">Paysan</option><option value="chat">Chat</option><option value="ecuyer">Écuyer</option></select>
+<select id="sp-class"><option value="apprenti">Apprenti</option><option value="paysan">Paysan</option><option value="chat">Chat</option><option value="ecuyer">Écuyer</option><option value="brigand">Brigand</option><option value="herboriste">Herboriste</option><option value="barde">Barde</option></select>
 <button class="sp-btn green" onclick="const n=document.getElementById('sp-name').value||'Héros_'+Math.floor(Math.random()*999);game.addChar(n,document.getElementById('sp-class').value);document.getElementById('sp-name').value=''">+ CRÉER</button>
 </div>
 <div class="sp-section">
@@ -438,7 +438,16 @@ chat:{name:'Chat',tier:0,hp:70,atk:8,def:3,spd:10,crit:25,role:'melee',mana:40,
     evolutions:['voleur','archer','druide'],evoLevel:3,sprite:'chat'},
 ecuyer:{name:'Écuyer',tier:0,hp:110,atk:8,def:10,spd:3,crit:8,role:'melee',mana:60,
     special:{name:'Bouclier',desc:'DEF x2 5s',cd:12000},color:'#6688bb',
-    evolutions:['guerrier','pretre','mage'],evoLevel:3,sprite:'ecuyer'}
+    evolutions:['guerrier','pretre','mage'],evoLevel:3,sprite:'ecuyer'},
+brigand:{name:'Brigand',tier:0,hp:90,atk:10,def:4,spd:7,crit:20,role:'melee',mana:35,
+    special:{name:'Embuscade',desc:'Crit x2 une fois',cd:9000},color:'#885533',
+    evolutions:['voleur','guerrier','archer'],evoLevel:3,sprite:'brigand'},
+herboriste:{name:'Herboriste',tier:0,hp:100,atk:5,def:6,spd:4,crit:10,role:'ranged',mana:80,
+    special:{name:'Potion',desc:'Heal allié +30%',cd:10000},color:'#55aa55',
+    evolutions:['druide','pretre','mage'],evoLevel:3,sprite:'herboriste'},
+barde:{name:'Barde',tier:0,hp:85,atk:7,def:5,spd:5,crit:15,role:'ranged',mana:70,
+    special:{name:'Mélodie',desc:'Boost ATK groupe 5s',cd:12000},color:'#cc66aa',
+    evolutions:['mage','pretre','druide'],evoLevel:3,sprite:'barde'}
 };
 
 const DEFAULT_COLORS={};
@@ -519,7 +528,7 @@ static drawChar(ctx,s,cls,tint,variant){
     const arm='#555',arm2='#444',arm3='#666',stl='#8a8a9a',stl2='#6a6a7a',stl3='#9a9aaa';
     // Map evolved classes to base sprite style with variations
     const spriteMap={
-        apprenti:'apprenti',paysan:'paysan',chat:'chat',ecuyer:'ecuyer',guerrier:'guerrier',mage:'mage',archer:'archer',
+        apprenti:'apprenti',paysan:'paysan',chat:'chat',ecuyer:'ecuyer',brigand:'brigand',herboriste:'herboriste',barde:'barde',guerrier:'guerrier',mage:'mage',archer:'archer',
         pretre:'pretre',voleur:'voleur',druide:'druide',paladin:'paladin',
         berserker:'guerrier',chevalier:'guerrier',archimage:'mage',necromancien:'mage',
         sniper:'archer',ranger:'archer',saint:'pretre',oracle:'pretre',
@@ -609,6 +618,63 @@ static drawChar(ctx,s,cls,tint,variant){
             c(12,2,stl3);c(12,3,stl);c(12,4,stl);c(12,5,'#553');c(12,6,'#442');
             // Small shield
             c(3,5,'#4466aa');c(3,6,'#5577bb');c(3,7,'#4466aa');c(4,5,'#5577bb');c(4,6,gold);c(4,7,'#5577bb');
+            break;
+        case 'brigand':
+            // Hooded thug, scarred, dual daggers
+            c(6,0,'#443322');c(7,0,'#554433');c(8,0,'#554433');c(9,0,'#443322');
+            c(5,1,'#443322');c(6,1,'#554433');c(7,1,'#554433');c(8,1,'#554433');c(9,1,'#554433');c(10,1,'#443322');
+            c(6,2,'#443322');c(7,2,'#554433');c(8,2,'#554433');c(9,2,'#443322');
+            c(6,3,sk2);c(7,3,sk);c(8,3,sk);c(9,3,sk2);
+            c(6,4,sk2);c(7,4,eye);c(8,4,'#a00');c(9,4,sk2); // scar on eye
+            c(6,5,sk);c(7,5,sk2);c(8,5,sk2);c(9,5,sk);
+            c(5,6,'#3a2a1a');c(6,6,'#4a3a2a');c(7,6,'#4a3a2a');c(8,6,'#4a3a2a');c(9,6,'#4a3a2a');c(10,6,'#3a2a1a');
+            c(5,7,'#332211');c(6,7,'#3a2a1a');c(7,7,'#3a2a1a');c(8,7,'#3a2a1a');c(9,7,'#3a2a1a');c(10,7,'#332211');
+            c(5,8,'#2a1a0a');c(6,8,'#332211');c(7,8,'#332211');c(8,8,'#332211');c(9,8,'#332211');c(10,8,'#2a1a0a');
+            c(6,9,belt);c(7,9,'#555');c(8,9,'#555');c(9,9,belt);
+            c(6,10,'#332211');c(7,10,'#2a1a0a');c(8,10,'#2a1a0a');c(9,10,'#332211');
+            c(6,11,'#2a1a0a');c(7,11,'#1a0f05');c(8,11,'#1a0f05');c(9,11,'#2a1a0a');
+            c(5,12,bt);c(6,12,bt);c(9,12,bt);c(10,12,bt);
+            c(5,13,bt2);c(6,13,bt2);c(9,13,bt2);c(10,13,bt2);
+            // Dual daggers
+            c(3,4,stl3);c(3,5,stl);c(3,6,'#553');c(12,4,stl3);c(12,5,stl);c(12,6,'#553');
+            break;
+        case 'herboriste':
+            // Green robe, herbs, nature staff
+            c(7,0,'#336633');c(8,0,'#336633');
+            c(6,1,'#447744');c(7,1,'#558855');c(8,1,'#558855');c(9,1,'#447744');
+            c(6,2,sk2);c(7,2,sk);c(8,2,sk);c(9,2,sk2);
+            c(6,3,sk);c(7,3,sk);c(8,3,sk);c(9,3,sk);
+            c(6,4,sk2);c(7,4,eye);c(8,4,eye);c(9,4,sk2);
+            c(6,5,sk);c(7,5,sk2);c(8,5,sk2);c(9,5,sk);
+            c(5,6,'#336633');c(6,6,'#448844');c(7,6,'#558855');c(8,6,'#558855');c(9,6,'#448844');c(10,6,'#336633');
+            c(5,7,'#2a5a2a');c(6,7,'#336633');c(7,7,'#448844');c(8,7,'#448844');c(9,7,'#336633');c(10,7,'#2a5a2a');
+            c(5,8,'#2a5a2a');c(6,8,'#336633');c(7,8,'#336633');c(8,8,'#336633');c(9,8,'#336633');c(10,8,'#2a5a2a');
+            c(6,9,'#553');c(7,9,'#664');c(8,9,'#664');c(9,9,'#553');
+            c(6,10,'#336633');c(7,10,'#2a5a2a');c(8,10,'#2a5a2a');c(9,10,'#336633');
+            c(6,11,'#2a5a2a');c(7,11,'#1a4a1a');c(8,11,'#1a4a1a');c(9,11,'#2a5a2a');
+            c(5,12,bt);c(6,12,bt);c(9,12,bt);c(10,12,bt);
+            c(5,13,bt2);c(6,13,bt2);c(9,13,bt2);c(10,13,bt2);
+            // Nature staff with leaf
+            c(12,0,'#44aa44');c(13,0,'#33bb33');c(12,1,'#558855');c(12,2,'#664');c(12,3,'#553');c(12,4,'#553');c(12,5,'#442');c(12,6,'#331');
+            break;
+        case 'barde':
+            // Purple/pink clothes, lute instrument
+            c(7,0,'#aa5588');c(8,0,'#aa5588');
+            c(6,1,'#bb6699');c(7,1,'#cc77aa');c(8,1,'#cc77aa');c(9,1,'#bb6699');
+            c(6,2,sk2);c(7,2,sk);c(8,2,sk);c(9,2,sk2);
+            c(6,3,sk);c(7,3,sk);c(8,3,sk);c(9,3,sk);
+            c(6,4,sk2);c(7,4,eye);c(8,4,eye);c(9,4,sk2);
+            c(6,5,sk);c(7,5,'#d88');c(8,5,sk2);c(9,5,sk); // smile
+            c(5,6,'#884477');c(6,6,'#995588');c(7,6,'#aa6699');c(8,6,'#aa6699');c(9,6,'#995588');c(10,6,'#884477');
+            c(5,7,'#773366');c(6,7,'#884477');c(7,7,'#995588');c(8,7,'#995588');c(9,7,'#884477');c(10,7,'#773366');
+            c(5,8,'#773366');c(6,8,'#884477');c(7,8,'#884477');c(8,8,'#884477');c(9,8,'#884477');c(10,8,'#773366');
+            c(6,9,belt);c(7,9,gold);c(8,9,gold);c(9,9,belt);
+            c(6,10,'#884477');c(7,10,'#773366');c(8,10,'#773366');c(9,10,'#884477');
+            c(6,11,'#773366');c(7,11,'#662255');c(8,11,'#662255');c(9,11,'#773366');
+            c(5,12,bt);c(6,12,bt);c(9,12,bt);c(10,12,bt);
+            c(5,13,bt2);c(6,13,bt2);c(9,13,bt2);c(10,13,bt2);
+            // Lute
+            c(12,4,'#8B6914');c(12,5,'#8B6914');c(12,6,'#A0762C');c(13,5,'#8B6914');c(13,6,'#8B6914');c(12,7,'#6a5010');c(12,8,'#553');
             break;
         case 'guerrier':
             // Heavy plate armor, great helm, greatsword + kite shield
@@ -2840,9 +2906,9 @@ class GameManager{
         switch(cmd){
             case 'class':{
                 const cls=(args[0]||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-                if(!cls)return`!class <nom> | Dispo: apprenti, paysan, chat, ecuyer`;
-                if(!CLASS_DATA[cls])return`Classe "${cls}" inconnue! Dispo: apprenti, paysan, chat, ecuyer`;
-                if(CLASS_DATA[cls].tier>0)return`Seuls apprenti et paysan sont disponibles! Utilise !evoluer pour évoluer.`;
+                if(!cls)return`!class <nom> | Dispo: apprenti, paysan, chat, ecuyer, brigand, herboriste, barde`;
+                if(!CLASS_DATA[cls])return`Classe "${cls}" inconnue! Dispo: apprenti, paysan, chat, ecuyer, brigand, herboriste, barde`;
+                if(CLASS_DATA[cls].tier>0)return`Classes T0 uniquement! Dispo: apprenti, paysan, chat, ecuyer, brigand, herboriste, barde`;
                 return this.addChar(username,cls);
             }
             case 'couleur':{
@@ -2979,6 +3045,7 @@ class GameManager{
                 critFlash();screenShake(false);
                 showBanner(`⬆ ÉVOLUTION!`,`${username} → ${CLASS_DATA[choice].name}`,3000);
                 this.log(`⬆ ${username} évolue → ${CLASS_DATA[choice].name}!`,'log-special');
+                chatSay(`🌟 ÉVOLUTION! @${username} devient ${CLASS_DATA[choice].name} (T${CLASS_DATA[choice].tier})! ⚔${nc.atk} 🛡${nc.def} ❤${nc.maxHp}`);
                 return`${username} → ${CLASS_DATA[choice].name}!`;
             }
             case 'reclass':{
@@ -3011,7 +3078,7 @@ class GameManager{
                 const cd=CLASS_DATA[c.className];
                 const tier=cd.tier||0;
                 // Class-specific skills based on base type
-                const sprMap={apprenti:'app',paysan:'pay',chat:'rog',ecuyer:'war',guerrier:'war',mage:'mag',archer:'arc',pretre:'cle',voleur:'rog',druide:'dru',paladin:'pal',
+                const sprMap={apprenti:'app',paysan:'pay',chat:'rog',ecuyer:'war',brigand:'rog',herboriste:'dru',barde:'mag',guerrier:'war',mage:'mag',archer:'arc',pretre:'cle',voleur:'rog',druide:'dru',paladin:'pal',
                     berserker:'war',chevalier:'war',champion:'war',gladiateur:'war',archimage:'mag',necromancien:'mag',elementaliste:'mag',liche:'mag',sorcier:'mag',
                     sniper:'arc',ranger:'arc',tireur_elite:'arc',maitre_chasse:'arc',chasseur:'arc',saint:'cle',oracle:'cle',archange:'cle',sage:'cle',templier:'cle',
                     assassin:'rog',ninja:'rog',maitre_ombre:'rog',shinobi:'rog',pirate:'rog',gardien:'dru',ancien:'dru',chamane:'dru',
@@ -3085,7 +3152,7 @@ class GameManager{
                 helpLines.push({t:'SOCIAL: !don <pseudo> <or> · !duel <pseudo>',c:'#cc5588'});
                 helpLines.push({t:'EVENT: !do / !notdo · !buffs · !couleur [nom/hex]',c:'#8855cc'});
                 if(c){const cd=CLASS_DATA[c.className];if(cd.evolutions&&cd.evolutions.length)helpLines.push({t:`Evo: !evoluer ${cd.evolutions.join('/')} (Nv.${cd.evoLevel})`,c:'#44cc44'})}
-                else{helpLines.push({t:'REJOINDRE: !class apprenti/paysan/chat/ecuyer',c:'#44cc44'})}
+                else{helpLines.push({t:'REJOINDRE: !class apprenti/paysan/chat/ecuyer/brigand/herboriste/barde',c:'#44cc44'})}
                 helpLines.push({t:'Combo x3+ = bonus · Revive auto 30s · Roulette 20min',c:'#555'});
                 showSB(helpLines,8000);
                 return`📜 Commandes: !attaque !soin !sort !skill !defense !special !shop !stats !evoluer !reclass !duel !don !couleur`;
@@ -3707,6 +3774,28 @@ setInterval(()=>{
     if(Object.keys(game.characters).length>0)game.log(`💰 Revenu passif: +${income}g/joueur`,'log-gold');
 },30000);
 
+// Auto-suggest evolution every 5 min for eligible players
+setInterval(()=>{
+    const eligible=Object.values(game.characters).filter(c=>{
+        const cd=CLASS_DATA[c.className];
+        return cd&&cd.evolutions&&cd.evolutions.length&&c.level>=cd.evoLevel;
+    });
+    if(eligible.length>0){
+        eligible.forEach(c=>{
+            const cd=CLASS_DATA[c.className];
+            c.popup('ÉVOLUE!','popup popup-crit');spawnP(c.element,'#d4af37',8);
+        });
+        if(eligible.length<=3){
+            eligible.forEach(c=>{
+                const cd=CLASS_DATA[c.className];
+                chatSay(`🌟 @${c.username} peut évoluer! Tape !evoluer ${cd.evolutions.join(' ou !evoluer ')}`);
+            });
+        }else{
+            chatSay(`🌟 ${eligible.length} joueurs peuvent évoluer! Tapez !evoluer <classe> pour monter en puissance!`);
+        }
+    }
+},300000);
+
 // Mana regen (every 10s, alive players regen mana based on season)
 setInterval(()=>{
     const sn=SEASONS[currentSeason];const regen=3+(sn.manaRegen||0);
@@ -3844,7 +3933,7 @@ function initTwitch(){
 function startPeriodicGuide(){
     if(!CONFIG.botToken)return;
     const msgs=[
-        `⚔ TWITCH RPG ⚔ Crée ton perso: !class apprenti / paysan / chat / ecuyer 🎮 Évolue au Nv.3!`,
+        `⚔ TWITCH RPG ⚔ Crée ton perso: !class apprenti/paysan/chat/ecuyer/brigand/herboriste/barde 🎮 Évolue au Nv.3!`,
         `📜 COMMANDES: !attaque !soin !sort !skill !defense !special !shop !stats !equip !evoluer !couleur !duel !don !recap !help`,
         `💡 ASTUCES: Combo x3+ = bonus DMG | !shop pour équipement | !evoluer pour changer de classe | !couleur pour personnaliser`
     ];
