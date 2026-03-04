@@ -251,7 +251,7 @@ canvas{image-rendering:pixelated}
 <div class="sp-section">
 <div class="sp-label">CRÉER HÉROS</div>
 <input id="sp-name" placeholder="Nom du héros">
-<select id="sp-class"><option value="apprenti">Apprenti</option><option value="paysan">Paysan</option></select>
+<select id="sp-class"><option value="apprenti">Apprenti</option><option value="paysan">Paysan</option><option value="chat">Chat</option><option value="ecuyer">Écuyer</option></select>
 <button class="sp-btn green" onclick="const n=document.getElementById('sp-name').value||'Héros_'+Math.floor(Math.random()*999);game.addChar(n,document.getElementById('sp-class').value);document.getElementById('sp-name').value=''">+ CRÉER</button>
 </div>
 <div class="sp-section">
@@ -432,7 +432,13 @@ titan_nature:{name:'Titan de Nature',tier:4,hp:600,atk:35,def:35,spd:3,crit:20,r
 // SPECIAL - Paysan (hidden OP)
 paysan:{name:'Paysan',tier:0,hp:130,atk:10,def:9,spd:4,crit:12,role:'melee',mana:30,
     special:{name:'Récolte',desc:'Vol PV',cd:11000},color:'#8B7355',
-    evolutions:['pretre','voleur','druide'],evoLevel:3,sprite:'paysan'}
+    evolutions:['pretre','voleur','druide'],evoLevel:3,sprite:'paysan'},
+chat:{name:'Chat',tier:0,hp:70,atk:8,def:3,spd:10,crit:25,role:'melee',mana:40,
+    special:{name:'Griffure',desc:'2 attaques rapides',cd:8000},color:'#dd9944',
+    evolutions:['voleur','archer','druide'],evoLevel:3,sprite:'chat'},
+ecuyer:{name:'Écuyer',tier:0,hp:110,atk:8,def:10,spd:3,crit:8,role:'melee',mana:60,
+    special:{name:'Bouclier',desc:'DEF x2 5s',cd:12000},color:'#6688bb',
+    evolutions:['guerrier','pretre','mage'],evoLevel:3,sprite:'ecuyer'}
 };
 
 const DEFAULT_COLORS={};
@@ -513,7 +519,7 @@ static drawChar(ctx,s,cls,tint,variant){
     const arm='#555',arm2='#444',arm3='#666',stl='#8a8a9a',stl2='#6a6a7a',stl3='#9a9aaa';
     // Map evolved classes to base sprite style with variations
     const spriteMap={
-        apprenti:'apprenti',paysan:'paysan',guerrier:'guerrier',mage:'mage',archer:'archer',
+        apprenti:'apprenti',paysan:'paysan',chat:'chat',ecuyer:'ecuyer',guerrier:'guerrier',mage:'mage',archer:'archer',
         pretre:'pretre',voleur:'voleur',druide:'druide',paladin:'paladin',
         berserker:'guerrier',chevalier:'guerrier',archimage:'mage',necromancien:'mage',
         sniper:'archer',ranger:'archer',saint:'pretre',oracle:'pretre',
@@ -563,6 +569,46 @@ static drawChar(ctx,s,cls,tint,variant){
             c(5,13,bt2);c(6,13,bt2);c(9,13,bt2);c(10,13,bt2);
             // Iron pitchfork
             c(12,0,stl2);c(13,0,stl2);c(14,0,stl2);c(13,1,stl);c(13,2,'#553');c(13,3,'#442');c(13,4,'#442');c(13,5,'#331');c(13,6,'#331');c(13,7,'#220');
+            break;
+        case 'chat':
+            // Cat character - ears, whiskers, tail, agile pose
+            c(6,0,'#cc8833');c(9,0,'#cc8833'); // ears
+            c(5,1,'#dd9944');c(6,1,'#eebb66');c(9,1,'#eebb66');c(10,1,'#dd9944');
+            c(6,2,'#eebb66');c(7,2,'#ffcc77');c(8,2,'#ffcc77');c(9,2,'#eebb66');
+            c(6,3,'#eebb66');c(7,3,'#ffcc77');c(8,3,'#ffcc77');c(9,3,'#eebb66');
+            c(6,4,'#dd9944');c(7,4,'#22aa22');c(8,4,'#22aa22');c(9,4,'#dd9944'); // green eyes
+            c(5,5,'#aa7733');c(6,5,'#cc8833');c(7,5,'#ffcc77');c(8,5,'#ffcc77');c(9,5,'#cc8833');c(10,5,'#aa7733'); // whiskers
+            c(6,6,'#dd9944');c(7,6,'#eebb66');c(8,6,'#eebb66');c(9,6,'#dd9944');
+            c(5,7,'#cc8833');c(6,7,'#dd9944');c(7,7,'#eebb66');c(8,7,'#eebb66');c(9,7,'#dd9944');c(10,7,'#cc8833');
+            c(6,8,'#cc8833');c(7,8,'#dd9944');c(8,8,'#dd9944');c(9,8,'#cc8833');
+            c(6,9,'#bb7722');c(7,9,'#cc8833');c(8,9,'#cc8833');c(9,9,'#bb7722');
+            c(6,10,'#dd9944');c(7,10,'#cc8833');c(8,10,'#cc8833');c(9,10,'#dd9944');
+            c(5,11,'#aa7733');c(6,11,'#bb7722');c(9,11,'#bb7722');c(10,11,'#aa7733');
+            c(5,12,'#bb7722');c(6,12,'#aa6622');c(9,12,'#aa6622');c(10,12,'#bb7722');
+            c(5,13,'#996622');c(6,13,'#884411');c(9,13,'#884411');c(10,13,'#996622');
+            // Tail
+            c(11,7,'#cc8833');c(12,6,'#dd9944');c(13,5,'#cc8833');c(14,4,'#dd9944');c(14,3,'#cc8833');
+            break;
+        case 'ecuyer':
+            // Squire - light armor, small shield, short sword
+            c(7,0,stl2);c(8,0,stl2);
+            c(6,1,stl);c(7,1,stl3);c(8,1,stl3);c(9,1,stl);
+            c(6,2,sk2);c(7,2,sk);c(8,2,sk);c(9,2,sk2);
+            c(6,3,sk);c(7,3,sk);c(8,3,sk);c(9,3,sk);
+            c(6,4,sk2);c(7,4,eye);c(8,4,eye);c(9,4,sk2);
+            c(6,5,sk);c(7,5,sk2);c(8,5,sk2);c(9,5,sk);
+            c(5,6,'#4466aa');c(6,6,'#5577bb');c(7,6,'#5577bb');c(8,6,'#5577bb');c(9,6,'#5577bb');c(10,6,'#4466aa');
+            c(5,7,'#3355aa');c(6,7,'#4466bb');c(7,7,stl);c(8,7,stl);c(9,7,'#4466bb');c(10,7,'#3355aa');
+            c(5,8,'#3355aa');c(6,8,'#4466bb');c(7,8,'#4466bb');c(8,8,'#4466bb');c(9,8,'#4466bb');c(10,8,'#3355aa');
+            c(6,9,belt);c(7,9,gold);c(8,9,gold);c(9,9,belt);
+            c(6,10,'#3355aa');c(7,10,'#2a4488');c(8,10,'#2a4488');c(9,10,'#3355aa');
+            c(6,11,'#2a4488');c(7,11,'#1a3366');c(8,11,'#1a3366');c(9,11,'#2a4488');
+            c(5,12,bt);c(6,12,'#3a2a1a');c(9,12,'#3a2a1a');c(10,12,bt);
+            c(5,13,bt2);c(6,13,bt2);c(9,13,bt2);c(10,13,bt2);
+            // Short sword
+            c(12,2,stl3);c(12,3,stl);c(12,4,stl);c(12,5,'#553');c(12,6,'#442');
+            // Small shield
+            c(3,5,'#4466aa');c(3,6,'#5577bb');c(3,7,'#4466aa');c(4,5,'#5577bb');c(4,6,gold);c(4,7,'#5577bb');
             break;
         case 'guerrier':
             // Heavy plate armor, great helm, greatsword + kite shield
@@ -2794,8 +2840,8 @@ class GameManager{
         switch(cmd){
             case 'class':{
                 const cls=(args[0]||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-                if(!cls)return`!class <nom> | Dispo: apprenti, paysan`;
-                if(!CLASS_DATA[cls])return`Classe "${cls}" inconnue! Dispo: apprenti, paysan`;
+                if(!cls)return`!class <nom> | Dispo: apprenti, paysan, chat, ecuyer`;
+                if(!CLASS_DATA[cls])return`Classe "${cls}" inconnue! Dispo: apprenti, paysan, chat, ecuyer`;
                 if(CLASS_DATA[cls].tier>0)return`Seuls apprenti et paysan sont disponibles! Utilise !evoluer pour évoluer.`;
                 return this.addChar(username,cls);
             }
@@ -2941,7 +2987,7 @@ class GameManager{
                 const cls=(args[0]||'').toLowerCase();
                 if(!cls)return`!reclass <classe> - Reset niv.0 mais x2 XP!`;
                 if(!CLASS_DATA[cls])return`Classe inconnue!`;
-                if(CLASS_DATA[cls].tier>0)return`Reclass vers apprenti ou paysan seulement!`;
+                if(CLASS_DATA[cls].tier>0)return`Reclass vers apprenti, paysan, chat ou ecuyer!`;
                 const oldG=c.gold,oldK=c.kills,oldMul=c.xpMulti,col=c.customColor;
                 const oldEquip=c.equipment?{...c.equipment}:{};const oldCC=c.classChanges||0;
                 c.remove();
@@ -2965,7 +3011,7 @@ class GameManager{
                 const cd=CLASS_DATA[c.className];
                 const tier=cd.tier||0;
                 // Class-specific skills based on base type
-                const sprMap={apprenti:'app',paysan:'pay',guerrier:'war',mage:'mag',archer:'arc',pretre:'cle',voleur:'rog',druide:'dru',paladin:'pal',
+                const sprMap={apprenti:'app',paysan:'pay',chat:'rog',ecuyer:'war',guerrier:'war',mage:'mag',archer:'arc',pretre:'cle',voleur:'rog',druide:'dru',paladin:'pal',
                     berserker:'war',chevalier:'war',champion:'war',gladiateur:'war',archimage:'mag',necromancien:'mag',elementaliste:'mag',liche:'mag',sorcier:'mag',
                     sniper:'arc',ranger:'arc',tireur_elite:'arc',maitre_chasse:'arc',chasseur:'arc',saint:'cle',oracle:'cle',archange:'cle',sage:'cle',templier:'cle',
                     assassin:'rog',ninja:'rog',maitre_ombre:'rog',shinobi:'rog',pirate:'rog',gardien:'dru',ancien:'dru',chamane:'dru',
@@ -3039,7 +3085,7 @@ class GameManager{
                 helpLines.push({t:'SOCIAL: !don <pseudo> <or> · !duel <pseudo>',c:'#cc5588'});
                 helpLines.push({t:'EVENT: !do / !notdo · !buffs · !couleur [nom/hex]',c:'#8855cc'});
                 if(c){const cd=CLASS_DATA[c.className];if(cd.evolutions&&cd.evolutions.length)helpLines.push({t:`Evo: !evoluer ${cd.evolutions.join('/')} (Nv.${cd.evoLevel})`,c:'#44cc44'})}
-                else{helpLines.push({t:'REJOINDRE: !class apprenti ou !class paysan',c:'#44cc44'})}
+                else{helpLines.push({t:'REJOINDRE: !class apprenti/paysan/chat/ecuyer',c:'#44cc44'})}
                 helpLines.push({t:'Combo x3+ = bonus · Revive auto 30s · Roulette 20min',c:'#555'});
                 showSB(helpLines,8000);
                 return`📜 Commandes: !attaque !soin !sort !skill !defense !special !shop !stats !evoluer !reclass !duel !don !couleur`;
@@ -3798,7 +3844,7 @@ function initTwitch(){
 function startPeriodicGuide(){
     if(!CONFIG.botToken)return;
     const msgs=[
-        `⚔ TWITCH RPG ⚔ Crée ton perso avec !class apprenti ou !class paysan 🎮 Évolue au Nv.3!`,
+        `⚔ TWITCH RPG ⚔ Crée ton perso: !class apprenti / paysan / chat / ecuyer 🎮 Évolue au Nv.3!`,
         `📜 COMMANDES: !attaque !soin !sort !skill !defense !special !shop !stats !equip !evoluer !couleur !duel !don !recap !help`,
         `💡 ASTUCES: Combo x3+ = bonus DMG | !shop pour équipement | !evoluer pour changer de classe | !couleur pour personnaliser`
     ];
