@@ -251,7 +251,7 @@ canvas{image-rendering:pixelated}
 <div class="sp-section">
 <div class="sp-label">CRÉER HÉROS</div>
 <input id="sp-name" placeholder="Nom du héros">
-<select id="sp-class"><option value="apprenti">Apprenti</option><option value="paysan">Paysan</option><option value="chat">Chat</option><option value="ecuyer">Écuyer</option><option value="brigand">Brigand</option><option value="herboriste">Herboriste</option><option value="barde">Barde</option></select>
+<select id="sp-class"><option value="apprenti">Apprenti</option><option value="paysan">Paysan</option><option value="chat">Chat</option><option value="ecuyer">Écuyer</option><option value="brigand">Brigand</option><option value="herboriste">Herboriste</option><option value="barde">Barde</option><option value="squelette">Squelette</option></select>
 <button class="sp-btn green" onclick="const n=document.getElementById('sp-name').value||'Héros_'+Math.floor(Math.random()*999);game.addChar(n,document.getElementById('sp-class').value);document.getElementById('sp-name').value=''">+ CRÉER</button>
 </div>
 <div class="sp-section">
@@ -263,6 +263,8 @@ canvas{image-rendering:pixelated}
 <button class="sp-btn purple" onclick="game.triggerEvent()">🎲 EVENT</button>
 <button class="sp-btn" style="background:#8b0000;border-color:#cc3333" onclick="game.startArena(8)">🏟 ARÈNE</button>
 <button class="sp-btn" onclick="game.blackMarketOpen=!game.blackMarketOpen;game.log(game.blackMarketOpen?'☠ MARCHÉ NOIR OUVERT!':'Marché Noir fermé','log-event')">☠ MARCHÉ</button>
+<button class="sp-btn" style="background:#d4af37;border-color:#ffcc00;color:#000" onclick="game.startKingEvent()">👑 ROI</button>
+<button class="sp-btn" style="background:#2a6e4e;border-color:#44cc88" onclick="game.startMiniGame()">🎮 MINI-JEU</button>
 </div>
 <div class="sp-section">
 <div class="sp-label">SAISON</div>
@@ -337,98 +339,122 @@ druide:{name:'Druide',tier:1,hp:120,atk:12,def:8,spd:5,crit:12,role:'ranged',man
 // TIER 2 - ADVANCED
 berserker:{name:'Berserker',tier:2,hp:200,atk:22,def:6,spd:5,crit:25,role:'melee',mana:30,
     special:{name:'Rage',desc:'ATK x3 5s',cd:20000},color:'#ff2222',
-    evolutions:['champion'],evoLevel:15,sprite:'berserker'},
+    evolutions:['champion','warlord','maitre_ombre'],evoLevel:15,sprite:'berserker'},
 chevalier:{name:'Chevalier',tier:2,hp:220,atk:16,def:18,spd:3,crit:12,role:'melee',mana:50,
     special:{name:'Rempart',desc:'DEF x3 groupe',cd:22000},color:'#aaaacc',
-    evolutions:['paladin'],evoLevel:15,sprite:'chevalier'},
+    evolutions:['paladin','inquisiteur','warlord'],evoLevel:15,sprite:'chevalier'},
 archimage:{name:'Archimage',tier:2,hp:100,atk:30,def:5,spd:5,crit:25,role:'ranged',mana:150,
     special:{name:'Apocalypse',desc:'Mega AoE',cd:25000},color:'#2244ff',
-    evolutions:['elementaliste'],evoLevel:15,sprite:'archimage'},
+    evolutions:['elementaliste','sage','enchanteur'],evoLevel:15,sprite:'archimage'},
 necromancien:{name:'Nécromancien',tier:2,hp:110,atk:25,def:6,spd:4,crit:20,role:'ranged',mana:130,
     special:{name:'Armée Morte',desc:'Invoque squelettes',cd:22000},color:'#443366',
-    evolutions:['liche'],evoLevel:15,sprite:'necromancien'},
+    evolutions:['liche','phantom','enchanteur'],evoLevel:15,sprite:'necromancien'},
 sniper:{name:'Sniper',tier:2,hp:100,atk:28,def:4,spd:6,crit:45,role:'ranged',mana:50,
     special:{name:'Headshot',desc:'Crit garanti x4',cd:20000},color:'#44bb44',
-    evolutions:['tireur_elite'],evoLevel:15,sprite:'sniper'},
+    evolutions:['tireur_elite','artilleur','maitre_chasse'],evoLevel:15,sprite:'sniper'},
 ranger:{name:'Ranger',tier:2,hp:130,atk:18,def:10,spd:9,crit:30,role:'ranged',mana:70,
     special:{name:'Compagnon',desc:'Loup allié',cd:25000},color:'#558844',
-    evolutions:['maitre_chasse'],evoLevel:15,sprite:'ranger'},
+    evolutions:['maitre_chasse','artilleur','ancien'],evoLevel:15,sprite:'ranger'},
 saint:{name:'Saint',tier:2,hp:120,atk:10,def:10,spd:4,crit:10,role:'ranged',mana:180,
     special:{name:'Résurrection',desc:'Revive un allié',cd:30000},color:'#ffff88',
-    evolutions:['archange'],evoLevel:15,sprite:'saint'},
+    evolutions:['archange','sage','inquisiteur'],evoLevel:15,sprite:'saint'},
 oracle:{name:'Oracle',tier:2,hp:110,atk:15,def:8,spd:5,crit:15,role:'ranged',mana:160,
     special:{name:'Prophétie',desc:'Buff all stats',cd:25000},color:'#cc88ff',
-    evolutions:['sage'],evoLevel:15,sprite:'oracle'},
+    evolutions:['sage','archange','enchanteur'],evoLevel:15,sprite:'oracle'},
 assassin:{name:'Assassin',tier:2,hp:110,atk:22,def:4,spd:12,crit:45,role:'melee',mana:40,
     special:{name:'Ombre',desc:'Invisible+Crit x5',cd:22000},color:'#220044',
-    evolutions:['maitre_ombre'],evoLevel:15,sprite:'assassin'},
+    evolutions:['maitre_ombre','phantom','shinobi'],evoLevel:15,sprite:'assassin'},
 ninja:{name:'Ninja',tier:2,hp:120,atk:20,def:6,spd:11,crit:35,role:'melee',mana:60,
     special:{name:'Shuriken',desc:'5 shurikens',cd:16000},color:'#333355',
-    evolutions:['shinobi'],evoLevel:15,sprite:'ninja'},
+    evolutions:['shinobi','maitre_ombre','phantom'],evoLevel:15,sprite:'ninja'},
 gardien:{name:'Gardien',tier:2,hp:180,atk:14,def:14,spd:4,crit:10,role:'melee',mana:100,
     special:{name:'Racines',desc:'Immobilise boss',cd:20000},color:'#116633',
-    evolutions:['ancien'],evoLevel:15,sprite:'gardien'},
+    evolutions:['ancien','avatar_nature','paladin'],evoLevel:15,sprite:'gardien'},
 dragon:{name:'Dragon',tier:2,hp:250,atk:28,def:16,spd:6,crit:20,role:'melee',mana:80,
     special:{name:'Souffle',desc:'Feu AoE massif',cd:18000},color:'#ff4400',
-    evolutions:['dragon_ancien'],evoLevel:15,sprite:'dragon_form'},
-// NEW TIER 2 (3rd evolution paths)
+    evolutions:['dragon_ancien','avatar_nature','elementaliste'],evoLevel:15,sprite:'dragon_form'},
 gladiateur:{name:'Gladiateur',tier:2,hp:190,atk:20,def:10,spd:7,crit:25,role:'melee',mana:40,
     special:{name:'Arena',desc:'ATK +50% 10s',cd:18000},color:'#cc6633',
-    evolutions:['paladin'],evoLevel:15,sprite:'guerrier'},
+    evolutions:['champion','warlord','paladin'],evoLevel:15,sprite:'guerrier'},
 sorcier:{name:'Sorcier',tier:2,hp:95,atk:26,def:5,spd:5,crit:22,role:'ranged',mana:140,
     special:{name:'Malédiction',desc:'Boss -30% ATK/DEF',cd:20000},color:'#6633aa',
-    evolutions:['liche'],evoLevel:15,sprite:'mage'},
+    evolutions:['elementaliste','liche','enchanteur'],evoLevel:15,sprite:'mage'},
 chasseur:{name:'Chasseur',tier:2,hp:120,atk:20,def:8,spd:9,crit:35,role:'ranged',mana:65,
     special:{name:'Piège',desc:'Stun boss 3s +dmg',cd:18000},color:'#886633',
-    evolutions:['maitre_chasse'],evoLevel:15,sprite:'archer'},
+    evolutions:['tireur_elite','maitre_chasse','artilleur'],evoLevel:15,sprite:'archer'},
 templier:{name:'Templier',tier:2,hp:150,atk:14,def:14,spd:3,crit:10,role:'melee',mana:100,
     special:{name:'Sacrement',desc:'Heal+Shield groupe',cd:22000},color:'#ccaa44',
-    evolutions:['archange'],evoLevel:15,sprite:'pretre'},
+    evolutions:['inquisiteur','paladin','archange'],evoLevel:15,sprite:'pretre'},
 pirate:{name:'Pirate',tier:2,hp:115,atk:18,def:6,spd:8,crit:30,role:'melee',mana:45,
     special:{name:'Pillage',desc:'Vol gold au boss',cd:16000},color:'#885522',
-    evolutions:['shinobi'],evoLevel:15,sprite:'voleur'},
+    evolutions:['shinobi','maitre_chasse','phantom'],evoLevel:15,sprite:'voleur'},
 chamane:{name:'Chamane',tier:2,hp:140,atk:16,def:10,spd:5,crit:15,role:'ranged',mana:110,
     special:{name:'Esprits',desc:'Invoque esprits alliés',cd:22000},color:'#448866',
-    evolutions:['ancien'],evoLevel:15,sprite:'druide'},
+    evolutions:['avatar_nature','ancien','enchanteur'],evoLevel:15,sprite:'druide'},
+abomination:{name:'Abomination',tier:2,hp:260,atk:24,def:8,spd:3,crit:15,role:'melee',mana:60,
+    special:{name:'Dévorer',desc:'Vol PV massif+peur',cd:20000},color:'#4a3040',
+    evolutions:['liche','phantom','ancien'],evoLevel:15,sprite:'abomination'},
 
-// TIER 3 - MASTER (final)
+// TIER 3 - MASTER (3 choix vers T4)
 paladin:{name:'Paladin',tier:3,hp:280,atk:20,def:22,spd:4,crit:15,role:'melee',mana:80,
-    special:{name:'Aegis',desc:'Bouclier divin',cd:22000},color:'#4499cc',evolutions:['dieu_guerre'],evoLevel:25,sprite:'paladin'},
+    special:{name:'Aegis',desc:'Bouclier divin',cd:22000},color:'#4499cc',evolutions:['dieu_guerre','empereur','divin'],evoLevel:25,sprite:'paladin'},
 champion:{name:'Champion',tier:3,hp:300,atk:30,def:12,spd:6,crit:30,role:'melee',mana:40,
-    special:{name:'Exécution',desc:'Finisher x5',cd:25000},color:'#ff0000',evolutions:['dieu_guerre'],evoLevel:25,sprite:'champion'},
+    special:{name:'Exécution',desc:'Finisher x5',cd:25000},color:'#ff0000',evolutions:['dieu_guerre','empereur','spectre'],evoLevel:25,sprite:'champion'},
+warlord:{name:'Seigneur de Guerre',tier:3,hp:320,atk:28,def:18,spd:5,crit:20,role:'melee',mana:60,
+    special:{name:'Commandement',desc:'ATK +8 groupe 15s',cd:25000},color:'#8b0000',evolutions:['dieu_guerre','empereur','titan_nature'],evoLevel:25,sprite:'guerrier'},
 elementaliste:{name:'Élémentaliste',tier:3,hp:120,atk:40,def:6,spd:5,crit:30,role:'ranged',mana:200,
-    special:{name:'Tempête',desc:'Feu+Glace+Foudre',cd:25000},color:'#0088ff',evolutions:['archonte'],evoLevel:25,sprite:'elementaliste'},
+    special:{name:'Tempête',desc:'Feu+Glace+Foudre',cd:25000},color:'#0088ff',evolutions:['archonte','phenix','arme_divine'],evoLevel:25,sprite:'elementaliste'},
 liche:{name:'Liche',tier:3,hp:150,atk:35,def:8,spd:4,crit:25,role:'ranged',mana:180,
-    special:{name:'Drain Âme',desc:'Vol PV massif',cd:22000},color:'#330055',evolutions:['archonte'],evoLevel:25,sprite:'liche'},
+    special:{name:'Drain Âme',desc:'Vol PV massif',cd:22000},color:'#330055',evolutions:['archonte','neant','spectre'],evoLevel:25,sprite:'liche'},
+enchanteur:{name:'Enchanteur',tier:3,hp:130,atk:22,def:10,spd:5,crit:18,role:'ranged',mana:220,
+    special:{name:'Enchantement',desc:'Buff all stats groupe',cd:26000},color:'#9966cc',evolutions:['archonte','divin','eternel'],evoLevel:25,sprite:'mage'},
 tireur_elite:{name:'Tireur d\'Élite',tier:3,hp:120,atk:38,def:5,spd:7,crit:50,role:'ranged',mana:60,
-    special:{name:'Balle Parfaite',desc:'Ignore DEF x6',cd:28000},color:'#33cc33',evolutions:['oeil_faucon'],evoLevel:25,sprite:'tireur_elite'},
+    special:{name:'Balle Parfaite',desc:'Ignore DEF x6',cd:28000},color:'#33cc33',evolutions:['oeil_faucon','arme_divine','spectre'],evoLevel:25,sprite:'tireur_elite'},
 maitre_chasse:{name:'Maître Chasseur',tier:3,hp:160,atk:25,def:14,spd:10,crit:35,role:'ranged',mana:80,
-    special:{name:'Meute',desc:'3 loups alliés',cd:28000},color:'#446633',evolutions:['oeil_faucon'],evoLevel:25,sprite:'maitre_chasse'},
+    special:{name:'Meute',desc:'3 loups alliés',cd:28000},color:'#446633',evolutions:['oeil_faucon','titan_nature','arme_divine'],evoLevel:25,sprite:'maitre_chasse'},
+artilleur:{name:'Artilleur',tier:3,hp:140,atk:35,def:6,spd:4,crit:35,role:'ranged',mana:70,
+    special:{name:'Bombardement',desc:'AoE x4 dégâts',cd:28000},color:'#cc8833',evolutions:['oeil_faucon','arme_divine','empereur'],evoLevel:25,sprite:'archer'},
 archange:{name:'Archange',tier:3,hp:160,atk:15,def:15,spd:5,crit:12,role:'ranged',mana:250,
-    special:{name:'Miracle',desc:'Full heal groupe',cd:35000},color:'#ffffaa',evolutions:['divin'],evoLevel:25,sprite:'archange'},
+    special:{name:'Miracle',desc:'Full heal groupe',cd:35000},color:'#ffffaa',evolutions:['divin','eternel','archonte'],evoLevel:25,sprite:'archange'},
 sage:{name:'Sage',tier:3,hp:140,atk:20,def:12,spd:5,crit:18,role:'ranged',mana:200,
-    special:{name:'Sagesse',desc:'+50% all stats 10s',cd:30000},color:'#aa66ff',evolutions:['divin'],evoLevel:25,sprite:'sage'},
+    special:{name:'Sagesse',desc:'+50% all stats 10s',cd:30000},color:'#aa66ff',evolutions:['divin','eternel','archonte'],evoLevel:25,sprite:'sage'},
+inquisiteur:{name:'Inquisiteur',tier:3,hp:200,atk:22,def:16,spd:5,crit:15,role:'melee',mana:120,
+    special:{name:'Jugement',desc:'Dégâts + Heal groupe',cd:24000},color:'#ccaa22',evolutions:['divin','empereur','neant'],evoLevel:25,sprite:'pretre'},
 maitre_ombre:{name:'Maître des Ombres',tier:3,hp:140,atk:32,def:6,spd:14,crit:50,role:'melee',mana:50,
-    special:{name:'Mort Silencieuse',desc:'One-shot -50% HP boss',cd:35000},color:'#110022',evolutions:['spectre'],evoLevel:25,sprite:'maitre_ombre'},
+    special:{name:'Mort Silencieuse',desc:'One-shot -50% HP boss',cd:35000},color:'#110022',evolutions:['spectre','neant','oeil_faucon'],evoLevel:25,sprite:'maitre_ombre'},
 shinobi:{name:'Shinobi',tier:3,hp:150,atk:28,def:8,spd:13,crit:40,role:'melee',mana:70,
-    special:{name:'Jutsu',desc:'Clone x3 attaque',cd:25000},color:'#222244',evolutions:['spectre'],evoLevel:25,sprite:'shinobi'},
+    special:{name:'Jutsu',desc:'Clone x3 attaque',cd:25000},color:'#222244',evolutions:['spectre','neant','oeil_faucon'],evoLevel:25,sprite:'shinobi'},
+phantom:{name:'Fantôme',tier:3,hp:130,atk:30,def:4,spd:15,crit:45,role:'melee',mana:50,
+    special:{name:'Évanescence',desc:'Esquive tout + crit x5',cd:28000},color:'#443355',evolutions:['spectre','neant','archonte'],evoLevel:25,sprite:'voleur'},
 ancien:{name:'Ancien',tier:3,hp:250,atk:20,def:20,spd:4,crit:15,role:'melee',mana:150,
-    special:{name:'Forêt Vivante',desc:'Tréants alliés',cd:30000},color:'#005522',evolutions:['titan_nature'],evoLevel:25,sprite:'ancien'},
+    special:{name:'Forêt Vivante',desc:'Tréants alliés',cd:30000},color:'#005522',evolutions:['titan_nature','eternel','phenix'],evoLevel:25,sprite:'ancien'},
 dragon_ancien:{name:'Dragon Ancien',tier:3,hp:400,atk:40,def:22,spd:7,crit:25,role:'melee',mana:100,
-    special:{name:'Inferno',desc:'Brûle tout',cd:25000},color:'#ff2200',evolutions:['titan_nature'],evoLevel:25,sprite:'dragon_ancien'},
-// TIER 4 - LEGENDARY CLASSES (Level 25+)
+    special:{name:'Inferno',desc:'Brûle tout',cd:25000},color:'#ff2200',evolutions:['titan_nature','phenix','dieu_guerre'],evoLevel:25,sprite:'dragon_ancien'},
+avatar_nature:{name:'Avatar Nature',tier:3,hp:280,atk:24,def:18,spd:5,crit:15,role:'ranged',mana:160,
+    special:{name:'Gaïa',desc:'Full heal + AoE nature',cd:30000},color:'#22cc44',evolutions:['titan_nature','phenix','eternel'],evoLevel:25,sprite:'druide'},
+// TIER 4 - LEGENDARY CLASSES (Level 25+, FINAL)
 dieu_guerre:{name:'Dieu de Guerre',tier:4,hp:500,atk:45,def:30,spd:7,crit:35,role:'melee',mana:120,
     special:{name:'Ragnarök',desc:'Dégâts x10 boss',cd:40000},color:'#ff2222',evolutions:[],sprite:'paladin'},
+empereur:{name:'Empereur',tier:4,hp:450,atk:40,def:35,spd:6,crit:25,role:'melee',mana:100,
+    special:{name:'Décret Impérial',desc:'x8 dmg + buff groupe',cd:42000},color:'#d4af37',evolutions:[],sprite:'champion'},
 archonte:{name:'Archonte',tier:4,hp:200,atk:60,def:10,spd:6,crit:40,role:'ranged',mana:350,
     special:{name:'Apocalypse',desc:'Nuke arcanique x15',cd:45000},color:'#aa00ff',evolutions:[],sprite:'mage'},
 oeil_faucon:{name:'Oeil de Faucon',tier:4,hp:180,atk:55,def:8,spd:15,crit:70,role:'ranged',mana:100,
     special:{name:'Flèche Divine',desc:'100% crit ignore DEF',cd:35000},color:'#22ff44',evolutions:[],sprite:'archer'},
+arme_divine:{name:'Arme Divine',tier:4,hp:200,atk:65,def:8,spd:12,crit:55,role:'ranged',mana:80,
+    special:{name:'Frappe Céleste',desc:'Ignore DEF x10',cd:38000},color:'#ffaa00',evolutions:[],sprite:'archer'},
 divin:{name:'Divin',tier:4,hp:250,atk:25,def:25,spd:5,crit:15,role:'ranged',mana:400,
     special:{name:'Résurrection',desc:'Full heal+revive all',cd:50000},color:'#ffffcc',evolutions:[],sprite:'pretre'},
+eternel:{name:'Éternel',tier:4,hp:300,atk:20,def:20,spd:5,crit:10,role:'ranged',mana:500,
+    special:{name:'Éternité',desc:'Full heal all+invulnérable 5s',cd:50000},color:'#eeffee',evolutions:[],sprite:'pretre'},
 spectre:{name:'Spectre',tier:4,hp:220,atk:50,def:5,spd:18,crit:65,role:'melee',mana:80,
     special:{name:'Faucheuse',desc:'Instant kill <20% HP boss',cd:40000},color:'#220033',evolutions:[],sprite:'voleur'},
+neant:{name:'Néant',tier:4,hp:180,atk:55,def:3,spd:16,crit:60,role:'melee',mana:100,
+    special:{name:'Néant Absolu',desc:'Delete <25% HP boss',cd:42000},color:'#110011',evolutions:[],sprite:'voleur'},
 titan_nature:{name:'Titan de Nature',tier:4,hp:600,atk:35,def:35,spd:3,crit:20,role:'melee',mana:200,
     special:{name:'Cataclysme',desc:'Séisme dégâts + stun',cd:45000},color:'#00aa22',evolutions:[],sprite:'druide'},
+phenix:{name:'Phénix',tier:4,hp:350,atk:45,def:15,spd:8,crit:30,role:'ranged',mana:200,
+    special:{name:'Renaissance',desc:'AoE feu + auto-revive',cd:45000},color:'#ff6600',evolutions:[],sprite:'druide'},
 
 // SPECIAL - Paysan (hidden OP)
 paysan:{name:'Paysan',tier:0,hp:130,atk:10,def:9,spd:4,crit:12,role:'melee',mana:30,
@@ -448,7 +474,10 @@ herboriste:{name:'Herboriste',tier:0,hp:100,atk:5,def:6,spd:4,crit:10,role:'rang
     evolutions:['druide','pretre','mage'],evoLevel:3,sprite:'herboriste'},
 barde:{name:'Barde',tier:0,hp:85,atk:7,def:5,spd:5,crit:15,role:'ranged',mana:70,
     special:{name:'Mélodie',desc:'Boost ATK groupe 5s',cd:12000},color:'#cc66aa',
-    evolutions:['mage','pretre','druide'],evoLevel:3,sprite:'barde'}
+    evolutions:['mage','pretre','druide'],evoLevel:3,sprite:'barde'},
+squelette:{name:'Squelette',tier:0,hp:75,atk:9,def:3,spd:6,crit:18,role:'melee',mana:45,
+    special:{name:'Os Brisé',desc:'Ignore 50% DEF',cd:9000},color:'#b0a890',
+    evolutions:['guerrier','mage','voleur'],evoLevel:3,sprite:'squelette'}
 };
 
 const DEFAULT_COLORS={};
@@ -520,8 +549,8 @@ function getTitle(kills){let t=TITLES[0];for(const ti of TITLES)if(kills>=ti.kil
 // ================================================================
 class PX{
 static c(ctx,x,y,col,s=1){ctx.fillStyle=col;ctx.fillRect(x*s,y*s,s,s)}
-static drawChar(ctx,s,cls,tint,variant){
-    variant=variant||1;
+static drawChar(ctx,s,cls,tint,variant,gender){
+    variant=variant||1;gender=gender||'m';
     const c=(x,y,col)=>{ctx.fillStyle=col;ctx.fillRect(x*s,y*s,s,s)};
     // DARK / BADASS style - detailed armor, visible weapons
     const sk='#c9a87c',sk2='#a88960',eye='#111',belt='#4a3a1a',gold='#c8a832',bt='#2a1a0a',bt2='#1a0f05';
@@ -529,16 +558,16 @@ static drawChar(ctx,s,cls,tint,variant){
     const arm='#555',arm2='#444',arm3='#666',stl='#8a8a9a',stl2='#6a6a7a',stl3='#9a9aaa';
     // Map evolved classes to base sprite style with variations
     const spriteMap={
-        apprenti:'apprenti',paysan:'paysan',chat:'chat',ecuyer:'ecuyer',brigand:'brigand',herboriste:'herboriste',barde:'barde',guerrier:'guerrier',mage:'mage',archer:'archer',
+        apprenti:'apprenti',paysan:'paysan',chat:'chat',ecuyer:'ecuyer',brigand:'brigand',herboriste:'herboriste',barde:'barde',squelette:'squelette',guerrier:'guerrier',mage:'mage',archer:'archer',
         pretre:'pretre',voleur:'voleur',druide:'druide',paladin:'paladin',
         berserker:'guerrier',chevalier:'guerrier',archimage:'mage',necromancien:'mage',
         sniper:'archer',ranger:'archer',saint:'pretre',oracle:'pretre',
-        assassin:'voleur',ninja:'voleur',gardien:'druide',dragon_form:'dragon_form',
+        assassin:'voleur',ninja:'voleur',gardien:'druide',abomination:'abomination',dragon_form:'dragon_form',
         champion:'champion',elementaliste:'elementaliste',liche:'liche',
         tireur_elite:'tireur_elite',maitre_chasse:'maitre_chasse',archange:'archange',sage:'sage',
         maitre_ombre:'maitre_ombre',shinobi:'shinobi',ancien:'ancien',dragon_ancien:'dragon_ancien',
-        dragon:'dragon_form',
-        dieu_guerre:'dieu_guerre',archonte:'archonte',oeil_faucon:'oeil_faucon',divin:'divin',spectre:'spectre',titan_nature:'titan_nature'
+        dragon:'dragon_form',warlord:'guerrier',enchanteur:'mage',artilleur:'archer',inquisiteur:'pretre',phantom:'voleur',avatar_nature:'druide',
+        dieu_guerre:'dieu_guerre',empereur:'champion',archonte:'archonte',oeil_faucon:'oeil_faucon',arme_divine:'archer',divin:'divin',eternel:'pretre',spectre:'spectre',neant:'voleur',titan_nature:'titan_nature',phenix:'druide'
     };
     const base=spriteMap[cls]||'guerrier';
     switch(base){
@@ -676,6 +705,44 @@ static drawChar(ctx,s,cls,tint,variant){
             c(5,13,bt2);c(6,13,bt2);c(9,13,bt2);c(10,13,bt2);
             // Lute
             c(12,4,'#8B6914');c(12,5,'#8B6914');c(12,6,'#A0762C');c(13,5,'#8B6914');c(13,6,'#8B6914');c(12,7,'#6a5010');c(12,8,'#553');
+            break;
+        case 'squelette':
+            // Skeleton - bone white, hollow eyes, ragged cloth, bone sword
+            c(7,0,'#e8e0d0');c(8,0,'#e8e0d0');
+            c(6,1,'#d8d0c0');c(7,1,'#e8e0d0');c(8,1,'#e8e0d0');c(9,1,'#d8d0c0');
+            c(6,2,'#d8d0c0');c(7,2,'#f0e8d8');c(8,2,'#f0e8d8');c(9,2,'#d8d0c0');
+            c(6,3,'#c8c0b0');c(7,3,'#f0e8d8');c(8,3,'#f0e8d8');c(9,3,'#c8c0b0');
+            c(6,4,'#1a0a0a');c(7,4,'#300');c(8,4,'#300');c(9,4,'#1a0a0a'); // dark hollow eyes
+            c(6,5,'#c8c0b0');c(7,5,'#0a0a0a');c(8,5,'#0a0a0a');c(9,5,'#c8c0b0'); // jaw teeth
+            c(6,6,'#b0a890');c(7,6,'#c8c0b0');c(8,6,'#c8c0b0');c(9,6,'#b0a890'); // neck bones
+            c(5,7,'#3a2830');c(6,7,'#4a3040');c(7,7,'#c8c0b0');c(8,7,'#c8c0b0');c(9,7,'#4a3040');c(10,7,'#3a2830'); // ragged cloth+ribs
+            c(5,8,'#3a2830');c(6,8,'#b0a890');c(7,8,'#c8c0b0');c(8,8,'#c8c0b0');c(9,8,'#b0a890');c(10,8,'#3a2830');
+            c(6,9,'#4a3040');c(7,9,'#3a2830');c(8,9,'#3a2830');c(9,9,'#4a3040'); // belt
+            c(6,10,'#b0a890');c(7,10,'#c8c0b0');c(8,10,'#c8c0b0');c(9,10,'#b0a890'); // leg bones
+            c(6,11,'#a09880');c(7,11,'#b0a890');c(8,11,'#b0a890');c(9,11,'#a09880');
+            c(5,12,'#908070');c(6,12,'#a09880');c(9,12,'#a09880');c(10,12,'#908070');
+            c(5,13,'#807060');c(6,13,'#908070');c(9,13,'#908070');c(10,13,'#807060');
+            // Bone sword
+            c(12,0,'#f0e8d8');c(12,1,'#e8e0d0');c(12,2,'#d8d0c0');c(12,3,'#c8c0b0');c(12,4,'#b0a890');c(12,5,'#4a3a2a');c(12,6,'#3a2a1a');c(12,7,'#2a1a0a');
+            break;
+        case 'abomination':
+            // Grotesque undead hulk, stitched flesh, massive arms
+            c(6,0,'#4a3040');c(7,0,'#5a3848');c(8,0,'#5a3848');c(9,0,'#4a3040');
+            c(5,1,'#4a3040');c(6,1,'#5a3848');c(7,1,'#6a4858');c(8,1,'#6a4858');c(9,1,'#5a3848');c(10,1,'#4a3040');
+            c(5,2,'#5a3848');c(6,2,'#6a4858');c(7,2,'#7a5868');c(8,2,'#7a5868');c(9,2,'#6a4858');c(10,2,'#5a3848');
+            c(6,3,'#6a4858');c(7,3,'#7a5868');c(8,3,'#7a5868');c(9,3,'#6a4858');
+            c(6,4,'#0a0');c(7,4,'#0f0');c(8,4,'#ff0');c(9,4,'#f00'); // mismatched eyes green/red
+            c(6,5,'#5a3848');c(7,5,'#333');c(8,5,'#333');c(9,5,'#5a3848'); // stitched mouth
+            c(4,6,'#5a3848');c(5,6,'#6a4858');c(6,6,'#7a5868');c(7,6,'#7a5868');c(8,6,'#7a5868');c(9,6,'#7a5868');c(10,6,'#6a4858');c(11,6,'#5a3848');
+            c(4,7,'#4a3040');c(5,7,'#5a3848');c(6,7,'#6a4858');c(7,7,'#552');c(8,7,'#6a4858');c(9,7,'#552');c(10,7,'#5a3848');c(11,7,'#4a3040'); // stitches
+            c(4,8,'#5a3848');c(5,8,'#6a4858');c(6,8,'#7a5868');c(7,8,'#7a5868');c(8,8,'#7a5868');c(9,8,'#7a5868');c(10,8,'#6a4858');c(11,8,'#5a3848');
+            c(5,9,'#3a2030');c(6,9,'#552');c(7,9,'#3a2030');c(8,9,'#3a2030');c(9,9,'#552');c(10,9,'#3a2030'); // belt+chains
+            c(5,10,'#5a3848');c(6,10,'#6a4858');c(7,10,'#5a3848');c(8,10,'#5a3848');c(9,10,'#6a4858');c(10,10,'#5a3848');
+            c(5,11,'#4a3040');c(6,11,'#5a3848');c(7,11,'#4a3040');c(8,11,'#4a3040');c(9,11,'#5a3848');c(10,11,'#4a3040');
+            c(4,12,'#3a2030');c(5,12,'#4a3040');c(6,12,'#3a2030');c(9,12,'#3a2030');c(10,12,'#4a3040');c(11,12,'#3a2030');
+            c(4,13,'#2a1020');c(5,13,'#3a2030');c(6,13,'#2a1020');c(9,13,'#2a1020');c(10,13,'#3a2030');c(11,13,'#2a1020');
+            // Meat hook weapon
+            c(13,0,stl3);c(13,1,stl);c(14,1,stl2);c(13,2,stl2);c(13,3,'#553');c(13,4,'#442');c(13,5,'#331');c(13,6,'#220');
             break;
         case 'guerrier':
             // Heavy plate armor, great helm, greatsword + kite shield
@@ -1172,6 +1239,18 @@ static drawChar(ctx,s,cls,tint,variant){
         c(11,5,t2);c(12,6,shade(t2,-10));c(12,7,shade(t2,-15));c(12,8,shade(t2,-20));c(12,9,shade(t2,-25));c(11,10,shade(t2,-30));c(13,8,shade(t2,-30));
         c(6,3,'#882222');c(9,3,'#882222');
         c(7,9,'#999');c(8,9,'#888');
+    }
+    // GENDER VISUAL DIFFERENCES
+    if(gender==='f'){
+        // Female: longer hair on sides (flowing down), eyelashes, lips hint
+        const hairCol=shade(t1,15)||'#886644';
+        // Hair flowing down left and right sides
+        c(5,2,hairCol);c(5,3,hairCol);c(5,4,shade(hairCol,-10));c(5,5,shade(hairCol,-15));
+        c(10,2,hairCol);c(10,3,hairCol);c(10,4,shade(hairCol,-10));c(10,5,shade(hairCol,-15));
+        // Eyelash accent (small pixel above eyes)
+        c(7,3,'#222');c(8,3,'#222');
+        // Lips tint
+        c(7,5,'#c87070');c(8,5,'#c87070');
     }
 }
 // BOSS SPRITES - MASSIVE & IMPOSING (64x64 logical pixels)
@@ -1692,10 +1771,93 @@ static drawShop(ctx,s){
 // ================================================================
 // BACKGROUND DRAWING
 // ================================================================
+// Arena/Duel scene flag
+let _arenaScene=false;
+
+function drawArenaScene(bg,w,h){
+    bg.clearRect(0,0,w,h);
+    // Dark sky with red tint
+    if(isFullscreen){
+        const sky=bg.createLinearGradient(0,0,0,h*.5);
+        sky.addColorStop(0,'#0a0408');sky.addColorStop(1,'#1a0810');
+        bg.fillStyle=sky;bg.fillRect(0,0,w,h*.5);
+        // Blood red stars
+        for(let i=0;i<60;i++){bg.fillStyle=`rgba(255,${100+Math.random()*100},${Math.random()*80},${.3+Math.random()*.5})`;bg.beginPath();bg.arc(Math.random()*w,Math.random()*h*.35,.5+Math.random()*1.5,0,Math.PI*2);bg.fill()}
+    }
+    // Arena ground - sand/dirt
+    const gY=h-55;
+    const grd=bg.createLinearGradient(0,gY,0,h);
+    grd.addColorStop(0,'#8a7050');grd.addColorStop(.3,'#6a5030');grd.addColorStop(1,'#4a3020');
+    bg.fillStyle=grd;bg.fillRect(0,gY,w,55);
+    // Blood splatters on ground
+    bg.globalAlpha=.15;bg.fillStyle='#661111';
+    [200,480,750,1100,1400,1700].forEach(sx=>{bg.beginPath();bg.ellipse(sx,gY+15+Math.random()*20,15+Math.random()*20,5+Math.random()*5,0,0,Math.PI*2);bg.fill()});
+    bg.globalAlpha=1;
+    // Arena walls (coliseum arches)
+    if(isFullscreen){
+        const wallY=h*.35;const wallH=gY-wallY;
+        // Back wall
+        bg.fillStyle='#2a1a10';bg.fillRect(0,wallY,w,wallH);
+        // Stone blocks texture
+        bg.fillStyle='#3a2a18';
+        for(let row=0;row<6;row++){
+            const by=wallY+row*(wallH/6);
+            for(let col=0;col<24;col++){
+                const bx=col*82+(row%2?41:0);
+                bg.fillRect(bx+1,by+1,78,wallH/6-2);
+            }
+        }
+        // Arches
+        bg.fillStyle='#1a0a08';
+        const archCount=12;const archW=w/archCount;
+        for(let i=0;i<archCount;i++){
+            const ax=i*archW+archW/2;
+            bg.beginPath();bg.arc(ax,wallY+wallH*.6,archW*.35,Math.PI,0);bg.lineTo(ax+archW*.35,wallY+wallH);bg.lineTo(ax-archW*.35,wallY+wallH);bg.closePath();bg.fill();
+        }
+        // Pillars
+        bg.fillStyle='#3a2a15';
+        for(let i=0;i<=archCount;i++){
+            const px=i*archW;
+            bg.fillRect(px-8,wallY,16,wallH);
+            bg.fillStyle='#4a3a20';bg.fillRect(px-10,wallY,20,8);bg.fillRect(px-10,wallY+wallH-8,20,8);
+            bg.fillStyle='#3a2a15';
+        }
+        // Torch fires in arena
+        [archW*1.5,archW*4.5,archW*7.5,archW*10.5].forEach(tx=>{
+            bg.fillStyle='#3a2a0a';bg.fillRect(tx-2,wallY+wallH*.3-28,4,28);
+            bg.fillStyle='#5a4a1a';bg.fillRect(tx-4,wallY+wallH*.3-30,8,3);
+            const g=bg.createRadialGradient(tx,wallY+wallH*.3-38,2,tx,wallY+wallH*.3-34,14);
+            g.addColorStop(0,'rgba(255,120,30,.9)');g.addColorStop(.4,'rgba(255,60,0,.5)');g.addColorStop(1,'rgba(200,30,0,0)');
+            bg.fillStyle=g;bg.fillRect(tx-14,wallY+wallH*.3-52,28,24);
+        });
+        // Crowd silhouettes on top of walls
+        bg.fillStyle='#1a0a05';
+        for(let i=0;i<80;i++){
+            const cx=Math.random()*w,cy=wallY-2-Math.random()*10;
+            bg.beginPath();bg.arc(cx,cy,3+Math.random()*2,0,Math.PI*2);bg.fill();
+            bg.fillRect(cx-2,cy+3,4,6);
+        }
+    }
+    // Arena banner
+    bg.fillStyle='#881122';bg.globalAlpha=.7;
+    bg.fillRect(w/2-120,gY-60,240,25);
+    bg.globalAlpha=1;bg.fillStyle='#d4af37';bg.font='bold 10px "Press Start 2P",monospace';bg.textAlign='center';
+    bg.fillText('ARENE DU SANG',w/2,gY-43);bg.textAlign='start';
+    // Fire braziers on ground
+    [150,500,w-500,w-150].forEach(tx=>{
+        bg.fillStyle='#553';bg.fillRect(tx-6,gY-16,12,16);
+        const g=bg.createRadialGradient(tx,gY-22,3,tx,gY-18,16);
+        g.addColorStop(0,'rgba(255,150,30,.8)');g.addColorStop(.5,'rgba(255,60,0,.4)');g.addColorStop(1,'rgba(200,20,0,0)');
+        bg.fillStyle=g;bg.fillRect(tx-16,gY-38,32,24);
+    });
+}
+
 function drawBG(){
     const cont=document.getElementById('game-container'),bgC=document.getElementById('bg-canvas');
     const h=cont.offsetHeight,w=1920;bgC.width=w;bgC.height=h;
     const bg=bgC.getContext('2d');const sn=SEASONS[currentSeason];
+    // Arena scene override
+    if(_arenaScene){drawArenaScene(bg,w,h);return}
     // Clear canvas (transparent sky - game visible behind)
     bg.clearRect(0,0,w,h);
     if(isFullscreen){
@@ -2084,11 +2246,13 @@ class Character{
         this.gold=0;this.kills=0;this.totalDmg=0;this.totalHeal=0;this.customColor=null;
         this.shieldHP=0;this.xpMulti=1;this.classChanges=0;
         this.equipment={weapon:null,armor:null,boots:null,amulet:null,ring:null};
-        this.combo=0;this.lastComboTime=0;
+        this.combo=0;this.lastComboTime=0;this._stance='default';
+        this.mount=null; // null, 'cheval', 'loup', 'dragon', 'licorne', 'sanglier'
         this.paysanBonus=(cls==='paysan');
-        // Design variant (1-3) based on username hash
+        // Design variant (1-3) and gender based on username hash
         let h=0;for(let i=0;i<username.length;i++){h=((h<<5)-h)+username.charCodeAt(i);h|=0}
         this.variant=(Math.abs(h)%3)+1;
+        this.gender=(Math.abs(h)%2===0)?'m':'f'; // random gender from hash
         const d=CLASS_DATA[this.className];
         this.hp=d.hp;this.maxHp=d.hp;this.atk=d.atk;this.def=d.def;this.spd=d.spd;this.crit=d.crit;
         this.mana=d.mana;this.maxMana=d.mana;
@@ -2101,7 +2265,7 @@ class Character{
         this.element=document.createElement('div');
         this.element.className=`character ${this.role} anim-idle`;
         const cv=document.createElement('canvas');cv.width=16;cv.height=16;
-        PX.drawChar(cv.getContext('2d'),1,this.className,this.getColor(),this.variant);
+        PX.drawChar(cv.getContext('2d'),1,this.className,this.getColor(),this.variant,this.gender);
         const nm=document.createElement('div');nm.className='char-name';nm.textContent=this.username;
         const ti=document.createElement('div');ti.className='char-title';ti.textContent=getTitle(this.kills).emoji;
         const lv=document.createElement('div');lv.className='char-lvl';lv.textContent='Lv'+this.level;
@@ -2112,7 +2276,9 @@ class Character{
         const cdEl=document.createElement('div');cdEl.className='char-cd';
         const bufDiv=document.createElement('div');bufDiv.className='char-buffs';
         const rvDiv=document.createElement('div');rvDiv.className='char-revive-cd';
-        this.element.append(nm,ti,lv,bars,sh,cb,cdEl,bufDiv,rvDiv,cv);
+        const mountDiv=document.createElement('div');mountDiv.className='char-mount';mountDiv.style.cssText='position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);font-size:8px;filter:drop-shadow(1px 1px 0 #000)';
+        if(this.mount){const mEmojis={cheval:'🐴',loup:'🐺',dragon:'🐉',licorne:'🦄',sanglier:'🐗'};mountDiv.textContent=mEmojis[this.mount]||'🐴'}
+        this.element.append(nm,ti,lv,bars,sh,cb,cdEl,bufDiv,rvDiv,mountDiv,cv);
         cont.appendChild(this.element);
         this.element.classList.add('char-spawn');setTimeout(()=>this.element.classList.remove('char-spawn'),700);
         spawnP(this.element,'#ffffcc',8);
@@ -2122,7 +2288,7 @@ class Character{
         if(this.role==='melee')this.element.style.left=(1150+Math.random()*380)+'px';
         else this.element.style.left=(80+Math.random()*900)+'px';
     }
-    redraw(){const cv=this.element.querySelector('canvas');if(!cv)return;const ctx=cv.getContext('2d');ctx.clearRect(0,0,16,16);PX.drawChar(ctx,1,this.className,this.getColor(),this.variant)}
+    redraw(){const cv=this.element.querySelector('canvas');if(!cv)return;const ctx=cv.getContext('2d');ctx.clearRect(0,0,16,16);PX.drawChar(ctx,1,this.className,this.getColor(),this.variant,this.gender)}
     startWalk(){this._wi=setInterval(()=>{if(!this.alive)return;let x;if(this.role==='melee')x=1100+Math.random()*420;else x=60+Math.random()*920;this.element.style.left=x+'px';this.spawnDust()},5000+Math.random()*4000)}
     spawnDust(){for(let i=0;i<3;i++){const d=document.createElement('div');d.style.cssText=`position:absolute;bottom:0;left:${24+Math.random()*16}px;width:${2+Math.random()*3}px;height:${2+Math.random()*3}px;background:rgba(160,140,100,${0.3+Math.random()*0.3});border-radius:50%;pointer-events:none;z-index:1`;d.style.setProperty('--px',(Math.random()-0.5)*20+'px');d.style.setProperty('--py',(-5-Math.random()*10)+'px');d.className='particle';this.element.appendChild(d);setTimeout(()=>d.remove(),800)}}
     updateBars(){
@@ -2576,7 +2742,126 @@ const EVENTS=[
 {id:25,title:'🌑 ÉCLIPSE TOTALE',desc:'Le soleil disparaît... les morts-vivants se lèvent...',
  doText:'Résister (double XP 3min)',notdoText:'Fuir (perd 50% gold)',
  doFn:(g)=>{Object.values(g.characters).forEach(c=>{if(c.alive)c.takeDmg(40)});g.xpBonus=2;setTimeout(()=>{g.xpBonus=1;g.log('L\'éclipse se termine...','log-info')},180000);g.log('🌑 ÉCLIPSE! Survie = Double XP 3min!','log-event')},
- notdoFn:(g)=>{Object.values(g.characters).forEach(c=>c.gold=Math.floor(c.gold/2));g.log('🌑 Fuite! -50% gold...','log-dmg')}}
+ notdoFn:(g)=>{Object.values(g.characters).forEach(c=>c.gold=Math.floor(c.gold/2));g.log('🌑 Fuite! -50% gold...','log-dmg')}},
+{id:26,title:'🐴 ÉCURIE ROYALE',desc:'Des montures sauvages apparaissent dans les plaines!',
+ doText:'Capturer (monture aléatoire!)',notdoText:'Vendre (150g chacun)',
+ doFn:(g)=>{const mounts=['cheval','loup','sanglier','licorne','dragon'];const mStats={cheval:{spd:3,emoji:'🐴'},loup:{spd:4,atk:2,emoji:'🐺'},sanglier:{def:3,hp:30,emoji:'🐗'},licorne:{mana:30,spd:2,emoji:'🦄'},dragon:{atk:4,spd:2,emoji:'🐉'}};Object.values(g.characters).forEach(c=>{if(c.alive&&!c.mount){const m=mounts[Math.floor(Math.random()*mounts.length)];c.mount=m;const s=mStats[m];if(s.spd)c.spd+=s.spd;if(s.atk)c.atk+=s.atk;if(s.def)c.def+=s.def;if(s.hp){c.maxHp+=s.hp;c.hp+=s.hp}if(s.mana){c.maxMana+=s.mana;c.mana+=s.mana}c.updateBars();const mDiv=c.element&&c.element.querySelector('.char-mount');if(mDiv)mDiv.textContent=s.emoji;c.popup(`${s.emoji} MONTURE!`,'popup popup-crit')}});g.log('🐴 Montures capturées! Chaque héros reçoit une monture avec bonus de stats!','log-event');chatSay(`🐴🔥 DES MONTURES SAUVAGES! Chaque héros capture sa monture! Chevaux 🐴 Loups 🐺 Sangliers 🐗 Licornes 🦄 Dragons 🐉 — Bonus de stats! 💪`)},
+ notdoFn:(g)=>{Object.values(g.characters).forEach(c=>c.gold+=150);g.log('💰 Montures vendues! +150g chacun!','log-gold')}},
+{id:27,title:'💀 INVASION DE SQUELETTES',desc:'Les morts se lèvent de leur tombe...',
+ doText:'Combattre (XP x3 2min)',notdoText:'Fuir dans le château',
+ doFn:(g)=>{Object.values(g.characters).forEach(c=>{if(c.alive)c.takeDmg(60)});g.xpBonus=3;setTimeout(()=>{g.xpBonus=1;g.log('Les squelettes retournent sous terre...','log-info')},120000);g.log('💀 ARMÉE DE SQUELETTES! XP x3 pendant 2min si vous survivez!','log-event')},
+ notdoFn:(g)=>{g.log('🏰 Vous barricadez le château. Les squelettes passent...','log-info')}},
+{id:28,title:'👑 PROTECTION DU ROI',desc:'Le Roi est attaqué! Une horde massive approche du château!',
+ doText:'Défendre le Roi! (combat héroïque)',notdoText:'Fuir (perdre honneur)',
+ doFn:(g)=>{g.startKingEvent()},
+ notdoFn:(g)=>{Object.values(g.characters).forEach(c=>{c.gold=Math.max(0,c.gold-100);c.atk=Math.max(1,c.atk-5)});g.log('💀 Lâches! Le Roi note votre trahison! -100g -5 ATK!','log-dmg');chatSay(`😤👑 Le Roi est furieux de votre lâcheté! -100g -5 ATK pour tous! La honte...`)}},
+{id:29,title:'🏰 SIÈGE DU CHÂTEAU',desc:'Des catapultes bombardent les murs du royaume!',
+ doText:'Contre-attaquer (+XP +gold)',notdoText:'Renforcer les murs (+DEF)',
+ doFn:(g)=>{Object.values(g.characters).forEach(c=>{if(c.alive){c.xp+=40;c.gold+=60;c.takeDmg(30);c.popup('+60g','popup popup-gold')}});g.log('⚔ Contre-attaque! +40 XP +60g mais -30 PV!','log-event')},
+ notdoFn:(g)=>{Object.values(g.characters).forEach(c=>{if(c.alive){c.def+=4;setTimeout(()=>{c.def-=4;c.updateBars()},180000)}});g.log('🏰 Murs renforcés! +4 DEF 3min pour tous!','log-event')}}
+];
+// ================================================================
+// TAVERN / BAR SYSTEM
+// ================================================================
+const TAVERN_DRINKS={
+biere:{name:'Bière',cost:20,emoji:'🍺',desc:'+3 ATK 3min',stat:'atk',val:3,dur:180000},
+hydromel:{name:'Hydromel',cost:35,emoji:'🍯',desc:'+4 DEF 3min',stat:'def',val:4,dur:180000},
+vin:{name:'Vin Rouge',cost:30,emoji:'🍷',desc:'+2 ATK +2 DEF 2min',multi:true,stats:{atk:2,def:2},dur:120000},
+cocktail:{name:'Cocktail Gobelin',cost:50,emoji:'🍹',desc:'+5 SPD 2min',stat:'spd',val:5,dur:120000},
+grog:{name:'Grog du Pirate',cost:45,emoji:'🏴‍☠️',desc:'+5 CRIT 3min',stat:'crit',val:5,dur:180000},
+elixir_force:{name:'Élixir de Force',cost:70,emoji:'💪',desc:'+6 ATK 3min',stat:'atk',val:6,dur:180000},
+liqueur_elfique:{name:'Liqueur Elfique',cost:100,emoji:'🧝',desc:'+3 ATK/DEF/SPD 3min',multi:true,stats:{atk:3,def:3,spd:3},dur:180000},
+absinthe:{name:'Absinthe Noire',cost:80,emoji:'🖤',desc:'+8 CRIT 2min',stat:'crit',val:8,dur:120000},
+lait_dragon:{name:'Lait de Dragon',cost:120,emoji:'🐉',desc:'+50 HP max permanent',stat:'maxHp',val:50,dur:0},
+sang_demon:{name:'Sang de Démon',cost:150,emoji:'😈',desc:'+5 ATK permanent -20 HP max',stat:'atk',val:5,dur:0,penalty:{stat:'maxHp',val:-20}}
+};
+function buyDrink(c,drinkKey,game){
+    const d=TAVERN_DRINKS[drinkKey];if(!d)return'Boisson inconnue! !taverne pour voir le menu';
+    if(c.gold<d.cost)return`Pas assez d'or! (${c.gold}/${d.cost}g)`;
+    c.gold-=d.cost;
+    if(d.dur===0){// Permanent
+        if(d.multi){Object.entries(d.stats).forEach(([s,v])=>{c[s]=(c[s]||0)+v})}
+        else{c[d.stat]=(c[d.stat]||0)+d.val;if(d.stat==='maxHp')c.hp+=d.val;if(d.stat==='maxMana')c.mana+=d.val}
+        if(d.penalty){c[d.penalty.stat]=(c[d.penalty.stat]||0)+d.penalty.val;if(d.penalty.stat==='maxHp')c.hp=Math.min(c.hp,c.maxHp)}
+        c.updateBars();
+        return`${d.emoji} ${d.name} bu! ${d.desc} (PERMANENT)`;
+    }
+    // Temporary buff
+    if(d.multi){
+        Object.entries(d.stats).forEach(([s,v])=>{c[s]=(c[s]||0)+v});
+        setTimeout(()=>{Object.entries(d.stats).forEach(([s,v])=>{c[s]=(c[s]||0)-v});c.updateBars()},d.dur);
+    }else{
+        c[d.stat]=(c[d.stat]||0)+d.val;
+        setTimeout(()=>{c[d.stat]=(c[d.stat]||0)-d.val;c.updateBars()},d.dur);
+    }
+    c.updateBars();spawnP(c.element,d.emoji==='🍺'?'#cc9933':'#aa55cc',6);
+    c.popup(`${d.emoji} BUFF!`,'popup popup-gold');
+    return`${d.emoji} ${d.name}! ${d.desc}`;
+}
+// ================================================================
+// MINI-GAME SYSTEM (between waves)
+// ================================================================
+const BIOMES=['🌲 FORÊT ENCHANTÉE','🏖 PLAGE TROPICALE','❄ MONTAGNE GLACÉE','🌋 VOLCAN ARDENT','🏜 DÉSERT ANCIEN','🍄 MARAIS FONGIQUE'];
+const MINI_GAMES=[
+{id:'treasure',name:'🗺 CHASSE AU TRÉSOR',biome:0,desc:'Cherchez des coffres cachés!',cmd:'chercher',
+ dur:90000,tick:5000,
+ onStart:(g)=>{g._mg={scores:{},total:0};chatSay(`🗺🔥 MINI-JEU: CHASSE AU TRÉSOR dans la ${BIOMES[0]}! Tapez !chercher pour fouiller! 90 secondes! 💰`);g.log('🗺 Mini-jeu: Chasse au Trésor!','log-event')},
+ onCmd:(g,u)=>{const r=Math.random();let gold=0,msg='';if(r<0.3){gold=Math.floor(20+Math.random()*30);msg=`💰 Coffre! +${gold}g`}else if(r<0.5){gold=Math.floor(50+Math.random()*50);msg=`💎 COFFRE RARE! +${gold}g`}else if(r<0.7){msg='🕷 Piège! -15 PV';const c=g.characters[u];if(c&&c.alive){c.takeDmg(15)}}else{gold=5;msg='🪨 Rien... +5g'}
+    if(gold>0){const c=g.characters[u];if(c)c.gold+=gold}
+    if(!g._mg.scores[u])g._mg.scores[u]=0;g._mg.scores[u]+=gold;g._mg.total++;
+    return msg},
+ onEnd:(g)=>{const sorted=Object.entries(g._mg.scores).sort((a,b)=>b[1]-a[1]);
+    const winner=sorted[0];if(winner){const c=g.characters[winner[0]];if(c){c.gold+=100;c.popup('🏆 TRÉSOR!','popup popup-crit');spawnP(c.element,'#d4af37',12)}
+    chatSay(`🗺🏆 FIN! Champion du trésor: @${winner[0]} avec ${winner[1]}g trouvés! +100g BONUS! 💰`)}
+    g.log('🗺 Chasse au trésor terminée!','log-event');g._mg=null}},
+{id:'fishing',name:'🎣 TOURNOI DE PÊCHE',biome:1,desc:'Le plus gros poisson gagne!',cmd:'pecher',
+ dur:80000,tick:8000,
+ onStart:(g)=>{g._mg={scores:{},total:0};chatSay(`🎣🔥 MINI-JEU: TOURNOI DE PÊCHE sur la ${BIOMES[1]}! Tapez !pecher pour lancer la ligne! 80 secondes! 🐟`);g.log('🎣 Mini-jeu: Tournoi de Pêche!','log-event')},
+ onCmd:(g,u)=>{const fish=['🐟 Sardine','🐠 Poisson Tropical','🐡 Poisson-Globe','🦈 Requin','🐋 Baleine','🦑 Kraken'];
+    const idx=Math.floor(Math.random()*fish.length);const pts=(idx+1)*10;
+    if(!g._mg.scores[u])g._mg.scores[u]=0;g._mg.scores[u]+=pts;g._mg.total++;
+    const c=g.characters[u];if(c){c.gold+=Math.floor(pts/2);c.heal(pts)}
+    return`${fish[idx]} pêché! +${pts}pts +${Math.floor(pts/2)}g +${pts}HP`},
+ onEnd:(g)=>{const sorted=Object.entries(g._mg.scores).sort((a,b)=>b[1]-a[1]);
+    const winner=sorted[0];if(winner){const c=g.characters[winner[0]];if(c){c.gold+=80;c.xp+=c.xpNext*0.3;c.popup('🏆 PÊCHEUR!','popup popup-crit');spawnP(c.element,'#55aaff',10)}
+    chatSay(`🎣🏆 FIN! Maître pêcheur: @${winner[0]} avec ${winner[1]}pts! +80g +30% XP! 🐟`)}
+    g.log('🎣 Tournoi de pêche terminé!','log-event');g._mg=null}},
+{id:'race',name:'🏃 COURSE HÉROÏQUE',biome:4,desc:'Le plus rapide remporte tout!',cmd:'courir',
+ dur:60000,tick:3000,
+ onStart:(g)=>{g._mg={scores:{},total:0};chatSay(`🏃🔥 MINI-JEU: COURSE dans le ${BIOMES[4]}! Tapez !courir pour sprinter! Plus tu spammes, plus tu avances! 60 secondes! 💨`);g.log('🏃 Mini-jeu: Course Héroïque!','log-event')},
+ onCmd:(g,u)=>{if(!g._mg.scores[u])g._mg.scores[u]=0;
+    const c=g.characters[u];const spdBonus=c?Math.floor(c.spd/3):0;
+    const dist=Math.floor(5+Math.random()*10)+spdBonus;g._mg.scores[u]+=dist;g._mg.total++;
+    return`💨 +${dist}m! (total: ${g._mg.scores[u]}m)`},
+ onEnd:(g)=>{const sorted=Object.entries(g._mg.scores).sort((a,b)=>b[1]-a[1]);
+    const winner=sorted[0];if(winner){const c=g.characters[winner[0]];if(c){c.gold+=120;c.spd+=2;c.popup('🏆 VAINQUEUR!','popup popup-crit');spawnP(c.element,'#ffaa00',10)}
+    chatSay(`🏃🏆 FIN! Vainqueur: @${winner[0]} avec ${winner[1]}m! +120g +2 SPD permanent! 💨`)}
+    g.log('🏃 Course terminée!','log-event');g._mg=null}},
+{id:'quiz',name:'📚 QUIZ DU SAGE',biome:5,desc:'Répondez aux questions!',cmd:'repondre',
+ dur:90000,tick:15000,
+ onStart:(g)=>{g._mg={scores:{},total:0,qIdx:0,questions:[
+    {q:'Quelle classe a le plus de CRIT de base?',a:['chat','voleur','assassin']},
+    {q:'Combien de classes T0 existe-t-il?',a:['8','huit']},
+    {q:'Quelle commande pour évoluer?',a:['evoluer','!evoluer']},
+    {q:'Quel T4 peut instant-kill un boss?',a:['spectre','neant']},
+    {q:'Quelle saison boost ATK +3?',a:['ete','été','summer']},
+    {q:'Combien de slots équipement?',a:['5','cinq']}
+    ]};
+    const q=g._mg.questions[0];chatSay(`📚🔥 MINI-JEU: QUIZ DU SAGE! Question 1: ${q.q} — Tapez !repondre <réponse>! 🧠`);g.log('📚 Mini-jeu: Quiz!','log-event')},
+ onCmd:(g,u,args)=>{if(!g._mg||!g._mg.questions)return null;
+    const q=g._mg.questions[g._mg.qIdx];if(!q)return'Quiz terminé!';
+    const ans=(args||[]).join(' ').toLowerCase().trim();
+    if(q.a.some(a=>ans.includes(a.toLowerCase()))){
+        if(!g._mg.scores[u])g._mg.scores[u]=0;g._mg.scores[u]+=50;g._mg.total++;
+        const c=g.characters[u];if(c){c.gold+=30;c.xp+=20}
+        g._mg.qIdx++;const next=g._mg.questions[g._mg.qIdx];
+        if(next)setTimeout(()=>chatSay(`📚 Question ${g._mg.qIdx+1}: ${next.q} — !repondre <réponse>`),3000);
+        return`✅ Correct! +50pts +30g +20XP`}
+    return`❌ Mauvaise réponse!`},
+ onEnd:(g)=>{const sorted=Object.entries(g._mg.scores).sort((a,b)=>b[1]-a[1]);
+    const winner=sorted[0];if(winner){const c=g.characters[winner[0]];if(c){c.gold+=100;c.maxMana+=20;c.mana+=20;c.popup('🏆 SAGE!','popup popup-crit')}
+    chatSay(`📚🏆 FIN! Plus sage: @${winner[0]} avec ${winner[1]}pts! +100g +20 Mana max! 🧠`)}
+    g.log('📚 Quiz terminé!','log-event');g._mg=null}}
 ];
 // ================================================================
 // ACHIEVEMENTS SYSTEM
@@ -2622,6 +2907,9 @@ class GameManager{
         this.eventActive=false;this.currentEvent=null;this.eventVotes={do:new Set(),notdo:new Set()};
         this.eventTimer=null;
         this.xpBonus=1;
+        this._mg=null;this._mgName=null;this._mgCmd=null;this._mgTimer=null;
+        this._kingEvent=false;this._tableRonde=false;
+        this._chatReminderInterval=null;
     }
 
     saveGame(){
@@ -2634,7 +2922,7 @@ class GameManager{
                     atk:c.atk,def:c.def,spd:c.spd,crit:c.crit,gold:c.gold,
                     kills:c.kills,totalDmg:c.totalDmg,totalHeal:c.totalHeal,
                     classChanges:c.classChanges||0,customColor:c.customColor,
-                    equipment:c.equipment||{},
+                    equipment:c.equipment||{},mount:c.mount||null,gender:c.gender||'m',
                     achievements:c._achievements?[...c._achievements]:[]};
             });
             localStorage.setItem('twitch_rpg_save',JSON.stringify(data));
@@ -2658,6 +2946,8 @@ class GameManager{
                 c.kills=d.kills;c.totalDmg=d.totalDmg||0;c.totalHeal=d.totalHeal||0;
                 c.classChanges=d.classChanges||0;c.customColor=d.customColor;
                 if(d.equipment){c.equipment=d.equipment;c.updateTierGlow()}
+                if(d.mount)c.mount=d.mount;
+                if(d.gender)c.gender=d.gender;
                 if(d.achievements)c._achievements=new Set(d.achievements);
                 c.redraw();c.updateBars();
             });
@@ -2674,12 +2964,145 @@ class GameManager{
         this.log(`${username} → ${CLASS_DATA[cls].name}!`,'log-info');
         const cd=CLASS_DATA[cls];
         chatSay(`⚔🔥 BIENVENUE dans Sir-MMORPG, @${username}! Tu es un ${cd.name} (${cd.role==='melee'?'Corps-à-corps':'Distance'}) ⚔${cd.atk} 🛡${cd.def} ❤${cd.hp} | Spécial: ${cd.special.name} — ${cd.special.desc}`);
-        chatSay(`📜 @${username} Commandes: !attaque !sort !skill !special (combat) | !shop (boutique) | !evoluer (Nv.${cd.evoLevel}) | !design 1/2/3 (look) | !couleur (couleur) | !duel (défi) | !help 🎮`);
+        chatSay(`📜 @${username} Commandes: !attaque !sort !skill !special (combat) | !shop | !evoluer (Nv.${cd.evoLevel}) | !taverne 🍺 | !highfive | !design 1/2/3 | !help 🎮`);
         return`Bienvenue dans Sir-MMORPG! ${cd.name} créé 🎮 | !help pour tout savoir`;
+    }
+
+    startMiniGame(){
+        if(this._mg||this.boss)return;
+        const mg=MINI_GAMES[Math.floor(Math.random()*MINI_GAMES.length)];
+        this._mg={id:mg.id,cmd:mg.cmd,scores:{},total:0};
+        this._mgName=mg.name;this._mgCmd=mg.cmd;
+        const biome=BIOMES[mg.biome]||BIOMES[0];
+        showBanner('🎮 MINI-JEU',`${mg.name}`,3000);
+        this.log(`🎮 ${mg.name} — ${biome} — ${mg.desc}`,'log-event');
+        chatSay(`🎮✨ MINI-JEU: ${mg.name}! ${biome} — ${mg.desc} Tapez !${mg.cmd} pour participer! ⏳ ${Math.floor(mg.dur/1000)}s`);
+        mg.onStart(this);
+        this._mgTimer=setTimeout(()=>{
+            mg.onEnd(this);
+            this._mg=null;this._mgName=null;this._mgCmd=null;this._mgTimer=null;
+            showBanner('🏁 FIN','Mini-jeu terminé!',2000);
+        },mg.dur);
+    }
+
+    endMiniGame(){
+        if(!this._mg)return;
+        if(this._mgTimer)clearTimeout(this._mgTimer);
+        const mg=MINI_GAMES.find(m=>m.id===this._mg.id);
+        if(mg)mg.onEnd(this);
+        this._mg=null;this._mgName=null;this._mgCmd=null;this._mgTimer=null;
+    }
+
+    startKingEvent(){
+        if(this._kingEvent||this.boss)return;
+        this._kingEvent=true;
+        showBanner('👑 PROTÉGEZ LE ROI!','Une horde de monstres approche!',4000);
+        this.log('👑🔥 ÉVÉNEMENT: PROTÉGER LE ROI! Une horde massive attaque le château!','log-event');
+        chatSay(`👑⚔🔥 ALERTE ROYALE! Le ROI est ATTAQUÉ par une HORDE de monstres! Tous aux armes! !attaque !sort !skill !special — Défendez Sa Majesté ou le royaume tombera! 👑`);
+        const pc=Math.max(1,Object.values(this.characters).filter(c=>c.alive).length);
+        const kingHP=500+pc*200;
+        const waveCount=3+Math.floor(this.wave/5);
+        const monsterHP=40+this.wave*5;
+        const monsterATK=8+this.wave*2;
+        this._kingHP=kingHP;this._kingMaxHP=kingHP;this._kingWaves=waveCount;this._kingWaveCur=0;
+        // Show king health in log
+        this.log(`👑 Santé du Roi: ${kingHP}/${kingHP} PV — ${waveCount} vagues de monstres à repousser!`,'log-info');
+        // Spawn waves of monsters attacking the king
+        const spawnKingWave=()=>{
+            if(!this._kingEvent||this._kingWaveCur>=this._kingWaves){
+                // Check if king survived
+                if(this._kingHP>0){
+                    // VICTORY — Table Ronde comes to help!
+                    this._kingEvent=false;
+                    this._tableRonde=true;
+                    showBanner('👑 VICTOIRE!','Le Roi est sauvé! La Table Ronde arrive!',5000);
+                    this.log('👑🏆 VICTOIRE! Le Roi est sauvé! Les Chevaliers de la Table Ronde arrivent!','log-event');
+                    chatSay(`👑🏆✨ VICTOIRE ROYALE! Le Roi est sauvé! Les CHEVALIERS DE LA TABLE RONDE se joignent à vous pour la prochaine vague! +100g +50XP pour tous! 🛡⚔`);
+                    // Reward all players
+                    Object.values(this.characters).forEach(c=>{
+                        if(c.alive||true){c.gold+=100;c.xp+=50;c.popup('👑+100g','popup popup-gold');spawnP(c.element,'#d4af37',8)}
+                    });
+                    // Table Ronde allies for next wave
+                    const knights=['🛡 Lancelot','⚔ Gauvain','🗡 Perceval','🏹 Tristan','✨ Merlin'];
+                    knights.forEach(k=>{
+                        this.allies.push({name:k,hp:800+this.wave*50,atk:60+this.wave*10,dur:-1});
+                    });
+                    this.log('🛡 5 Chevaliers de la Table Ronde vous accompagnent! Lancelot, Gauvain, Perceval, Tristan, Merlin!','log-event');
+                    // Drop resources
+                    Object.values(this.characters).forEach(c=>{
+                        const res=Math.floor(30+Math.random()*50);c.gold+=res;
+                        const statBoost=Math.floor(2+Math.random()*3);
+                        c.atk+=statBoost;c.def+=statBoost;c.updateBars();
+                        this.log(`📦 ${c.username} reçoit ${res}g + ${statBoost} ATK/DEF des chevaliers!`,'log-gold');
+                    });
+                }else{
+                    // DEFEAT
+                    this._kingEvent=false;
+                    showBanner('💀 DÉFAITE','Le Roi est tombé...','',3000);
+                    this.log('💀 Le Roi est tombé! Le royaume pleure...','log-dmg');
+                    chatSay(`💀😢 Le Roi est tombé au combat... Le royaume est en deuil. -50g pour tous comme tribut funéraire... 👑`);
+                    Object.values(this.characters).forEach(c=>{c.gold=Math.max(0,c.gold-50)});
+                }
+                return;
+            }
+            this._kingWaveCur++;
+            const count=4+Math.floor(Math.random()*4)+this._kingWaveCur;
+            const monsters=[];
+            const monsterNames=['👺 Gobelin','💀 Squelette','👹 Orc','🧌 Troll','👻 Spectre','🧛 Vampire','👿 Démon'];
+            for(let i=0;i<count;i++){
+                monsters.push({name:monsterNames[Math.floor(Math.random()*monsterNames.length)],hp:monsterHP+this._kingWaveCur*10,atk:monsterATK+this._kingWaveCur*3});
+            }
+            this.log(`👑 Vague ${this._kingWaveCur}/${this._kingWaves}: ${count} monstres attaquent le Roi!`,'log-event');
+            chatSay(`👑⚔ VAGUE ${this._kingWaveCur}/${this._kingWaves}: ${count} monstres chargent! !attaque !sort !skill pour les repousser! Santé du Roi: ${this._kingHP}/${this._kingMaxHP} 💖`);
+            // Simulate combat — players auto-attack monsters, monsters attack king
+            let remainingMonsters=monsters.length;
+            const players=Object.values(this.characters).filter(c=>c.alive);
+            // Each player kills ~1 monster per tick, monsters deal damage to king
+            const kingCombat=setInterval(()=>{
+                if(!this._kingEvent||remainingMonsters<=0){
+                    clearInterval(kingCombat);
+                    if(this._kingEvent&&this._kingHP>0){
+                        this.log(`👑 Vague ${this._kingWaveCur} repoussée! Roi: ${this._kingHP}/${this._kingMaxHP} PV`,'log-info');
+                        setTimeout(spawnKingWave,5000);
+                    }
+                    return;
+                }
+                // Players damage monsters
+                players.forEach(p=>{
+                    if(remainingMonsters>0&&p.alive){
+                        const dmg=p.atk+Math.floor(Math.random()*5);
+                        monsters[remainingMonsters-1].hp-=dmg;
+                        p.xp+=2;p.totalDmg+=dmg;
+                        if(monsters[remainingMonsters-1].hp<=0){remainingMonsters--;p.gold+=10;p.kills++;p.popup('💀','popup')}
+                    }
+                });
+                // Allies help
+                this.allies.forEach(a=>{if(remainingMonsters>0){monsters[remainingMonsters-1].hp-=a.atk;if(monsters[remainingMonsters-1].hp<=0)remainingMonsters--}});
+                // Remaining monsters damage king
+                const kDmg=Math.min(remainingMonsters,5)*(monsterATK+this._kingWaveCur*2);
+                this._kingHP-=kDmg;
+                if(this._kingHP<=0){
+                    this._kingHP=0;clearInterval(kingCombat);
+                    this._kingWaveCur=this._kingWaves; // Force end
+                    spawnKingWave();
+                }
+            },2000);
+        };
+        // Start first wave after 5 seconds
+        setTimeout(spawnKingWave,5000);
     }
 
     spawnBoss(){
         this._bossDefeating=false;
+        // Clear Table Ronde allies after one boss if they were active
+        if(this._tableRonde){
+            this._tableRonde=false;
+            // Table Ronde allies have dur:-1, they stay for this boss fight then leave
+            setTimeout(()=>{
+                this.allies=this.allies.filter(a=>!['🛡 Lancelot','⚔ Gauvain','🗡 Perceval','🏹 Tristan','✨ Merlin'].includes(a.name));
+                if(this.allies.length===0)this.log('🛡 Les Chevaliers de la Table Ronde repartent vers Camelot...','log-info');
+            },60000);
+        }
         this.bossIdx++;this.wave++;
         // Progressive wave system:
         // Waves 1-4: small monster packs (easy)
@@ -2922,9 +3345,9 @@ class GameManager{
         switch(cmd){
             case 'class':{
                 const cls=(args[0]||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-                if(!cls)return`!class <nom> | Dispo: apprenti, paysan, chat, ecuyer, brigand, herboriste, barde`;
-                if(!CLASS_DATA[cls])return`Classe "${cls}" inconnue! Dispo: apprenti, paysan, chat, ecuyer, brigand, herboriste, barde`;
-                if(CLASS_DATA[cls].tier>0)return`Classes T0 uniquement! Dispo: apprenti, paysan, chat, ecuyer, brigand, herboriste, barde`;
+                if(!cls)return`!class <nom> | Dispo: apprenti, paysan, chat, ecuyer, brigand, herboriste, barde, squelette`;
+                if(!CLASS_DATA[cls])return`Classe "${cls}" inconnue! Dispo: apprenti, paysan, chat, ecuyer, brigand, herboriste, barde, squelette`;
+                if(CLASS_DATA[cls].tier>0)return`Classes T0 uniquement! Dispo: apprenti, paysan, chat, ecuyer, brigand, herboriste, barde, squelette`;
                 return this.addChar(username,cls);
             }
             case 'couleur':{
@@ -2948,10 +3371,22 @@ class GameManager{
                 chatSay(`🎭 @${username} change de look! Design ${d}/3 — Essaye aussi !couleur pour personnaliser! 🎨`);
                 return`🎭 Design ${d} appliqué!`;
             }
+            case 'homme':case 'femme':case 'gender':case 'sexe':{
+                if(!c)return'!class pour rejoindre!';
+                const g=cmd==='femme'?'f':(cmd==='homme'?'m':(args[0]==='f'||args[0]==='femme'?'f':'m'));
+                c.gender=g;c.redraw();
+                spawnP(c.element,'#ff88cc',6);
+                const gName=g==='f'?'Femme ♀':'Homme ♂';
+                c.popup(gName,'popup popup-gold');
+                this.log(`${g==='f'?'♀':'♂'} ${username} → ${gName}`,'log-info');
+                return`${gName} appliqué! (!homme / !femme pour changer)`;
+            }
             case 'attaque':{
                 if(!this.boss||!this.boss.alive)return'Pas de boss!';
                 if(!c||!c.alive)return'KO!';
                 if(c._stunned)return`${username} est étourdi!`;
+                // Activate attack stance (auto-combo on auto-attack ticks)
+                c._stance='attack';
                 const now=Date.now();if(now-c.lastComboTime<6000)c.combo=Math.min(c.combo+1,10);else c.combo=1;c.lastComboTime=now;
                 const comboMult=1+c.combo*0.05;
                 const dmg=c.attack(this.boss,comboMult);
@@ -2968,12 +3403,13 @@ class GameManager{
                     c.updateBars();checkAchievements(c,this);
                     if(!this.boss.alive)this.onBossDefeated();
                 }
-                return null;
+                return`⚔ Mode attaque activé! Auto-combo en cours...`;
             }
             case 'soin':{
                 if(!c||!c.alive)return null;
                 if(c._stunned)return`${username} est étourdi!`;
                 if(!c.useMana(20))return'Pas assez de mana!';
+                c._stance='default';c.combo=0; // Cancel attack stance
                 const h=c.heal(20+c.level*3);if(h>0)this.log(`${username} +${h} PV`,'log-heal');c.xp+=2;return`💚 +${h} PV (${c.hp}/${c.maxHp})`;
             }
             case 'sort':{
@@ -2981,6 +3417,7 @@ class GameManager{
                 if(!c||!c.alive)return'KO!';
                 if(c._stunned)return`${username} est étourdi!`;
                 if(!c.useMana(30))return'Pas assez de mana!';
+                c._stance='default';c.combo=0; // Cancel attack stance
                 const dmg=Math.floor(c.atk*2);const d=this.boss.takeDmg(dmg);c.totalDmg+=d;c.xp+=5;
                 spawnP(c.element,'#aa44ff',6);
                 this.log(`${username} SORT! -${d}`,'log-special');
@@ -2988,13 +3425,16 @@ class GameManager{
                 return null;
             }
             case 'defense':case 'esquive':{
-                if(!c||!c.alive)return null;c.defending=true;spawnP(c.element,'#6688cc',5);this.log(`${username} en défense!`,'log-info');
-                setTimeout(()=>{if(c)c.defending=false},5000);return`🛡 En défense! (5s)`;
+                if(!c||!c.alive)return null;
+                c._stance='default';c.combo=0; // Cancel attack stance
+                c.defending=true;spawnP(c.element,'#6688cc',5);this.log(`${username} en défense!`,'log-info');
+                setTimeout(()=>{if(c)c.defending=false},5000);return`🛡 En défense! (5s) — Attaque auto stoppée`;
             }
             case 'special':{
                 if(!this.boss||!this.boss.alive)return'Pas de boss!';
                 if(!c||!c.alive)return'KO!';
                 if(c._stunned)return`${username} est étourdi!`;
+                c._stance='default';c.combo=0; // Cancel attack stance
                 const r=c.useSpecial(this.boss,Object.values(this.characters));
                 if(r){this.log(r,'log-special');if(this.boss&&!this.boss.alive)this.onBossDefeated()}
                 return r;
@@ -3059,30 +3499,30 @@ class GameManager{
                 const choice=(args[0]||'').toLowerCase();
                 if(!choice)return`Évolutions: ${evos.join(', ')} | !evoluer <classe>`;
                 if(!evos.includes(choice)||!CLASS_DATA[choice])return`Choix invalide! Options: ${evos.join(', ')}`;
-                const oldG=c.gold,oldK=c.kills,oldLvl=c.level,oldXp=c.xp,oldXpN=c.xpNext,oldMul=c.xpMulti;
+                const oldG=c.gold,oldK=c.kills,oldMul=c.xpMulti;
                 // Calculate equip stats to subtract from bonus calc
                 let eqA=0,eqD=0,eqS=0,eqC=0;const oldEquip=c.equipment?{...c.equipment}:{};
                 Object.values(oldEquip).forEach(k=>{if(k&&EQUIPMENT[k]){const s=EQUIPMENT[k].stats;eqA+=s.atk||0;eqD+=s.def||0;eqS+=s.spd||0;eqC+=s.crit||0}});
-                const bonA=c.atk-CLASS_DATA[c.className].atk-eqA,bonD=c.def-CLASS_DATA[c.className].def-eqD;
-                const bonS=c.spd-CLASS_DATA[c.className].spd-eqS,bonC=c.crit-CLASS_DATA[c.className].crit-eqC;
-                const col=c.customColor;
+                const bonA=Math.max(0,c.atk-CLASS_DATA[c.className].atk-eqA),bonD=Math.max(0,c.def-CLASS_DATA[c.className].def-eqD);
+                const bonS=Math.max(0,c.spd-CLASS_DATA[c.className].spd-eqS),bonC=Math.max(0,c.crit-CLASS_DATA[c.className].crit-eqC);
+                const col=c.customColor,oldGender=c.gender,oldMount=c.mount;
                 c.remove();
                 this.characters[username]=new Character(username,choice);
                 const nc=this.characters[username];
-                nc.gold=oldG;nc.kills=oldK;nc.level=oldLvl;nc.xp=oldXp;nc.xpNext=oldXpN;nc.xpMulti=oldMul;
-                nc.atk+=bonA;nc.def+=bonD;nc.spd+=bonS;nc.crit+=bonC;
+                nc.gold=oldG;nc.kills=oldK;nc.level=1;nc.xp=0;nc.xpMulti=oldMul;
+                nc.atk+=Math.floor(bonA*0.3);nc.def+=Math.floor(bonD*0.3);nc.spd+=Math.floor(bonS*0.3);nc.crit+=Math.floor(bonC*0.3);
                 // Re-apply equipment
                 nc.equipment=oldEquip;
                 Object.values(oldEquip).forEach(k=>{if(k&&EQUIPMENT[k]){Object.entries(EQUIPMENT[k].stats).forEach(([st,v])=>{if(st==='maxHp'){nc.maxHp+=v;nc.hp+=v}else if(st==='maxMana'){nc.maxMana+=v;nc.mana+=v}else{nc[st]=(nc[st]||0)+v}})}});
-                nc.customColor=col;nc.redraw();nc.updateBars();nc.updateTierGlow();
+                nc.customColor=col;nc.gender=oldGender;nc.mount=oldMount;nc.redraw();nc.updateBars();nc.updateTierGlow();
                 spawnP(nc.element,'#d4af37',20);spawnP(nc.element,'#ffffff',15);
                 nc.element.classList.remove('lvl-up-glow');void nc.element.offsetWidth;nc.element.classList.add('lvl-up-glow');
                 setTimeout(()=>nc.element.classList.remove('lvl-up-glow'),1200);
                 critFlash();screenShake(false);
                 showBanner(`⬆ ÉVOLUTION!`,`${username} → ${CLASS_DATA[choice].name}`,3000);
                 this.log(`⬆ ${username} évolue → ${CLASS_DATA[choice].name}!`,'log-special');
-                chatSay(`🔥🌟 ÉVOLUTION LÉGENDAIRE! @${username} se transforme en ${CLASS_DATA[choice].name} (T${CLASS_DATA[choice].tier})! ⚔${nc.atk} 🛡${nc.def} ❤${nc.maxHp} — La puissance grandit! 💪`);
-                return`${username} → ${CLASS_DATA[choice].name}!`;
+                chatSay(`🔥🌟 ÉVOLUTION! @${username} se transforme en ${CLASS_DATA[choice].name} (T${CLASS_DATA[choice].tier})! Niveau reset → 1! ⚔${nc.atk} 🛡${nc.def} ❤${nc.maxHp} — Nouveau départ plus puissant! 💪`);
+                return`${username} → ${CLASS_DATA[choice].name}! Nv.1 — 30% bonus stats conservés!`;
             }
             case 'reclass':{
                 // Change class - reset level but x2 XP
@@ -3090,8 +3530,8 @@ class GameManager{
                 const cls=(args[0]||'').toLowerCase();
                 if(!cls)return`!reclass <classe> - Reset niv.0 mais x2 XP!`;
                 if(!CLASS_DATA[cls])return`Classe inconnue!`;
-                if(CLASS_DATA[cls].tier>0)return`Reclass vers apprenti, paysan, chat ou ecuyer!`;
-                const oldG=c.gold,oldK=c.kills,oldMul=c.xpMulti,col=c.customColor;
+                if(CLASS_DATA[cls].tier>0)return`Reclass T0 seulement: apprenti/paysan/chat/ecuyer/brigand/herboriste/barde/squelette`;
+                const oldG=c.gold,oldK=c.kills,oldMul=c.xpMulti,col=c.customColor,oldGender=c.gender,oldMount=c.mount;
                 const oldEquip=c.equipment?{...c.equipment}:{};const oldCC=c.classChanges||0;
                 c.remove();
                 this.characters[username]=new Character(username,cls);
@@ -3100,7 +3540,7 @@ class GameManager{
                 // Re-apply equipment
                 nc.equipment=oldEquip;
                 Object.values(oldEquip).forEach(k=>{if(k&&EQUIPMENT[k]){Object.entries(EQUIPMENT[k].stats).forEach(([st,v])=>{if(st==='maxHp'){nc.maxHp+=v;nc.hp+=v}else if(st==='maxMana'){nc.maxMana+=v;nc.mana+=v}else{nc[st]=(nc[st]||0)+v}})}});
-                nc.customColor=col;nc.redraw();nc.updateBars();nc.updateTierGlow();
+                nc.customColor=col;nc.gender=oldGender;nc.mount=oldMount;nc.redraw();nc.updateBars();nc.updateTierGlow();
                 spawnP(nc.element,'#44aaff',15);
                 nc.element.classList.remove('lvl-up-glow');void nc.element.offsetWidth;nc.element.classList.add('lvl-up-glow');
                 setTimeout(()=>nc.element.classList.remove('lvl-up-glow'),1200);
@@ -3114,12 +3554,12 @@ class GameManager{
                 const cd=CLASS_DATA[c.className];
                 const tier=cd.tier||0;
                 // Class-specific skills based on base type
-                const sprMap={apprenti:'app',paysan:'pay',chat:'rog',ecuyer:'war',brigand:'rog',herboriste:'dru',barde:'mag',guerrier:'war',mage:'mag',archer:'arc',pretre:'cle',voleur:'rog',druide:'dru',paladin:'pal',
-                    berserker:'war',chevalier:'war',champion:'war',gladiateur:'war',archimage:'mag',necromancien:'mag',elementaliste:'mag',liche:'mag',sorcier:'mag',
-                    sniper:'arc',ranger:'arc',tireur_elite:'arc',maitre_chasse:'arc',chasseur:'arc',saint:'cle',oracle:'cle',archange:'cle',sage:'cle',templier:'cle',
-                    assassin:'rog',ninja:'rog',maitre_ombre:'rog',shinobi:'rog',pirate:'rog',gardien:'dru',ancien:'dru',chamane:'dru',
+                const sprMap={apprenti:'app',paysan:'pay',chat:'rog',ecuyer:'war',brigand:'rog',herboriste:'dru',barde:'mag',squelette:'rog',guerrier:'war',mage:'mag',archer:'arc',pretre:'cle',voleur:'rog',druide:'dru',paladin:'pal',
+                    berserker:'war',chevalier:'war',champion:'war',gladiateur:'war',warlord:'war',archimage:'mag',necromancien:'mag',elementaliste:'mag',liche:'mag',sorcier:'mag',enchanteur:'mag',
+                    sniper:'arc',ranger:'arc',tireur_elite:'arc',maitre_chasse:'arc',chasseur:'arc',artilleur:'arc',saint:'cle',oracle:'cle',archange:'cle',sage:'cle',templier:'cle',inquisiteur:'pal',
+                    assassin:'rog',ninja:'rog',maitre_ombre:'rog',shinobi:'rog',pirate:'rog',phantom:'rog',gardien:'dru',ancien:'dru',chamane:'dru',avatar_nature:'dru',abomination:'war',
                     dragon_form:'dru',dragon_ancien:'dru',dragon:'dru',
-                    dieu_guerre:'war',archonte:'mag',oeil_faucon:'arc',divin:'cle',spectre:'rog',titan_nature:'dru'};
+                    dieu_guerre:'war',empereur:'war',archonte:'mag',oeil_faucon:'arc',arme_divine:'arc',divin:'cle',eternel:'cle',spectre:'rog',neant:'rog',titan_nature:'dru',phenix:'dru'};
                 const bType=sprMap[c.className]||'war';
                 const skills={
                     war:{name:'Cri de Guerre',cost:25,fn:()=>{
@@ -3176,7 +3616,7 @@ class GameManager{
                 this.log(result,'log-special');
                 return result;
             }
-            case 'help':case 'commandes':{
+            case 'help':case 'commandes':case 'aide':{
                 const helpLines=[];
                 helpLines.push({t:'━━ COMMANDES ━━',c:'#9a8340'});
                 helpLines.push({t:'COMBAT: !attaque · !soin · !sort · !skill',c:'#cc6644'});
@@ -3185,14 +3625,16 @@ class GameManager{
                 helpLines.push({t:'EQUIP: !equip (voir) · !marche noir',c:'#5588cc'});
                 helpLines.push({t:'INFO: !stats · !classement · !info [classe] · !recap',c:'#5588cc'});
                 helpLines.push({t:'PROG: !evoluer [classe] · !reclass · !succes',c:'#55aa55'});
-                helpLines.push({t:'SOCIAL: !don <or> · !duel <pseudo> · !combat (arène)',c:'#cc5588'});
-                helpLines.push({t:'PERSO: !design 1/2/3 (look) · !couleur [nom/hex]',c:'#8855cc'});
+                helpLines.push({t:'SOCIAL: !don · !duel · !combat · !highfive <pseudo>',c:'#cc5588'});
+                helpLines.push({t:'DÉTENTE: !taverne · !manger · !repos',c:'#cc8844'});
+                helpLines.push({t:'MINI-JEU: !chercher · !pecher · !courir · !repondre',c:'#44aacc'});
+                helpLines.push({t:'PERSO: !design 1/2/3 · !homme/!femme · !couleur [nom/hex]',c:'#8855cc'});
                 helpLines.push({t:'EVENT: !do / !notdo · !buffs',c:'#8855cc'});
                 if(c){const cd=CLASS_DATA[c.className];if(cd.evolutions&&cd.evolutions.length)helpLines.push({t:`Evo: !evoluer ${cd.evolutions.join('/')} (Nv.${cd.evoLevel})`,c:'#44cc44'})}
-                else{helpLines.push({t:'REJOINDRE: !class apprenti/paysan/chat/ecuyer/brigand/herboriste/barde',c:'#44cc44'})}
+                else{helpLines.push({t:'REJOINDRE: !class apprenti/paysan/chat/ecuyer/brigand/herboriste/barde/squelette',c:'#44cc44'})}
                 helpLines.push({t:'Combo x3+ = bonus · Revive auto 30s · Roulette 20min',c:'#555'});
-                showSB(helpLines,8000);
-                return`📜 Commandes: !attaque !soin !sort !skill !defense !special !shop !stats !evoluer !reclass !duel !don !couleur`;
+                showSB(helpLines,10000);
+                return`📜 !attaque !soin !sort !skill !defense !special !shop !stats !evoluer !reclass !duel !highfive !taverne !manger !help`;
             }
             case 'succes':case 'achievements':{
                 if(!c)return'!class pour rejoindre!';
@@ -3254,6 +3696,8 @@ class GameManager{
                 spawnP(winner.element,'#d4af37',12);spawnP(loser.element,'#ff4444',6);
                 winner.popup('VICTOIRE!','popup popup-crit');loser.popup('DÉFAITE','popup popup-dmg');
                 screenShake(false);critFlash();
+                _arenaScene=true;drawBG(); // Duel arena scene
+                setTimeout(()=>{_arenaScene=false;drawBG()},4000);
                 showBanner('⚔ DUEL!',`${winner.username} vs ${loser.username}`,2500);
                 this.log(`⚔ DUEL: ${winner.username} bat ${loser.username}! (+${prize}g)`,'log-special');
                 const duelLines=[
@@ -3268,6 +3712,53 @@ class GameManager{
                 // Join arena if open
                 if(!this._arena||this._arena.phase!=='inscription')return'Pas d\'arène en cours! Le streamer peut lancer !arene';
                 return this.joinArena(username);
+            }
+            case 'taverne':case 'bar':case 'boire':{
+                if(!c)return'!class pour rejoindre!';
+                const dk=(args[0]||'').toLowerCase();
+                if(!dk){
+                    const menu=Object.entries(TAVERN_DRINKS).map(([k,d])=>`${d.emoji}${d.name}(${d.cost}g)`).join(' ');
+                    return`🍺 TAVERNE: ${menu} | !taverne <nom>`;
+                }
+                return buyDrink(c,dk,this);
+            }
+            case 'manger':case 'eat':case 'repos':{
+                if(!c||!c.alive)return'!class pour rejoindre!';
+                if(c._lastMeal&&Date.now()-c._lastMeal<60000)return'🍖 Tu as déjà mangé récemment! Attends 1min';
+                c._lastMeal=Date.now();
+                const foods=['🍖 Gigot de Sanglier','🍗 Poulet Rôti','🧀 Fromage Elfique','🥧 Tourte du Paysan','🍞 Pain Nain','🥩 Steak de Dragon','🍎 Pomme Enchantée','🍲 Ragoût du Château'];
+                const food=foods[Math.floor(Math.random()*foods.length)];
+                const heal=Math.floor(15+Math.random()*25);
+                c.heal(heal);c.gold-=Math.min(c.gold,5);
+                c.popup(food.split(' ')[0],'popup popup-heal');spawnP(c.element,'#ffaa44',4);
+                const emote=document.createElement('div');emote.className='idle-emote';emote.textContent=food.split(' ')[0];c.element.appendChild(emote);setTimeout(()=>emote.remove(),2000);
+                this.log(`${food} pour ${username}! +${heal} PV`,'log-heal');
+                return`${food}! +${heal} PV (-5g) Miam!`;
+            }
+            case 'highfive':case 'hf':case 'salut':{
+                if(!c||!c.alive)return'!class pour rejoindre!';
+                const target=(args[0]||'').toLowerCase();
+                if(!target)return'!highfive <pseudo> — Tape dans la main!';
+                const tc=Object.values(this.characters).find(t=>t.username.toLowerCase()===target);
+                if(!tc||!tc.alive)return`${target} indisponible!`;
+                if(tc===c)return'Tu ne peux pas te high-five toi-même! 😂';
+                // Both get small buff
+                c.atk+=1;tc.atk+=1;c.def+=1;tc.def+=1;
+                setTimeout(()=>{c.atk-=1;tc.atk-=1;c.def-=1;tc.def-=1;c.updateBars();tc.updateBars()},120000);
+                spawnP(c.element,'#ffcc00',5);spawnP(tc.element,'#ffcc00',5);
+                c.popup('🤝','popup popup-gold');tc.popup('🤝','popup popup-gold');
+                const emoteC=document.createElement('div');emoteC.className='idle-emote';emoteC.textContent='✋';c.element.appendChild(emoteC);setTimeout(()=>emoteC.remove(),1500);
+                const emoteT=document.createElement('div');emoteT.className='idle-emote';emoteT.textContent='✋';tc.element.appendChild(emoteT);setTimeout(()=>emoteT.remove(),1500);
+                this.log(`🤝 ${username} et ${tc.username} se tapent dans la main! +1 ATK/DEF 2min`,'log-info');
+                chatSay(`🤝✨ @${username} et @${tc.username} HIGH FIVE! L'amitié donne de la force! +1 ATK/DEF 2min! 💪`);
+                return null;
+            }
+            case 'chercher':case 'pecher':case 'courir':case 'repondre':{
+                if(!c||!c.alive)return'!class pour rejoindre!';
+                if(!this._mg)return'Pas de mini-jeu en cours!';
+                const mg=MINI_GAMES.find(m=>m.cmd===cmd);
+                if(!mg||mg.id!==this._mg.id)return`Mini-jeu actuel: ${this._mgName}! Utilisez !${this._mg.cmd}`;
+                return mg.onCmd(this,username,args);
             }
             case 'info':{
                 const cls=(args[0]||'').toLowerCase();
@@ -3414,23 +3905,28 @@ class GameManager{
         this.allies=this.allies.filter(a=>{if(a.dur===-1)return true;a.dur-=15000;return a.dur>0});
         // Event chance removed: streamer triggers manually via panel
         // Boss countdown with cinematic warning
-        let cd=900;
-        this.log('⏳ Prochaine vague dans 15 min...','log-info');
-        chatSay(`⏳ Le calme avant la tempête... 15 min de répit! Forgez vos armes (!shop), évoluez (!evoluer) ou défiez-vous (!duel)! ⚒🔥`);
+        let cd=1800;
+        this.log('⏳ Prochaine vague dans 30 min... Profitez du répit!','log-info');
+        chatSay(`⏳ Le calme avant la tempête... 30 min de répit! 🍺 !taverne pour boire | !shop pour forger | !evoluer pour évoluer | !duel pour combattre! 🎮`);
+        // Trigger mini-game after 2 min
+        setTimeout(()=>this.startMiniGame(),120000);
         const cdI=setInterval(()=>{cd--;
-            if(cd===600)chatSay(`⏳ Les éclaireurs rapportent un mouvement ennemi... 10 min avant l'attaque! Préparez-vous: !shop !evoluer 🛒`);
-            if(cd===300){chatSay(`⏳🔥 La terre gronde au loin... 5 MINUTES! Les forgerons martèlent (!shop), les sages méditent (!evoluer)... Le boss APPROCHE! ⚔`);this.log('⏳ Boss dans 5 min...','log-info')}
-            if(cd===120)chatSay(`⏳⚠ 2 MINUTES! Les sentinelles sonnent l'alarme! Aux remparts! Derniers soins (!soin) et dernières potions (!shop)! 🔥`);
-            if(cd===60){showBanner('⏳ BOSS APPROCHE','1 minute!',2000);chatSay(`⚠🔥 1 MINUTE! Le sol tremble sous ses pas! Héros, dégainez vos épées! Le château compte sur VOUS! ⚔💪`)}
-            if(cd===30){showBanner('⏳ BOSS IMMINENT','30 secondes!',1500);chatSay(`⚠💀 30 SECONDES! On entend son RUGISSEMENT! Formez les rangs! !attaque !sort !skill à son arrivée! 🔥`)}
-            if(cd===10){showBanner('⏳ BOSS IMMINENT','10 secondes!',1500);chatSay(`⚠💀🔥 10 SECONDES!!! LES PORTES CRAQUENT!!! VOUS ÊTES LE DERNIER REMPART!!! ⚔⚔⚔`)}
+            if(cd===1500)chatSay(`⏳ 25 min... Le village est calme. Profitez de la 🍺 taverne (!taverne) et des mini-jeux! 🎮`);
+            if(cd===1200)chatSay(`⏳ 20 min avant l'attaque! Forgerons, à vos enclumes! !shop !evoluer 🛒`);
+            if(cd===900)chatSay(`⏳ 15 min! Les éclaireurs rapportent un mouvement ennemi... Préparez-vous: !shop !evoluer !taverne 🛒`);
+            if(cd===600)chatSay(`⏳ 10 min! La terre gronde au loin... Derniers achats (!shop), dernières bières (!taverne)! ⚔`);
+            if(cd===300){chatSay(`⏳🔥 5 MINUTES! Les forgerons martèlent (!shop), les sages méditent (!evoluer)... Le boss APPROCHE! ⚔`);this.log('⏳ Boss dans 5 min...','log-info')}
+            if(cd===120)chatSay(`⏳⚠ 2 MINUTES! Les sentinelles sonnent l'alarme! Aux remparts! Derniers soins (!soin)! 🔥`);
+            if(cd===60){showBanner('⏳ BOSS APPROCHE','1 minute!',2000);chatSay(`⚠🔥 1 MINUTE! Le sol tremble! Héros, dégainez vos épées! ⚔💪`)}
+            if(cd===30){showBanner('⏳ BOSS IMMINENT','30 secondes!',1500);chatSay(`⚠💀 30 SECONDES! Formez les rangs! !attaque !sort !skill à son arrivée! 🔥`)}
+            if(cd===10){showBanner('⏳ BOSS IMMINENT','10 secondes!',1500);chatSay(`⚠💀🔥 10 SECONDES!!! LES PORTES CRAQUENT!!! ⚔⚔⚔`)}
             if(cd<=3&&cd>0){
                 showBanner(`⚠ ${cd} ⚠`,'',800);screenShake(false);bossWarningFlash();
                 this.log(`⚠ Boss dans ${cd}s!`,'log-dmg');
             }
             if(cd<=0)clearInterval(cdI);
         },1000);
-        setTimeout(()=>this.spawnBoss(),902000);
+        setTimeout(()=>this.spawnBoss(),1802000);
         // Reset totalDmg/totalHeal for next boss + clear defeat flag after delay
         setTimeout(()=>{Object.values(this.characters).forEach(c=>{c.totalDmg=0;c.totalHeal=0});this._bossDefeating=false},2000);
     }
@@ -3712,6 +4208,7 @@ class GameManager{
         chatSay(scenarios[Math.floor(Math.random()*scenarios.length)]);
         showBanner('🏟 ARÈNE OUVERTE!',`Tapez !combat (${maxPlayers} places)`,4000);
         screenShake(false);
+        _arenaScene=true;drawBG(); // Switch to arena scene
         this.log(`🏟 ARÈNE: inscriptions ouvertes (max ${maxPlayers})!`,'log-event');
         // 60s inscription timer
         let cd=60;
@@ -3754,7 +4251,7 @@ class GameManager{
             // Not enough - refund
             players.forEach(p=>{const c=this.characters[p.username];if(c){c.gold+=p.mise;c.popup(`+${p.mise}g`,'popup popup-gold')}});
             chatSay(`🏟 Arène annulée — pas assez de combattants! Or remboursé!`);
-            this._arena=null;return;
+            this._arena=null;_arenaScene=false;drawBG();return;
         }
         this._arena.phase='combat';
         const bank=this._arena.bank;
@@ -3818,6 +4315,8 @@ class GameManager{
         this.log(`🏆 CHAMPION: ${cc.username} gagne ${share}g!`,'log-gold');
         cc.checkLevelUp();
         this._arena=null;
+        // Return to normal scene after 5s
+        setTimeout(()=>{_arenaScene=false;drawBG()},5000);
     }
 
     log(text,cls){this.combatLog.unshift({text,cls,time:Date.now()});if(this.combatLog.length>25)this.combatLog.pop();this.renderLog()}
@@ -3839,6 +4338,25 @@ setInterval(()=>{
         setTimeout(()=>{sv.style.opacity='0';setTimeout(()=>sv.remove(),300)},2000);
     }
 },60000);
+
+// ── PERIODIC CHAT REMINDER: every 10 minutes ──
+const CHAT_REMINDERS=[
+    `🎮 COMMANDES: !class (rejoindre) · !attaque · !sort · !skill · !shop · !evoluer · !taverne · !help 📜`,
+    `⚔ COMBATTEZ: !attaque !soin !sort !skill !defense !special — Combo x3+ = BONUS! 🔥`,
+    `🍺 DÉTENTE: !taverne (boissons buff) · !manger (PV) · !highfive <pseudo> (amitié!) 🤝`,
+    `🛒 PROGRESSION: !shop (équipement) · !evoluer (évolution!) · !stats · !classement · !succes 📈`,
+    `🎨 PERSONNALISATION: !design 1/2/3 · !couleur <nom/hex> · !homme/!femme · !class 🖌`,
+    `⚔ ARÈNE: !duel <pseudo> (1v1) · !combat (arène PvP) · Gagnez or et gloire! 🏆`,
+    `🎲 ÉVÉNEMENTS: Quand un event apparaît, votez !do ou !notdo — Attention aux conséquences! 👀`,
+    `📖 CLASSES T0: apprenti · paysan · chat · ecuyer · brigand · herboriste · barde · squelette — !class <nom> pour commencer! 🌟`
+];
+let _reminderIdx=0;
+setInterval(()=>{
+    if(Object.keys(game.characters).length>0){
+        chatSay(CHAT_REMINDERS[_reminderIdx%CHAT_REMINDERS.length]);
+        _reminderIdx++;
+    }
+},600000); // Every 10 minutes
 
 // ── ROULETTE SYSTEM: random item every 20 minutes ──
 const ROULETTE_POOL=[
@@ -3926,11 +4444,22 @@ setInterval(()=>{
             game.log(`${c.username} revient au combat! (30% PV)`,'log-heal');c._deathTime=null;
             return;
         }
-        if(c.alive&&Math.random()<.3){
-            const d=c.attack(game.boss);
-            if(d>0){
-                spawnP(c.element,'#ff6644',3);
-                if(!game.boss.alive)game.onBossDefeated();
+        if(c.alive){
+            // Attack stance = always attack with combo. Default = 30% chance basic attack
+            if(c._stance==='attack'){
+                // Auto-combo: increment combo on each tick
+                const tn=Date.now();if(tn-c.lastComboTime<8000)c.combo=Math.min(c.combo+1,10);else c.combo=1;c.lastComboTime=tn;
+                const cm=1+c.combo*0.05;
+                const d=c.attack(game.boss,cm);
+                if(d>0){
+                    spawnP(c.element,c.combo>=5?'#ffaa00':'#ff6644',c.combo>=3?c.combo:3);
+                    if(c.combo>=10){c.combo=0;c.popup('💥 FINISHER!','popup popup-crit');
+                        const bonus=Math.floor(c.atk*2);game.boss&&game.boss.alive&&game.boss.takeDmg(bonus);c.totalDmg+=bonus}
+                    if(!game.boss.alive)game.onBossDefeated();
+                }
+            }else if(Math.random()<.3){
+                const d=c.attack(game.boss);
+                if(d>0){spawnP(c.element,'#ff6644',3);if(!game.boss.alive)game.onBossDefeated()}
             }
         }
     });
@@ -4117,7 +4646,7 @@ function initTwitch(){
         if(self)return;const u=tags['display-name']||tags.username;
         const m=msg.trim().toLowerCase();if(!m.startsWith('!'))return;
         const parts=m.split(' '),cmd=parts[0].substring(1),args=parts.slice(1);
-        const valid=['class','attaque','soin','sort','defense','esquive','special','stats','couleur','design','look','style','shop','marche','evolution','evoluer','reclass','do','notdo','skill','help','commandes','succes','achievements','classement','top','leaderboard','don','give','duel','combat','info','buffs','recap','equip','equipement'];
+        const valid=['class','attaque','soin','sort','defense','esquive','special','stats','couleur','design','look','style','shop','marche','evolution','evoluer','reclass','do','notdo','skill','help','commandes','succes','achievements','classement','top','leaderboard','don','give','duel','combat','info','buffs','recap','equip','equipement','homme','femme','gender','sexe'];
         if(valid.includes(cmd)){console.log(`CMD: ${u} !${cmd} ${args.join(' ')}`);const r=game.processCmd(u,cmd,args);if(r&&CONFIG.botToken)chatSay(`@${u} ${r}`)}
         // Streamer-only commands (broadcaster or mod)
         const isBroadcaster=tags.badges&&(tags.badges.broadcaster||tags.badges.moderator);
