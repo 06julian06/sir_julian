@@ -261,6 +261,7 @@ canvas{image-rendering:pixelated}
 <div class="sp-section">
 <div class="sp-label">EVENTS</div>
 <button class="sp-btn purple" onclick="game.triggerEvent()">🎲 EVENT</button>
+<button class="sp-btn" style="background:#8b0000;border-color:#cc3333" onclick="game.startArena(8)">🏟 ARÈNE</button>
 <button class="sp-btn" onclick="game.blackMarketOpen=!game.blackMarketOpen;game.log(game.blackMarketOpen?'☠ MARCHÉ NOIR OUVERT!':'Marché Noir fermé','log-event')">☠ MARCHÉ</button>
 </div>
 <div class="sp-section">
@@ -2730,7 +2731,14 @@ class GameManager{
             Object.values(this.characters).forEach(c=>{c.totalDmg=0;c.totalHeal=0});
             const modInfo=mod?` [${mod.emoji} ${mod.name}]`:'';
             this.log(`💀 MEGA BOSS! ${this.boss.name}${modInfo} (${this.boss.maxHp} PV)`,'log-special');
-            chatSay(`💀🔥 ALERTE MEGA BOSS! Vague ${this.wave} — ${this.boss.name} débarque avec ${this.boss.maxHp} PV! Tous ensemble ou vous mourrez! !attaque !sort !skill !special 💀⚔`);
+            const megaScenarios=[
+                `💀🔥 LES MURS TREMBLENT! ${this.boss.name} défonce les portes du château! Vous êtes le DERNIER REMPART! ${this.boss.maxHp} PV — Tous ensemble ou le royaume tombe! !attaque !sort !skill ⚔`,
+                `💀🔥 LES TÉNÈBRES S'ABATTENT! ${this.boss.name} émerge des profondeurs avec ${this.boss.maxHp} PV! Héros, c'est MAINTENANT ou JAMAIS! !attaque !sort !skill ⚔`,
+                `💀🔥 ALERTE MAXIMALE! ${this.boss.name} marche sur la citadelle! ${this.boss.maxHp} PV de pure TERREUR! Défendez le trône ou périssez! !attaque !sort !skill ⚔`,
+                `💀🔥 LE SOL TREMBLE! ${this.boss.name} arrive avec ${this.boss.maxHp} PV! Les légendes parlaient de ce jour... Êtes-vous prêts?! !attaque !sort !skill ⚔`,
+                `💀🔥 L'APOCALYPSE FRAPPE! ${this.boss.name} (${this.boss.maxHp} PV) détruit tout sur son passage! Seuls les plus braves survivront! !attaque !sort !skill ⚔`
+            ];
+            chatSay(megaScenarios[Math.floor(Math.random()*megaScenarios.length)]);
             bossIntroOverlay(this.boss.name,this.boss.maxHp,this.wave,mod,false);
             showBanner(`💀 VAGUE ${this.wave} - MEGA BOSS! 💀`,`${this.boss.name} - ${this.boss.maxHp} PV`,5000);
             screenShake(true);
@@ -2747,7 +2755,13 @@ class GameManager{
             Object.values(this.characters).forEach(c=>{c.totalDmg=0;c.totalHeal=0});
             const modInfo=mod?` [${mod.emoji} ${mod.name}]`:'';
             this.log(`⚔ Mini-Boss! ${this.boss.name}${modInfo} (${this.boss.maxHp} PV)`,'log-special');
-            chatSay(`⚔💥 MINI-BOSS Vague ${this.wave}! ${this.boss.name} attaque! Montrez-lui qui domine! !attaque !sort !skill 🔥`);
+            const miniScenarios=[
+                `⚔💥 Un éclaireur ennemi! ${this.boss.name} teste vos défenses! Repoussez-le avant que l'armée suive! !attaque !sort !skill 🔥`,
+                `⚔💥 Les gardes crient: "${this.boss.name} à la porte nord!" Courez aux remparts! !attaque !sort !skill 🔥`,
+                `⚔💥 ${this.boss.name} surgit de la forêt sombre! Les villageois fuient! Protégez-les! !attaque !sort !skill 🔥`,
+                `⚔💥 Une ombre se dessine... ${this.boss.name} cherche la bagarre! Montrez-lui qui défend ces terres! !attaque !sort !skill 🔥`
+            ];
+            chatSay(miniScenarios[Math.floor(Math.random()*miniScenarios.length)]);
             bossIntroOverlay(this.boss.name,this.boss.maxHp,this.wave,mod,false);
             showBanner(`⚔ VAGUE ${this.wave} - MINI-BOSS ⚔`,`${this.boss.name} - ${this.boss.maxHp} PV`,3000);
         } else if(Math.random()<0.15&&this.wave>10){
@@ -3171,7 +3185,7 @@ class GameManager{
                 helpLines.push({t:'EQUIP: !equip (voir) · !marche noir',c:'#5588cc'});
                 helpLines.push({t:'INFO: !stats · !classement · !info [classe] · !recap',c:'#5588cc'});
                 helpLines.push({t:'PROG: !evoluer [classe] · !reclass · !succes',c:'#55aa55'});
-                helpLines.push({t:'SOCIAL: !don <pseudo> <or> · !duel <pseudo>',c:'#cc5588'});
+                helpLines.push({t:'SOCIAL: !don <or> · !duel <pseudo> · !combat (arène)',c:'#cc5588'});
                 helpLines.push({t:'PERSO: !design 1/2/3 (look) · !couleur [nom/hex]',c:'#8855cc'});
                 helpLines.push({t:'EVENT: !do / !notdo · !buffs',c:'#8855cc'});
                 if(c){const cd=CLASS_DATA[c.className];if(cd.evolutions&&cd.evolutions.length)helpLines.push({t:`Evo: !evoluer ${cd.evolutions.join('/')} (Nv.${cd.evoLevel})`,c:'#44cc44'})}
@@ -3228,7 +3242,7 @@ class GameManager{
             case 'duel':{
                 if(!c||!c.alive)return'KO!';
                 const target=(args[0]||'').toLowerCase();
-                if(!target)return'!duel <pseudo> - Défi PvP amical!';
+                if(!target)return'!duel <pseudo> — Défi PvP! Le perdant donne de l\'or au gagnant!';
                 const tc=Object.values(this.characters).find(t=>t.username.toLowerCase()===target);
                 if(!tc||!tc.alive)return`${target} indisponible!`;
                 if(tc===c)return'Tu ne peux pas te défier!';
@@ -3242,7 +3256,18 @@ class GameManager{
                 screenShake(false);critFlash();
                 showBanner('⚔ DUEL!',`${winner.username} vs ${loser.username}`,2500);
                 this.log(`⚔ DUEL: ${winner.username} bat ${loser.username}! (+${prize}g)`,'log-special');
-                return`⚔ ${winner.username} gagne le duel contre ${loser.username}! (+${prize}g)`;
+                const duelLines=[
+                    `🏆⚔ @${winner.username} ÉCRASE @${loser.username} dans la poussière! +${prize}g pillés! "${winner.username} est le plus fort!" crie la foule! 💪🔥`,
+                    `🏆⚔ Le sang coule! @${winner.username} triomphe de @${loser.username}! ${prize}g arrachés des mains du vaincu! Qui sera le prochain?! 💪🔥`,
+                    `🏆⚔ HUMILIATION! @${loser.username} tombe! @${winner.username} récupère ${prize}g! La légende grandit! !duel pour le défier! 💪🔥`
+                ];
+                chatSay(duelLines[Math.floor(Math.random()*duelLines.length)]);
+                return null;
+            }
+            case 'combat':{
+                // Join arena if open
+                if(!this._arena||this._arena.phase!=='inscription')return'Pas d\'arène en cours! Le streamer peut lancer !arene';
+                return this.joinArena(username);
             }
             case 'info':{
                 const cls=(args[0]||'').toLowerCase();
@@ -3391,14 +3416,14 @@ class GameManager{
         // Boss countdown with cinematic warning
         let cd=900;
         this.log('⏳ Prochaine vague dans 15 min...','log-info');
-        chatSay(`⏳ Prochaine vague dans 15 min! Profitez-en: !shop pour s'équiper, !evoluer pour évoluer! 🛒⚒`);
+        chatSay(`⏳ Le calme avant la tempête... 15 min de répit! Forgez vos armes (!shop), évoluez (!evoluer) ou défiez-vous (!duel)! ⚒🔥`);
         const cdI=setInterval(()=>{cd--;
-            if(cd===600)chatSay(`⏳ Prochaine vague dans 10 min! !shop pour s'armer, !evoluer pour évoluer! 🛒`);
-            if(cd===300){chatSay(`⏳🔥 5 MINUTES avant le boss! Équipez-vous: !shop | Évoluez: !evoluer | Préparez-vous au COMBAT! ⚔`);this.log('⏳ Boss dans 5 min...','log-info')}
-            if(cd===120)chatSay(`⏳⚠ 2 MINUTES! Le boss approche! Derniers achats: !shop | Soignez-vous: !soin 🔥`);
-            if(cd===60){showBanner('⏳ BOSS APPROCHE','1 minute!',2000);chatSay(`⚠🔥 BOSS dans 1 MINUTE! Dernière chance de !shop ou !soin! Préparez vos armes! ⚔💪`)}
-            if(cd===30){showBanner('⏳ BOSS IMMINENT','30 secondes!',1500);chatSay(`⚠💀 30 SECONDES! Le boss arrive!! !attaque !sort !skill dès qu'il spawn! 🔥`)}
-            if(cd===10){showBanner('⏳ BOSS IMMINENT','10 secondes!',1500);chatSay(`⚠💀🔥 10 SECONDES!!! LE BOSS ARRIVE!!! PRÊTS?! ⚔⚔⚔`)}
+            if(cd===600)chatSay(`⏳ Les éclaireurs rapportent un mouvement ennemi... 10 min avant l'attaque! Préparez-vous: !shop !evoluer 🛒`);
+            if(cd===300){chatSay(`⏳🔥 La terre gronde au loin... 5 MINUTES! Les forgerons martèlent (!shop), les sages méditent (!evoluer)... Le boss APPROCHE! ⚔`);this.log('⏳ Boss dans 5 min...','log-info')}
+            if(cd===120)chatSay(`⏳⚠ 2 MINUTES! Les sentinelles sonnent l'alarme! Aux remparts! Derniers soins (!soin) et dernières potions (!shop)! 🔥`);
+            if(cd===60){showBanner('⏳ BOSS APPROCHE','1 minute!',2000);chatSay(`⚠🔥 1 MINUTE! Le sol tremble sous ses pas! Héros, dégainez vos épées! Le château compte sur VOUS! ⚔💪`)}
+            if(cd===30){showBanner('⏳ BOSS IMMINENT','30 secondes!',1500);chatSay(`⚠💀 30 SECONDES! On entend son RUGISSEMENT! Formez les rangs! !attaque !sort !skill à son arrivée! 🔥`)}
+            if(cd===10){showBanner('⏳ BOSS IMMINENT','10 secondes!',1500);chatSay(`⚠💀🔥 10 SECONDES!!! LES PORTES CRAQUENT!!! VOUS ÊTES LE DERNIER REMPART!!! ⚔⚔⚔`)}
             if(cd<=3&&cd>0){
                 showBanner(`⚠ ${cd} ⚠`,'',800);screenShake(false);bossWarningFlash();
                 this.log(`⚠ Boss dans ${cd}s!`,'log-dmg');
@@ -3512,7 +3537,12 @@ class GameManager{
         screenShake(false);bossWarningFlash();
         showBanner('💎 MONSTRE BUTIN!',`${lm.name} - Tuez-le pour du loot!`,3000);
         this.log(`💎 ${lm.name} apparaît! HP: ${totalHp} - Loot garanti!`,'log-event');
-        chatSay(`💎⚔ ALERTE MONSTRE BUTIN: ${lm.name} apparaît! Du loot ÉPIQUE vous attend! Tous ensemble: !attaque !sort !skill — Foncez! 🔥`);
+                const lootScenarios=[
+            `💎⚔ Un coffre ancien brille dans les ténèbres... ${lm.name} le garde! Tuez-le pour le trésor! !attaque !sort !skill 🔥`,
+            `💎⚔ Les forgerons ont besoin de matériaux RARES! ${lm.name} en possède! Emparez-vous de son butin! !attaque !sort !skill 🔥`,
+            `💎⚔ Une créature mythique! ${lm.name} porte de l'équipement LÉGENDAIRE! Celui qui frappe fort sera récompensé! !attaque !sort !skill 🔥`
+        ];
+        chatSay(lootScenarios[Math.floor(Math.random()*lootScenarios.length)]);
         // Boss attacks but weaker
         this.bossAtkLoop=setInterval(()=>{if(!this.boss||!this.boss.alive)return clearInterval(this.bossAtkLoop);this.bossDamage()},4000);
     }
@@ -3563,7 +3593,12 @@ class GameManager{
         screenShake(false);bossWarningFlash();
         showBanner('💰 MONSTRE D\'OR!',`${gm.name} - Tuez-le pour de l'or!`,3000);
         this.log(`💰 ${gm.name} apparaît! HP: ${totalHp} - Pluie d'or garantie!`,'log-event');
-        chatSay(`💰🔥 PLUIE D'OR! ${gm.name} débarque chargé de trésors! Frappez-le avant qu'il s'enfuie! !attaque !sort !skill — Devenez RICHES! 💎`);
+                const goldScenarios=[
+            `💰🔥 Un marchand fou couvert d'or traverse le champ de bataille! ${gm.name} — Attrapez-le avant qu'il s'enfuie! !attaque !sort !skill 🤑`,
+            `💰🔥 Le trésor royal a été volé par ${gm.name}! Récupérez l'or du royaume! Chaque coup = des pièces! !attaque !sort !skill 🤑`,
+            `💰🔥 ${gm.name} — Cette créature TRANSPIRE l'or! Frappez et les pièces tombent! Devenez RICHES! !attaque !sort !skill 🤑`
+        ];
+        chatSay(goldScenarios[Math.floor(Math.random()*goldScenarios.length)]);
         this.bossAtkLoop=setInterval(()=>{if(!this.boss||!this.boss.alive)return clearInterval(this.bossAtkLoop);this.bossDamage()},4000);
     }
     onGoldDrop(){
@@ -3661,6 +3696,128 @@ class GameManager{
         winner.popup('VICTOIRE!','popup popup-crit');loser.popup('DÉFAITE','popup popup-dmg');
         this.log(`🏆 ${winner.username} gagne le duel! +${prize}g +20XP!`,'log-special');
         chatSay(`🏆⚔ VICTOIRE ÉCRASANTE! @${winner.username} terrasse @${loser.username}! +${prize}g +20XP! Qui ose le défier? !duel 💪🔥`);
+    }
+
+    // ARENA EVENT - Open PvP with bank + loot
+    startArena(maxPlayers){
+        if(this._arena)return this.log('❌ Arène déjà en cours!','log-dmg');
+        maxPlayers=Math.max(2,Math.min(20,maxPlayers||8));
+        this._arena={players:[],max:maxPlayers,bank:0,phase:'inscription',timer:null};
+        const scenarios=[
+            `⚔🏟 L'ARÈNE S'OUVRE! Les portes du Colisée grincent... ${maxPlayers} places! Mise: 20% de votre or! Les PREMIERS à taper !combat entrent! Les gagnants PILLENT les perdants! 💰🔥`,
+            `⚔🏟 LE TOURNOI DES BRAVES! Le roi cherche ses champions! ${maxPlayers} guerriers max — Tapez !combat pour entrer! Votre or est en jeu: mise 20%! Le vainqueur RAFLE TOUT! 💰🔥`,
+            `⚔🏟 BATAILLE ROYALE! L'arène de sang ouvre ses portes! ${maxPlayers} places — Tapez !combat! Mise: 20% de votre or va dans la banque! Les survivants pillent les vaincus! 💰🔥`,
+            `⚔🏟 LES DIEUX RÉCLAMENT DU SPECTACLE! ${maxPlayers} héros peuvent entrer dans l'arène! Tapez !combat — Mise 20% de votre or! Gloire ou RUINE! 💰🔥`
+        ];
+        chatSay(scenarios[Math.floor(Math.random()*scenarios.length)]);
+        showBanner('🏟 ARÈNE OUVERTE!',`Tapez !combat (${maxPlayers} places)`,4000);
+        screenShake(false);
+        this.log(`🏟 ARÈNE: inscriptions ouvertes (max ${maxPlayers})!`,'log-event');
+        // 60s inscription timer
+        let cd=60;
+        this._arena.timer=setInterval(()=>{
+            cd--;
+            if(cd===30)chatSay(`🏟 ARÈNE: 30s restantes! ${this._arena.players.length}/${maxPlayers} inscrits — !combat pour entrer! 🔥`);
+            if(cd===10)chatSay(`🏟⚠ 10 SECONDES! Dernière chance de taper !combat! ${this._arena.players.length} combattants inscrits!`);
+            if(cd<=0||this._arena.players.length>=maxPlayers){
+                clearInterval(this._arena.timer);
+                this.resolveArena();
+            }
+        },1000);
+    }
+    joinArena(username){
+        if(!this._arena||this._arena.phase!=='inscription')return null;
+        const c=this.characters[username];
+        if(!c||!c.alive)return'Tu dois être vivant pour combattre!';
+        if(this._arena.players.find(p=>p.username===username))return'Tu es déjà inscrit!';
+        if(this._arena.players.length>=this._arena.max)return'L\'arène est pleine!';
+        // Mise: 20% de l'or (min 5g)
+        const mise=Math.max(5,Math.floor(c.gold*0.2));
+        c.gold-=mise;
+        this._arena.bank+=mise;
+        this._arena.players.push({username,mise});
+        c.popup(`-${mise}g`,'popup popup-dmg');
+        const remaining=this._arena.max-this._arena.players.length;
+        const scenarios=[
+            `⚔ @${username} entre dans l'arène! Mise: ${mise}g! ${this._arena.players.length} combattants — ${remaining>0?`encore ${remaining} places!`:'COMPLET!'}`,
+            `⚔ @${username} dégaine son arme dans l'arène! ${mise}g dans la banque! ${this._arena.players.length} guerriers prêts! ${remaining>0?`${remaining} places restantes!`:'C\'est PARTI!'}`,
+            `⚔ @${username} accepte le défi! ${mise}g en jeu! ${this._arena.players.length}/${this._arena.max} — ${remaining>0?`Qui d'autre ose?`:'L\'arène est PLEINE!'}`
+        ];
+        chatSay(scenarios[Math.floor(Math.random()*scenarios.length)]);
+        return null;
+    }
+    resolveArena(){
+        if(!this._arena)return;
+        clearInterval(this._arena.timer);
+        const players=this._arena.players;
+        if(players.length<2){
+            // Not enough - refund
+            players.forEach(p=>{const c=this.characters[p.username];if(c){c.gold+=p.mise;c.popup(`+${p.mise}g`,'popup popup-gold')}});
+            chatSay(`🏟 Arène annulée — pas assez de combattants! Or remboursé!`);
+            this._arena=null;return;
+        }
+        this._arena.phase='combat';
+        const bank=this._arena.bank;
+        chatSay(`🏟🔥 L'ARÈNE FERME SES PORTES! ${players.length} combattants s'affrontent pour ${bank}g de butin! QUE LE COMBAT COMMENCE! ⚔💀`);
+        showBanner('🏟 COMBAT!',`${players.length} guerriers — ${bank}g en jeu!`,3000);
+        screenShake(true);critFlash();
+        // Simulate tournament: random bracket
+        let fighters=players.map(p=>({...p,c:this.characters[p.username]})).filter(f=>f.c);
+        // Shuffle
+        for(let i=fighters.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[fighters[i],fighters[j]]=[fighters[j],fighters[i]]}
+        // Battle royale: each round, bottom half eliminated
+        let round=1;
+        while(fighters.length>1){
+            const pairs=[];
+            for(let i=0;i<fighters.length-1;i+=2)pairs.push([fighters[i],fighters[i+1]]);
+            // Odd one out gets a bye
+            const oddOne=fighters.length%2===1?fighters[fighters.length-1]:null;
+            const roundWinners=[];
+            const roundLosers=[];
+            pairs.forEach(([f1,f2])=>{
+                const a=f1.c,b=f2.c;
+                const score1=a.atk+a.spd+Math.floor(Math.random()*20)+(Math.random()*100<a.crit?a.atk:0);
+                const score2=b.atk+b.spd+Math.floor(Math.random()*20)+(Math.random()*100<b.crit?b.atk:0);
+                const def1=a.def+Math.floor(Math.random()*10);
+                const def2=b.def+Math.floor(Math.random()*10);
+                const dmg1=Math.max(1,score1-def2);const dmg2=Math.max(1,score2-def1);
+                if(dmg1>=dmg2){roundWinners.push(f1);roundLosers.push(f2)}
+                else{roundWinners.push(f2);roundLosers.push(f1)}
+            });
+            if(oddOne)roundWinners.push(oddOne);
+            // Losers lose equipment or gold to winners
+            roundLosers.forEach(l=>{
+                const lc=l.c;
+                spawnP(lc.element,'#ff4444',10);lc.popup('ÉLIMINÉ!','popup popup-dmg');
+                // Lose 10% gold to the pot
+                const lostGold=Math.floor(lc.gold*0.1);
+                lc.gold-=lostGold;this._arena.bank+=lostGold;
+            });
+            this.log(`🏟 Round ${round}: ${roundWinners.map(f=>`@${f.username}`).join(', ')} avancent! | ${roundLosers.map(f=>`@${f.username}`).join(', ')} éliminés!`,'log-special');
+            fighters=roundWinners;
+            round++;
+        }
+        // WINNER!
+        const champion=fighters[0];
+        const cc=champion.c;
+        const totalBank=this._arena.bank;
+        const share=Math.floor(totalBank);
+        cc.gold+=share;cc.xp+=50+this.wave*5;
+        spawnP(cc.element,'#d4af37',30);spawnP(cc.element,'#ffffff',20);
+        cc.popup(`+${share}g CHAMPION!`,'popup popup-crit');
+        cc.element.classList.remove('lvl-up-glow');void cc.element.offsetWidth;cc.element.classList.add('lvl-up-glow');
+        setTimeout(()=>cc.element.classList.remove('lvl-up-glow'),2000);
+        screenShake(true);critFlash();
+        showBanner('🏆 CHAMPION!',`${cc.username} — +${share}g!`,4000);
+        const victoryLines=[
+            `🏆🔥 GLOIRE À @${cc.username}! Champion de l'arène! ${players.length} adversaires VAINCUS! +${share}g raflés! Le royaume s'incline devant sa puissance! 👑⚔`,
+            `🏆🔥 @${cc.username} SE TIENT SEUL DEBOUT! ${share}g de butin des ${players.length-1} vaincus! UN VRAI GUERRIER! Qui osera le défier la prochaine fois? 👑⚔`,
+            `🏆🔥 LA FOULE ACCLAME @${cc.username}! CHAMPION INCONTESTÉ! ${share}g empochés! Les perdants pleurent leur or! LÉGENDAIRE! 👑⚔`
+        ];
+        chatSay(victoryLines[Math.floor(Math.random()*victoryLines.length)]);
+        this.log(`🏆 CHAMPION: ${cc.username} gagne ${share}g!`,'log-gold');
+        cc.checkLevelUp();
+        this._arena=null;
     }
 
     log(text,cls){this.combatLog.unshift({text,cls,time:Date.now()});if(this.combatLog.length>25)this.combatLog.pop();this.renderLog()}
@@ -3960,7 +4117,7 @@ function initTwitch(){
         if(self)return;const u=tags['display-name']||tags.username;
         const m=msg.trim().toLowerCase();if(!m.startsWith('!'))return;
         const parts=m.split(' '),cmd=parts[0].substring(1),args=parts.slice(1);
-        const valid=['class','attaque','soin','sort','defense','esquive','special','stats','couleur','design','look','style','shop','marche','evolution','evoluer','reclass','do','notdo','skill','help','commandes','succes','achievements','classement','top','leaderboard','don','give','duel','info','buffs','recap','equip','equipement'];
+        const valid=['class','attaque','soin','sort','defense','esquive','special','stats','couleur','design','look','style','shop','marche','evolution','evoluer','reclass','do','notdo','skill','help','commandes','succes','achievements','classement','top','leaderboard','don','give','duel','combat','info','buffs','recap','equip','equipement'];
         if(valid.includes(cmd)){console.log(`CMD: ${u} !${cmd} ${args.join(' ')}`);const r=game.processCmd(u,cmd,args);if(r&&CONFIG.botToken)chatSay(`@${u} ${r}`)}
         // Streamer-only commands (broadcaster or mod)
         const isBroadcaster=tags.badges&&(tags.badges.broadcaster||tags.badges.moderator);
@@ -3977,6 +4134,10 @@ function initTwitch(){
             else if(cmd==='teamduel'){
                 if(args.length<1)chatSay(`@${u} Usage: !teamduel <taille> ou !teamduel p1 p2 vs p3 p4`);
                 else game.teamDuel(args);
+            }
+            else if(cmd==='arene'||cmd==='arena'){
+                const max=parseInt(args[0])||8;
+                game.startArena(max);
             }
         }
     });
@@ -4024,6 +4185,7 @@ function startPeriodicGuide(){
             `!goldmonster — Invoquer un monstre d'or`,
             `!forceduel j1 j2 — Forcer un duel`,
             `!teamduel N — Duel d'équipe NvN`,
+            `!arene [max] — Arène PvP (mise + loot)`,
             `━━━━━━━━━━━━━━━━━━━━━━━`
         ];
         lines.forEach(l=>game.log(l,'log-special'));
@@ -4031,7 +4193,7 @@ function startPeriodicGuide(){
     // First panel after 30s
     setTimeout(()=>{
         game.log('━━ 🎮 PANEL STREAMER ━━','log-special');
-        game.log('!event !bossnow !loot !goldmonster !forceduel !teamduel','log-special');
+        game.log('!event !bossnow !loot !goldmonster !forceduel !teamduel !arene','log-special');
     },30000);
 }
 
