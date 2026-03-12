@@ -16,15 +16,15 @@ canvas{image-rendering:pixelated}
 #mode-toggle{display:none}
 .character{position:absolute;bottom:45px;z-index:20;transition:left 2s ease-in-out}
 .character.melee{z-index:22}.character.ranged{z-index:18}
-.character canvas{width:64px;height:64px;display:block}
+.character canvas{width:80px;height:80px;display:block}
 .character.tier-1 canvas{filter:drop-shadow(0 0 2px #888)}
 .character.tier-2 canvas{filter:drop-shadow(0 0 3px #55aaff)}
 .character.tier-3 canvas{filter:drop-shadow(0 0 4px #aa55ff)}
 .character.tier-4 canvas{filter:drop-shadow(0 0 5px #ff8833)}
 .character.tier-5 canvas{filter:drop-shadow(0 0 6px #ff4444) drop-shadow(0 0 12px #ff220044)}
-.char-name{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:8px;font-weight:bold;color:#ffdd66;white-space:nowrap;text-shadow:1px 1px 0 #000,-1px 1px 0 #000,1px -1px 0 #000,-1px -1px 0 #000,0 0 4px rgba(255,200,50,0.5);letter-spacing:0.5px}
-.char-bars{position:absolute;top:-12px;left:50%;transform:translateX(-50%);width:54px}
-.bar{width:100%;height:6px;background:#111;border:1px solid #333;margin-bottom:1px;position:relative;overflow:hidden}
+.char-name{position:absolute;top:-26px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:bold;color:#ffdd66;white-space:nowrap;text-shadow:1px 1px 0 #000,-1px 1px 0 #000,1px -1px 0 #000,-1px -1px 0 #000,0 0 4px rgba(255,200,50,0.5);letter-spacing:0.5px}
+.char-bars{position:absolute;top:-14px;left:50%;transform:translateX(-50%);width:64px}
+.bar{width:100%;height:7px;background:#111;border:1px solid #333;margin-bottom:1px;position:relative;overflow:hidden}
 .bar-fill{height:100%;transition:width 0.3s}
 .bar-text{position:absolute;top:0;left:0;width:100%;height:100%;font-size:4px;line-height:6px;text-align:center;color:#fff;text-shadow:0 0 2px #000,1px 1px 0 #000;z-index:1;pointer-events:none}
 .hp-fill{background:linear-gradient(90deg,#3a8a3a,#1a4a1a)}
@@ -46,9 +46,9 @@ canvas{image-rendering:pixelated}
 #shop-zone.open{display:block}
 #shop-zone canvas{width:128px;height:72px;display:block;animation:forgeFlicker 2s ease-in-out infinite}
 #shop-label{font-size:7px;color:#d4af37;text-align:center;text-shadow:0 0 6px rgba(200,120,0,.4),1px 1px 0 #000;letter-spacing:2px}
-#hud{position:fixed;top:8px;left:8px;z-index:100;background:linear-gradient(180deg,rgba(12,12,28,.95),rgba(8,8,18,.98));border:1px solid #2a2418;padding:8px 12px;font-size:7px;line-height:2;max-width:380px;box-shadow:0 2px 12px rgba(0,0,0,.6)}
+#hud{display:none}
 .hud-title{color:#9a8340;font-size:9px;letter-spacing:3px;margin-bottom:4px;text-transform:uppercase;border-bottom:1px solid #1a1810;padding-bottom:4px}
-#season-hud{position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:100;background:linear-gradient(180deg,rgba(12,12,28,.95),rgba(8,8,18,.98));border:1px solid #2a2418;padding:6px 16px;font-size:8px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.6);letter-spacing:1px}
+#season-hud{display:none}
 #combat-log{display:none}
 .log-dmg{color:#cc4444}.log-heal{color:#44aa44}.log-special{color:#cc7722}.log-info{color:#5577aa}.log-gold{color:#aa8833}.log-mvp{color:#cc55aa}.log-event{color:#9944aa}
 #event-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:300;display:none;background:linear-gradient(180deg,rgba(15,10,30,.97),rgba(8,6,18,.99));border:1px solid #3a2060;padding:20px 30px;text-align:center;max-width:500px;min-width:350px;box-shadow:0 0 40px rgba(100,30,180,.2)}
@@ -133,15 +133,15 @@ canvas{image-rendering:pixelated}
 .boss-warning-flash{position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at 70% 80%,rgba(255,0,0,.5),transparent 70%);z-index:55;pointer-events:none;animation:bossWarn .8s ease-out forwards}
 .char-cd{position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);font-size:5px;color:#ff4444;text-shadow:1px 1px 0 #000;white-space:nowrap;opacity:0;transition:opacity 0.3s}
 .char-cd.show{opacity:1}
-.char-stunned{animation:none!important;filter:grayscale(.7) brightness(.6)!important}
+.char-stunned{animation:none!important;opacity:.6!important}
 @keyframes critFlash{0%{opacity:0}15%{opacity:.4}30%{opacity:.1}50%{opacity:.3}100%{opacity:0}}
 .crit-flash{position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at center,rgba(255,215,0,.6),transparent 60%);z-index:55;pointer-events:none;animation:critFlash .5s ease-out forwards}
 @keyframes bigHit{0%{filter:brightness(1) sepia(0)}15%{filter:brightness(3) sepia(1) hue-rotate(-30deg) saturate(3)}40%{filter:brightness(1.8) sepia(.5) hue-rotate(-20deg)}60%{filter:brightness(1.2) sepia(.2)}100%{filter:brightness(1) sepia(0)}}
 .anim-big-hit{animation:bigHit .6s ease-out}
 @keyframes charSpawnIn{0%{opacity:0;transform:translateY(40px) scale(.3);filter:brightness(3)}50%{opacity:1;transform:translateY(-8px) scale(1.1);filter:brightness(1.5)}75%{transform:translateY(3px) scale(.95)}100%{opacity:1;transform:translateY(0) scale(1);filter:brightness(1)}}
 .char-spawn{animation:charSpawnIn .7s ease-out}
-@keyframes deathFade{0%{opacity:1;filter:brightness(1)}30%{filter:brightness(3) saturate(0)}60%{opacity:.5;filter:brightness(.5) saturate(0)}100%{opacity:.15;filter:grayscale(1) brightness(.3)}}
-.char-dead{animation:deathFade .8s forwards}
+@keyframes deathFade{0%{opacity:1}50%{opacity:.6}100%{opacity:.4}}
+.char-dead{animation:deathFade .5s forwards;opacity:.4}
 @keyframes enrageGlow{0%,100%{filter:brightness(1) drop-shadow(0 0 4px rgba(255,0,0,.3))}50%{filter:brightness(1.4) drop-shadow(0 0 12px rgba(255,0,0,.8))}}
 .boss-enraged{animation:enrageGlow 1s ease-in-out infinite}
 .kill-streak{position:fixed;top:15%;left:50%;transform:translateX(-50%);z-index:150;font-size:18px;color:#ff4444;text-shadow:0 0 15px rgba(255,0,0,.7),3px 3px 0 #000;pointer-events:none;animation:floatUp 2s forwards;font-family:'Press Start 2P',monospace}
@@ -319,119 +319,119 @@ apprenti:{name:'Apprenti',tier:0,hp:80,atk:6,def:5,spd:3,crit:5,role:'melee',man
 // TIER 1 - BASE CLASSES
 guerrier:{name:'Guerrier',tier:1,hp:160,atk:14,def:12,spd:3,crit:15,role:'melee',mana:40,
     special:{name:'Fureur',desc:'ATK x2',cd:14000},color:'#cc3333',
-    evolutions:['berserker','chevalier','gladiateur'],evoLevel:8,sprite:'guerrier'},
+    evolutions:['berserker','chevalier','gladiateur'],evoLevel:10,sprite:'guerrier'},
 mage:{name:'Mage',tier:1,hp:90,atk:20,def:4,spd:4,crit:20,role:'ranged',mana:100,
     special:{name:'Météore',desc:'AoE massif',cd:18000},color:'#3355bb',
-    evolutions:['archimage','necromancien','sorcier'],evoLevel:8,sprite:'mage'},
+    evolutions:['archimage','necromancien','sorcier'],evoLevel:10,sprite:'mage'},
 archer:{name:'Archer',tier:1,hp:110,atk:16,def:6,spd:8,crit:30,role:'ranged',mana:60,
     special:{name:'Pluie',desc:'5 flèches',cd:16000},color:'#339933',
-    evolutions:['sniper','ranger','chasseur'],evoLevel:8,sprite:'archer'},
+    evolutions:['sniper','ranger','chasseur'],evoLevel:10,sprite:'archer'},
 pretre:{name:'Prêtre',tier:1,hp:100,atk:8,def:7,spd:4,crit:8,role:'ranged',mana:120,
     special:{name:'Bénédiction',desc:'Heal groupe',cd:18000},color:'#eeee66',
-    evolutions:['saint','oracle','templier'],evoLevel:8,sprite:'pretre'},
+    evolutions:['saint','oracle','templier'],evoLevel:10,sprite:'pretre'},
 voleur:{name:'Voleur',tier:1,hp:100,atk:15,def:4,spd:10,crit:35,role:'melee',mana:50,
     special:{name:'Assassinat',desc:'Crit x3',cd:14000},color:'#7733aa',
-    evolutions:['assassin','ninja','pirate'],evoLevel:8,sprite:'voleur'},
+    evolutions:['assassin','ninja','pirate'],evoLevel:10,sprite:'voleur'},
 druide:{name:'Druide',tier:1,hp:120,atk:12,def:8,spd:5,crit:12,role:'ranged',mana:90,
     special:{name:'Nature',desc:'Heal+Épines',cd:16000},color:'#22aa44',
-    evolutions:['gardien','dragon','chamane'],evoLevel:8,sprite:'druide'},
+    evolutions:['gardien','dragon','chamane'],evoLevel:10,sprite:'druide'},
 
 // TIER 2 - ADVANCED
 berserker:{name:'Berserker',tier:2,hp:200,atk:22,def:6,spd:5,crit:25,role:'melee',mana:30,
     special:{name:'Rage',desc:'ATK x3 5s',cd:20000},color:'#ff2222',
-    evolutions:['champion','warlord','maitre_ombre'],evoLevel:15,sprite:'berserker'},
+    evolutions:['champion','warlord','maitre_ombre'],evoLevel:25,sprite:'berserker'},
 chevalier:{name:'Chevalier',tier:2,hp:220,atk:16,def:18,spd:3,crit:12,role:'melee',mana:50,
     special:{name:'Rempart',desc:'DEF x3 groupe',cd:22000},color:'#aaaacc',
-    evolutions:['paladin','inquisiteur','warlord'],evoLevel:15,sprite:'chevalier'},
+    evolutions:['paladin','inquisiteur','warlord'],evoLevel:25,sprite:'chevalier'},
 archimage:{name:'Archimage',tier:2,hp:100,atk:30,def:5,spd:5,crit:25,role:'ranged',mana:150,
     special:{name:'Apocalypse',desc:'Mega AoE',cd:25000},color:'#2244ff',
-    evolutions:['elementaliste','sage','enchanteur'],evoLevel:15,sprite:'archimage'},
+    evolutions:['elementaliste','sage','enchanteur'],evoLevel:25,sprite:'archimage'},
 necromancien:{name:'Nécromancien',tier:2,hp:110,atk:25,def:6,spd:4,crit:20,role:'ranged',mana:130,
     special:{name:'Armée Morte',desc:'Invoque squelettes',cd:22000},color:'#443366',
-    evolutions:['liche','phantom','enchanteur'],evoLevel:15,sprite:'necromancien'},
+    evolutions:['liche','phantom','enchanteur'],evoLevel:25,sprite:'necromancien'},
 sniper:{name:'Sniper',tier:2,hp:100,atk:28,def:4,spd:6,crit:45,role:'ranged',mana:50,
     special:{name:'Headshot',desc:'Crit garanti x4',cd:20000},color:'#44bb44',
-    evolutions:['tireur_elite','artilleur','maitre_chasse'],evoLevel:15,sprite:'sniper'},
+    evolutions:['tireur_elite','artilleur','maitre_chasse'],evoLevel:25,sprite:'sniper'},
 ranger:{name:'Ranger',tier:2,hp:130,atk:18,def:10,spd:9,crit:30,role:'ranged',mana:70,
     special:{name:'Compagnon',desc:'Loup allié',cd:25000},color:'#558844',
-    evolutions:['maitre_chasse','artilleur','ancien'],evoLevel:15,sprite:'ranger'},
+    evolutions:['maitre_chasse','artilleur','ancien'],evoLevel:25,sprite:'ranger'},
 saint:{name:'Saint',tier:2,hp:120,atk:10,def:10,spd:4,crit:10,role:'ranged',mana:180,
     special:{name:'Résurrection',desc:'Revive un allié',cd:30000},color:'#ffff88',
-    evolutions:['archange','sage','inquisiteur'],evoLevel:15,sprite:'saint'},
+    evolutions:['archange','sage','inquisiteur'],evoLevel:25,sprite:'saint'},
 oracle:{name:'Oracle',tier:2,hp:110,atk:15,def:8,spd:5,crit:15,role:'ranged',mana:160,
     special:{name:'Prophétie',desc:'Buff all stats',cd:25000},color:'#cc88ff',
-    evolutions:['sage','archange','enchanteur'],evoLevel:15,sprite:'oracle'},
+    evolutions:['sage','archange','enchanteur'],evoLevel:25,sprite:'oracle'},
 assassin:{name:'Assassin',tier:2,hp:110,atk:22,def:4,spd:12,crit:45,role:'melee',mana:40,
     special:{name:'Ombre',desc:'Invisible+Crit x5',cd:22000},color:'#220044',
-    evolutions:['maitre_ombre','phantom','shinobi'],evoLevel:15,sprite:'assassin'},
+    evolutions:['maitre_ombre','phantom','shinobi'],evoLevel:25,sprite:'assassin'},
 ninja:{name:'Ninja',tier:2,hp:120,atk:20,def:6,spd:11,crit:35,role:'melee',mana:60,
     special:{name:'Shuriken',desc:'5 shurikens',cd:16000},color:'#333355',
-    evolutions:['shinobi','maitre_ombre','phantom'],evoLevel:15,sprite:'ninja'},
+    evolutions:['shinobi','maitre_ombre','phantom'],evoLevel:25,sprite:'ninja'},
 gardien:{name:'Gardien',tier:2,hp:180,atk:14,def:14,spd:4,crit:10,role:'melee',mana:100,
     special:{name:'Racines',desc:'Immobilise boss',cd:20000},color:'#116633',
-    evolutions:['ancien','avatar_nature','paladin'],evoLevel:15,sprite:'gardien'},
+    evolutions:['ancien','avatar_nature','paladin'],evoLevel:25,sprite:'gardien'},
 dragon:{name:'Dragon',tier:2,hp:250,atk:28,def:16,spd:6,crit:20,role:'melee',mana:80,
     special:{name:'Souffle',desc:'Feu AoE massif',cd:18000},color:'#ff4400',
-    evolutions:['dragon_ancien','avatar_nature','elementaliste'],evoLevel:15,sprite:'dragon_form'},
+    evolutions:['dragon_ancien','avatar_nature','elementaliste'],evoLevel:25,sprite:'dragon_form'},
 gladiateur:{name:'Gladiateur',tier:2,hp:190,atk:20,def:10,spd:7,crit:25,role:'melee',mana:40,
     special:{name:'Arena',desc:'ATK +50% 10s',cd:18000},color:'#cc6633',
-    evolutions:['champion','warlord','paladin'],evoLevel:15,sprite:'guerrier'},
+    evolutions:['champion','warlord','paladin'],evoLevel:25,sprite:'guerrier'},
 sorcier:{name:'Sorcier',tier:2,hp:95,atk:26,def:5,spd:5,crit:22,role:'ranged',mana:140,
     special:{name:'Malédiction',desc:'Boss -30% ATK/DEF',cd:20000},color:'#6633aa',
-    evolutions:['elementaliste','liche','enchanteur'],evoLevel:15,sprite:'mage'},
+    evolutions:['elementaliste','liche','enchanteur'],evoLevel:25,sprite:'mage'},
 chasseur:{name:'Chasseur',tier:2,hp:120,atk:20,def:8,spd:9,crit:35,role:'ranged',mana:65,
     special:{name:'Piège',desc:'Stun boss 3s +dmg',cd:18000},color:'#886633',
-    evolutions:['tireur_elite','maitre_chasse','artilleur'],evoLevel:15,sprite:'archer'},
+    evolutions:['tireur_elite','maitre_chasse','artilleur'],evoLevel:25,sprite:'archer'},
 templier:{name:'Templier',tier:2,hp:150,atk:14,def:14,spd:3,crit:10,role:'melee',mana:100,
     special:{name:'Sacrement',desc:'Heal+Shield groupe',cd:22000},color:'#ccaa44',
-    evolutions:['inquisiteur','paladin','archange'],evoLevel:15,sprite:'pretre'},
+    evolutions:['inquisiteur','paladin','archange'],evoLevel:25,sprite:'pretre'},
 pirate:{name:'Pirate',tier:2,hp:115,atk:18,def:6,spd:8,crit:30,role:'melee',mana:45,
     special:{name:'Pillage',desc:'Vol gold au boss',cd:16000},color:'#885522',
-    evolutions:['shinobi','maitre_chasse','phantom'],evoLevel:15,sprite:'voleur'},
+    evolutions:['shinobi','maitre_chasse','phantom'],evoLevel:25,sprite:'voleur'},
 chamane:{name:'Chamane',tier:2,hp:140,atk:16,def:10,spd:5,crit:15,role:'ranged',mana:110,
     special:{name:'Esprits',desc:'Invoque esprits alliés',cd:22000},color:'#448866',
-    evolutions:['avatar_nature','ancien','enchanteur'],evoLevel:15,sprite:'druide'},
+    evolutions:['avatar_nature','ancien','enchanteur'],evoLevel:25,sprite:'druide'},
 abomination:{name:'Abomination',tier:2,hp:260,atk:24,def:8,spd:3,crit:15,role:'melee',mana:60,
     special:{name:'Dévorer',desc:'Vol PV massif+peur',cd:20000},color:'#4a3040',
-    evolutions:['liche','phantom','ancien'],evoLevel:15,sprite:'abomination'},
+    evolutions:['liche','phantom','ancien'],evoLevel:25,sprite:'abomination'},
 
 // TIER 3 - MASTER (3 choix vers T4)
 paladin:{name:'Paladin',tier:3,hp:280,atk:20,def:22,spd:4,crit:15,role:'melee',mana:80,
-    special:{name:'Aegis',desc:'Bouclier divin',cd:22000},color:'#4499cc',evolutions:['dieu_guerre','empereur','divin'],evoLevel:25,sprite:'paladin'},
+    special:{name:'Aegis',desc:'Bouclier divin',cd:22000},color:'#4499cc',evolutions:['dieu_guerre','empereur','divin'],evoLevel:50,sprite:'paladin'},
 champion:{name:'Champion',tier:3,hp:300,atk:30,def:12,spd:6,crit:30,role:'melee',mana:40,
-    special:{name:'Exécution',desc:'Finisher x5',cd:25000},color:'#ff0000',evolutions:['dieu_guerre','empereur','spectre'],evoLevel:25,sprite:'champion'},
+    special:{name:'Exécution',desc:'Finisher x5',cd:25000},color:'#ff0000',evolutions:['dieu_guerre','empereur','spectre'],evoLevel:50,sprite:'champion'},
 warlord:{name:'Seigneur de Guerre',tier:3,hp:320,atk:28,def:18,spd:5,crit:20,role:'melee',mana:60,
-    special:{name:'Commandement',desc:'ATK +8 groupe 15s',cd:25000},color:'#8b0000',evolutions:['dieu_guerre','empereur','titan_nature'],evoLevel:25,sprite:'guerrier'},
+    special:{name:'Commandement',desc:'ATK +8 groupe 15s',cd:25000},color:'#8b0000',evolutions:['dieu_guerre','empereur','titan_nature'],evoLevel:50,sprite:'guerrier'},
 elementaliste:{name:'Élémentaliste',tier:3,hp:120,atk:40,def:6,spd:5,crit:30,role:'ranged',mana:200,
-    special:{name:'Tempête',desc:'Feu+Glace+Foudre',cd:25000},color:'#0088ff',evolutions:['archonte','phenix','arme_divine'],evoLevel:25,sprite:'elementaliste'},
+    special:{name:'Tempête',desc:'Feu+Glace+Foudre',cd:25000},color:'#0088ff',evolutions:['archonte','phenix','arme_divine'],evoLevel:50,sprite:'elementaliste'},
 liche:{name:'Liche',tier:3,hp:150,atk:35,def:8,spd:4,crit:25,role:'ranged',mana:180,
-    special:{name:'Drain Âme',desc:'Vol PV massif',cd:22000},color:'#330055',evolutions:['archonte','neant','spectre'],evoLevel:25,sprite:'liche'},
+    special:{name:'Drain Âme',desc:'Vol PV massif',cd:22000},color:'#330055',evolutions:['archonte','neant','spectre'],evoLevel:50,sprite:'liche'},
 enchanteur:{name:'Enchanteur',tier:3,hp:130,atk:22,def:10,spd:5,crit:18,role:'ranged',mana:220,
-    special:{name:'Enchantement',desc:'Buff all stats groupe',cd:26000},color:'#9966cc',evolutions:['archonte','divin','eternel'],evoLevel:25,sprite:'mage'},
+    special:{name:'Enchantement',desc:'Buff all stats groupe',cd:26000},color:'#9966cc',evolutions:['archonte','divin','eternel'],evoLevel:50,sprite:'mage'},
 tireur_elite:{name:'Tireur d\'Élite',tier:3,hp:120,atk:38,def:5,spd:7,crit:50,role:'ranged',mana:60,
-    special:{name:'Balle Parfaite',desc:'Ignore DEF x6',cd:28000},color:'#33cc33',evolutions:['oeil_faucon','arme_divine','spectre'],evoLevel:25,sprite:'tireur_elite'},
+    special:{name:'Balle Parfaite',desc:'Ignore DEF x6',cd:28000},color:'#33cc33',evolutions:['oeil_faucon','arme_divine','spectre'],evoLevel:50,sprite:'tireur_elite'},
 maitre_chasse:{name:'Maître Chasseur',tier:3,hp:160,atk:25,def:14,spd:10,crit:35,role:'ranged',mana:80,
-    special:{name:'Meute',desc:'3 loups alliés',cd:28000},color:'#446633',evolutions:['oeil_faucon','titan_nature','arme_divine'],evoLevel:25,sprite:'maitre_chasse'},
+    special:{name:'Meute',desc:'3 loups alliés',cd:28000},color:'#446633',evolutions:['oeil_faucon','titan_nature','arme_divine'],evoLevel:50,sprite:'maitre_chasse'},
 artilleur:{name:'Artilleur',tier:3,hp:140,atk:35,def:6,spd:4,crit:35,role:'ranged',mana:70,
-    special:{name:'Bombardement',desc:'AoE x4 dégâts',cd:28000},color:'#cc8833',evolutions:['oeil_faucon','arme_divine','empereur'],evoLevel:25,sprite:'archer'},
+    special:{name:'Bombardement',desc:'AoE x4 dégâts',cd:28000},color:'#cc8833',evolutions:['oeil_faucon','arme_divine','empereur'],evoLevel:50,sprite:'archer'},
 archange:{name:'Archange',tier:3,hp:160,atk:15,def:15,spd:5,crit:12,role:'ranged',mana:250,
-    special:{name:'Miracle',desc:'Full heal groupe',cd:35000},color:'#ffffaa',evolutions:['divin','eternel','archonte'],evoLevel:25,sprite:'archange'},
+    special:{name:'Miracle',desc:'Full heal groupe',cd:35000},color:'#ffffaa',evolutions:['divin','eternel','archonte'],evoLevel:50,sprite:'archange'},
 sage:{name:'Sage',tier:3,hp:140,atk:20,def:12,spd:5,crit:18,role:'ranged',mana:200,
-    special:{name:'Sagesse',desc:'+50% all stats 10s',cd:30000},color:'#aa66ff',evolutions:['divin','eternel','archonte'],evoLevel:25,sprite:'sage'},
+    special:{name:'Sagesse',desc:'+50% all stats 10s',cd:30000},color:'#aa66ff',evolutions:['divin','eternel','archonte'],evoLevel:50,sprite:'sage'},
 inquisiteur:{name:'Inquisiteur',tier:3,hp:200,atk:22,def:16,spd:5,crit:15,role:'melee',mana:120,
-    special:{name:'Jugement',desc:'Dégâts + Heal groupe',cd:24000},color:'#ccaa22',evolutions:['divin','empereur','neant'],evoLevel:25,sprite:'pretre'},
+    special:{name:'Jugement',desc:'Dégâts + Heal groupe',cd:24000},color:'#ccaa22',evolutions:['divin','empereur','neant'],evoLevel:50,sprite:'pretre'},
 maitre_ombre:{name:'Maître des Ombres',tier:3,hp:140,atk:32,def:6,spd:14,crit:50,role:'melee',mana:50,
-    special:{name:'Mort Silencieuse',desc:'One-shot -50% HP boss',cd:35000},color:'#110022',evolutions:['spectre','neant','oeil_faucon'],evoLevel:25,sprite:'maitre_ombre'},
+    special:{name:'Mort Silencieuse',desc:'One-shot -50% HP boss',cd:35000},color:'#110022',evolutions:['spectre','neant','oeil_faucon'],evoLevel:50,sprite:'maitre_ombre'},
 shinobi:{name:'Shinobi',tier:3,hp:150,atk:28,def:8,spd:13,crit:40,role:'melee',mana:70,
-    special:{name:'Jutsu',desc:'Clone x3 attaque',cd:25000},color:'#222244',evolutions:['spectre','neant','oeil_faucon'],evoLevel:25,sprite:'shinobi'},
+    special:{name:'Jutsu',desc:'Clone x3 attaque',cd:25000},color:'#222244',evolutions:['spectre','neant','oeil_faucon'],evoLevel:50,sprite:'shinobi'},
 phantom:{name:'Fantôme',tier:3,hp:130,atk:30,def:4,spd:15,crit:45,role:'melee',mana:50,
-    special:{name:'Évanescence',desc:'Esquive tout + crit x5',cd:28000},color:'#443355',evolutions:['spectre','neant','archonte'],evoLevel:25,sprite:'voleur'},
+    special:{name:'Évanescence',desc:'Esquive tout + crit x5',cd:28000},color:'#443355',evolutions:['spectre','neant','archonte'],evoLevel:50,sprite:'voleur'},
 ancien:{name:'Ancien',tier:3,hp:250,atk:20,def:20,spd:4,crit:15,role:'melee',mana:150,
-    special:{name:'Forêt Vivante',desc:'Tréants alliés',cd:30000},color:'#005522',evolutions:['titan_nature','eternel','phenix'],evoLevel:25,sprite:'ancien'},
+    special:{name:'Forêt Vivante',desc:'Tréants alliés',cd:30000},color:'#005522',evolutions:['titan_nature','eternel','phenix'],evoLevel:50,sprite:'ancien'},
 dragon_ancien:{name:'Dragon Ancien',tier:3,hp:400,atk:40,def:22,spd:7,crit:25,role:'melee',mana:100,
-    special:{name:'Inferno',desc:'Brûle tout',cd:25000},color:'#ff2200',evolutions:['titan_nature','phenix','dieu_guerre'],evoLevel:25,sprite:'dragon_ancien'},
+    special:{name:'Inferno',desc:'Brûle tout',cd:25000},color:'#ff2200',evolutions:['titan_nature','phenix','dieu_guerre'],evoLevel:50,sprite:'dragon_ancien'},
 avatar_nature:{name:'Avatar Nature',tier:3,hp:280,atk:24,def:18,spd:5,crit:15,role:'ranged',mana:160,
-    special:{name:'Gaïa',desc:'Full heal + AoE nature',cd:30000},color:'#22cc44',evolutions:['titan_nature','phenix','eternel'],evoLevel:25,sprite:'druide'},
+    special:{name:'Gaïa',desc:'Full heal + AoE nature',cd:30000},color:'#22cc44',evolutions:['titan_nature','phenix','eternel'],evoLevel:50,sprite:'druide'},
 // TIER 4 - LEGENDARY CLASSES (Level 25+, FINAL)
 dieu_guerre:{name:'Dieu de Guerre',tier:4,hp:500,atk:45,def:30,spd:7,crit:35,role:'melee',mana:120,
     special:{name:'Ragnarök',desc:'Dégâts x10 boss',cd:40000},color:'#ff2222',evolutions:[],sprite:'paladin'},
@@ -533,6 +533,67 @@ pacte:{name:'Pacte Sanguin',cost:300,desc:'-20 PVmax +15 ATK',emoji:'💀'},
 necro:{name:'Nécromancie',cost:250,desc:'+50 Mana max',emoji:'👻'},
 ombre:{name:'Cape Ombre',cost:350,desc:'+8 SPD +5 CRIT',emoji:'🌑'}
 };
+// ================================================================
+// MINING, FORGE, HARVEST & PICKAXES
+// ================================================================
+const PICKAXES={
+pioche_bois:{name:'Pioche Bois',tier:1,cost:20,bonus:0,emoji:'⛏'},
+pioche_fer:{name:'Pioche Fer',tier:2,cost:80,bonus:1,emoji:'⛏'},
+pioche_acier:{name:'Pioche Acier',tier:3,cost:200,bonus:2,emoji:'⛏'},
+pioche_mithril:{name:'Pioche Mithril',tier:4,cost:500,bonus:4,emoji:'⛏'},
+pioche_diamant:{name:'Pioche Diamant',tier:5,cost:1200,bonus:7,emoji:'💎'}
+};
+const MINE_LOOT=[
+{name:'Pierre',emoji:'🪨',chance:0.35,base:2,gold:3},
+{name:'Charbon',emoji:'⚫',chance:0.25,base:1,gold:5},
+{name:'Fer',emoji:'🔩',chance:0.20,base:1,gold:8},
+{name:'Or Brut',emoji:'🥇',chance:0.12,base:1,gold:15},
+{name:'Gemme',emoji:'💎',chance:0.05,base:1,gold:30},
+{name:'Mithril',emoji:'✨',chance:0.03,base:1,gold:50}
+];
+const FORGE_RECIPES={
+epee_fer:{name:'Épée Fer',need:{fer:3,charbon:2},result:'epee_fer',emoji:'⚔'},
+armure_fer:{name:'Armure Fer',need:{fer:5,charbon:3},result:'armure_fer',emoji:'🛡'},
+epee_acier:{name:'Lame Acier',need:{fer:5,charbon:5,or_brut:2},result:'epee_acier',emoji:'⚔'},
+armure_acier:{name:'Armure Acier',need:{fer:8,charbon:6,or_brut:3},result:'armure_acier',emoji:'🛡'},
+anneau_or:{name:'Anneau Or',need:{or_brut:5,gemme:2},result:'anneau_or',emoji:'💍'},
+amulette_or:{name:'Amulette Or',need:{or_brut:3,gemme:3},result:'amulette_or',emoji:'📿'},
+botte_acier:{name:'Bottes Acier',need:{fer:4,charbon:3,pierre:5},result:'botte_acier',emoji:'👢'},
+epee_mithril:{name:'Lame Mithril',need:{mithril:3,gemme:2,or_brut:5},result:'epee_mithril',emoji:'⚔'},
+armure_mithril:{name:'Armure Mithril',need:{mithril:5,gemme:3,fer:10},result:'armure_mithril',emoji:'🛡'}
+};
+const HARVEST_ITEMS=[
+{name:'Blé',emoji:'🌾',chance:0.40,base:2,gold:4},
+{name:'Herbes',emoji:'🌿',chance:0.30,base:1,gold:6},
+{name:'Champignon',emoji:'🍄',chance:0.15,base:1,gold:10},
+{name:'Fleur Rare',emoji:'🌺',chance:0.10,base:1,gold:20},
+{name:'Truffe',emoji:'🟤',chance:0.05,base:1,gold:40}
+];
+const SEASONAL_ACTIVITIES={
+winter:{name:'Boule de Neige',emoji:'❄',cmd:'neige',reward:8,desc:'Lance une boule de neige!'},
+autumn:{name:'Ramassage Feuilles',emoji:'🍂',cmd:'feuilles',reward:6,desc:'Nettoie le passage!'},
+summer:{name:'Pêche Dorée',emoji:'🎣',cmd:'peche',reward:10,desc:'Pêche dans le lac enchanté!'},
+spring:{name:'Cueillette Fleurs',emoji:'🌸',cmd:'fleurs',reward:7,desc:'Cueille des fleurs rares!'}
+};
+// Active seasonal missions (auto-generated)
+let _activeMissions=[];let _missionTimer=null;
+function generateMissions(){
+    const resources=['pierre','charbon','fer','blé','herbes'];
+    const season=['spring','summer','autumn','winter'][Math.floor(Date.now()/7776000000)%4];
+    _activeMissions=[];
+    for(let i=0;i<3;i++){
+        const res=resources[Math.floor(Math.random()*resources.length)];
+        const qty=5+Math.floor(Math.random()*15);
+        const gold=qty*5+Math.floor(Math.random()*30);
+        _activeMissions.push({resource:res,qty,gold,emoji:MINE_LOOT.find(m=>m.name.toLowerCase()===res)?.emoji||HARVEST_ITEMS.find(h=>h.name.toLowerCase()===res)?.emoji||'📦',claimed:new Set()});
+    }
+    // Seasonal bonus mission
+    const sa=SEASONAL_ACTIVITIES[season];
+    if(sa)_activeMissions.push({resource:sa.cmd,qty:3+Math.floor(Math.random()*5),gold:50+Math.floor(Math.random()*50),emoji:sa.emoji,seasonal:true,claimed:new Set()});
+}
+generateMissions();setInterval(generateMissions,1800000); // New missions every 30min
+// Betting system
+let _activeBets={};let _betId=0;
 const SLOT_NAMES={weapon:'Arme',armor:'Armure',boots:'Bottes',amulet:'Amulette',ring:'Anneau'};
 const TIER_COLORS=['#888','#aaa','#55aaff','#aa55ff','#ff8833','#ff4444'];
 function getEquipDesc(key){const e=EQUIPMENT[key];if(!e)return'';return Object.entries(e.stats).map(([k,v])=>`+${v} ${k.toUpperCase()}`).join(' ');}
@@ -2399,62 +2460,120 @@ class Character{
         const manaCost=20+(cd.tier||0)*10;
         if(!this.useMana(manaCost))return`Pas assez de mana ! (${this.mana}/${manaCost})`;
         this.specialReady=false;this._specialUsedAt=Date.now();setTimeout(()=>{this.specialReady=true},cd.special.cd);
-        let r='';const cls=this.className;
-        // Universal special effects based on class type
-        if(cd.role==='melee'){
-            // Melee specials - damage focused
-            if(!boss||!boss.alive){r=`${this.username} ${cd.special.name}! (pas de cible)`;spawnP(this.element,cd.color,5)}
-            else{const multi=1.5+(cd.tier||0)*0.5;const dmg=boss.takeDmg(Math.floor(this.atk*multi));this.totalDmg+=dmg;r=`${this.username} ${cd.special.name}! -${dmg} dégâts!`;spawnP(this.element,cd.color,10)}
-        }else{
-            // Ranged specials
-            if(cls==='pretre'||cls==='saint'||cls==='archange'||cls==='oracle'||cls==='sage'||cls==='divin'){
-                let th=0;if(allChars)allChars.forEach(c=>{if(c.alive)th+=c.heal(20+this.atk+(cd.tier||0)*10)});
-                this.totalHeal+=th;r=`${this.username} ${cd.special.name}! +${th} PV groupe!`;
-                spawnP(this.element,'#44ff44',10);
-            }else{
-                if(!boss||!boss.alive){r=`${this.username} ${cd.special.name}! (pas de cible)`;spawnP(this.element,cd.color,5)}
-                else{const multi=2+(cd.tier||0)*0.5;const dmg=boss.takeDmg(Math.floor(this.atk*multi));this.totalDmg+=dmg;r=`${this.username} ${cd.special.name}! -${dmg} dégâts!`;spawnP(this.element,cd.color,10)}
-            }
+        const cls=this.className;const u=this.username;const me=this;
+        const bAlive=boss&&boss.alive;
+        const hit=(multi)=>{if(!bAlive)return 0;const d=boss.takeDmg(Math.floor(me.atk*multi));me.totalDmg+=d;return d};
+        const healGrp=(amt)=>{let t=0;if(allChars)allChars.forEach(c=>{if(c.alive)t+=c.heal(amt)});me.totalHeal+=t;return t};
+        const shieldGrp=(amt)=>{if(allChars)allChars.forEach(c=>{if(c.alive)c.setShield(amt)})};
+        const buffGrp=(stat,val,dur)=>{if(allChars)allChars.forEach(c=>{if(c.alive){c[stat]+=val;setTimeout(()=>{c[stat]-=val;c.updateBars()},dur)}})};
+        let r='';
+        // ═══ T0 SPECIALS ═══
+        if(cls==='apprenti'){const d=hit(1.5);r=`✨ ${u} ESSAI! -${d} dégâts!`;spawnP(this.element,'#998877',5)}
+        else if(cls==='paysan'){const h=this.heal(Math.floor(this.maxHp*0.3));this.gold+=10;r=`🌾 ${u} RÉCOLTE! +${h} PV +10g!`;spawnP(this.element,'#8B7355',6)}
+        else if(cls==='chat'){const d1=hit(1.2);const d2=hit(1.2);r=`🐱 ${u} GRIFFURE! -${d1}+-${d2} (2 coups rapides)!`;spawnP(this.element,'#dd9944',6)}
+        else if(cls==='ecuyer'){this.def*=2;setTimeout(()=>{this.def=Math.floor(this.def/2);this.updateBars()},5000);r=`🛡 ${u} BOUCLIER! DEF x2 pendant 5s!`;spawnP(this.element,'#6688bb',5)}
+        else if(cls==='brigand'){const crit=Math.random()<0.5;const d=hit(crit?3:1.5);r=`🗡 ${u} EMBUSCADE! -${d}${crit?' CRIT x2!':''}!`;spawnP(this.element,'#885533',6)}
+        else if(cls==='herboriste'){const h=healGrp(15+Math.floor(this.atk*0.5));r=`🌿 ${u} POTION! +${h} PV allié!`;spawnP(this.element,'#55aa55',5)}
+        else if(cls==='barde'){buffGrp('atk',3,5000);r=`🎵 ${u} MÉLODIE! ATK +3 groupe 5s!`;spawnP(this.element,'#cc66aa',6)}
+        else if(cls==='squelette'){const d=hit(2);r=`💀 ${u} OS BRISÉ! -${d} (ignore 50% DEF)!`;spawnP(this.element,'#b0a890',5)}
+        // ═══ T1 SPECIALS ═══
+        else if(cls==='guerrier'){this.atk*=2;const d=hit(2);this.atk=Math.floor(this.atk/2);r=`⚔ ${u} FUREUR! ATK x2 → -${d} dégâts!`;spawnP(this.element,'#cc3333',8)}
+        else if(cls==='mage'){const d=hit(3);if(allChars)allChars.forEach(c=>{if(c.alive&&c!==me)c.xp+=3});r=`☄ ${u} MÉTÉORE! -${d} AoE massif!`;spawnP(this.element,'#3355bb',10)}
+        else if(cls==='archer'){let td=0;for(let i=0;i<5;i++){td+=hit(0.6)};r=`🏹 ${u} PLUIE DE FLÈCHES! 5x → -${td} total!`;spawnP(this.element,'#339933',8)}
+        else if(cls==='pretre'){const h=healGrp(25+this.atk);r=`✨ ${u} BÉNÉDICTION! +${h} PV groupe!`;spawnP(this.element,'#eeee66',8)}
+        else if(cls==='voleur'){const crit=true;const d=hit(3);r=`🔪 ${u} ASSASSINAT! CRIT x3 → -${d}!`;spawnP(this.element,'#7733aa',8)}
+        else if(cls==='druide'){const h=healGrp(15+this.atk*0.5);const d=hit(1.5);r=`🌿 ${u} NATURE! +${h} PV groupe + -${d} épines!`;spawnP(this.element,'#22aa44',8)}
+        // ═══ T2 SPECIALS ═══
+        else if(cls==='berserker'){const hpRatio=1-(this.hp/this.maxHp);const multi=3+hpRatio*4;const d=hit(multi);r=`🔥 ${u} RAGE! ATK x${multi.toFixed(1)} → -${d}! (plus blessé = plus fort)`;spawnP(this.element,'#ff2222',10)}
+        else if(cls==='chevalier'){const d=hit(2);shieldGrp(25+this.def);r=`🛡 ${u} REMPART! -${d} + Bouclier ${25+this.def} groupe!`;spawnP(this.element,'#aaaacc',10)}
+        else if(cls==='archimage'){const d=hit(4);if(allChars)allChars.forEach(c=>{if(c.alive)c.mana=Math.min(c.maxMana,c.mana+15)});r=`💫 ${u} APOCALYPSE ARCANE! -${d} + 15 MP groupe!`;spawnP(this.element,'#2244ff',12)}
+        else if(cls==='necromancien'){const d=hit(2);game.allies.push({name:'💀 Squelettes de '+u,hp:200+this.atk*3,atk:this.atk,dur:30000});r=`☠ ${u} ARMÉE MORTE! -${d} + Squelettes invoqués (30s)!`;spawnP(this.element,'#443366',10)}
+        else if(cls==='sniper'){const crit=hit(4);r=`🎯 ${u} HEADSHOT! CRIT x4 → -${crit}! (ignore DEF)`;spawnP(this.element,'#44bb44',10)}
+        else if(cls==='ranger'){game.allies.push({name:'🐺 Loup de '+u,hp:150+this.atk*2,atk:Math.floor(this.atk*0.8),dur:45000});r=`🐺 ${u} COMPAGNON! Loup invoqué (45s, ATK ${Math.floor(this.atk*0.8)})!`;spawnP(this.element,'#558844',8)}
+        else if(cls==='saint'){const h=healGrp(40+this.atk*2);if(allChars)allChars.forEach(c=>{if(!c.alive&&Math.random()<0.3){c.alive=true;c.hp=Math.floor(c.maxHp*0.3);c.element.classList.remove('char-dead');c.element.classList.add('anim-idle');c.updateBars();c.popup('REVIVE!','popup popup-lvl')}});r=`✝ ${u} RÉSURRECTION! +${h} PV + chance revive!`;spawnP(this.element,'#ffff88',10)}
+        else if(cls==='oracle'){buffGrp('crit',20,10000);buffGrp('atk',3,10000);r=`🔮 ${u} PROPHÉTIE! +20 CRIT +3 ATK groupe 10s!`;spawnP(this.element,'#cc88ff',10)}
+        else if(cls==='assassin'){this._invisible=true;setTimeout(()=>{this._invisible=false},5000);const d=hit(5);r=`🌑 ${u} OMBRE! Invisible 5s + -${d} CRIT x5!`;spawnP(this.element,'#220044',10)}
+        else if(cls==='ninja'){let td=0;for(let i=0;i<5;i++){td+=hit(0.8)};r=`🌀 ${u} SHURIKEN! 5x → -${td} total!`;spawnP(this.element,'#333355',10)}
+        else if(cls==='gardien'){shieldGrp(40+this.def*2);buffGrp('def',5,15000);r=`🌳 ${u} RACINES! Bouclier ${40+this.def*2} + DEF +5 groupe 15s!`;spawnP(this.element,'#116633',10)}
+        else if(cls==='dragon'){const d=hit(3.5);if(bAlive){const burn=Math.floor(this.atk*0.5);let ticks=5;const bi=setInterval(()=>{if(boss&&boss.alive&&ticks>0){boss.takeDmg(burn);me.totalDmg+=burn;ticks--}else clearInterval(bi)},2000)};r=`🔥 ${u} SOUFFLE DRACONIQUE! -${d} + brûlure (${Math.floor(this.atk*0.5)}x5)!`;spawnP(this.element,'#ff4400',12)}
+        else if(cls==='gladiateur'){this.atk=Math.floor(this.atk*1.5);setTimeout(()=>{this.atk=Math.floor(this.atk/1.5);this.updateBars()},10000);const d=hit(2.5);r=`⚔ ${u} ARENA! -${d} + ATK +50% 10s!`;spawnP(this.element,'#cc6633',10)}
+        else if(cls==='sorcier'){if(bAlive){boss.atk=Math.floor(boss.atk*0.7);boss.def=Math.floor(boss.def*0.7);setTimeout(()=>{if(boss){boss.atk=Math.floor(boss.atk/0.7);boss.def=Math.floor(boss.def/0.7)}},15000)};r=`🧙 ${u} MALÉDICTION! Boss -30% ATK/DEF 15s!`;spawnP(this.element,'#6633aa',10)}
+        else if(cls==='chasseur'){const d=hit(3);if(bAlive){boss._stunned=true;setTimeout(()=>{if(boss)boss._stunned=false},3000)};r=`🪤 ${u} PIÈGE! -${d} + Boss STUN 3s!`;spawnP(this.element,'#886633',10)}
+        else if(cls==='templier'){const d=hit(2);const h=healGrp(20+this.def);shieldGrp(20);r=`⚜ ${u} SACREMENT! -${d} + ${h} PV + Bouclier 20 groupe!`;spawnP(this.element,'#ccaa44',10)}
+        else if(cls==='pirate'){const stolen=Math.floor(20+Math.random()*40);if(allChars)allChars.forEach(c=>{if(c.alive)c.gold+=stolen});r=`🏴‍☠️ ${u} PILLAGE! +${stolen}g pour tous! Arrr!`;spawnP(this.element,'#885522',8)}
+        else if(cls==='chamane'){game.allies.push({name:'👻 Esprits de '+u,hp:180+this.atk*2,atk:Math.floor(this.atk*0.7),dur:40000});const h=healGrp(15);r=`👻 ${u} ESPRITS! Esprits invoqués (40s) + ${h} PV groupe!`;spawnP(this.element,'#448866',10)}
+        else if(cls==='abomination'){if(bAlive){const steal=Math.floor(this.atk*3);boss.takeDmg(steal);me.totalDmg+=steal;me.heal(steal);buffGrp('def',-2,10000)};r=`🧟 ${u} DÉVORER! Vol ${Math.floor(this.atk*3)} PV au boss! (peur: DEF -2 groupe 10s)`;spawnP(this.element,'#4a3040',10)}
+        // ═══ T3 SPECIALS ═══
+        else if(cls==='paladin'){const d=hit(3);shieldGrp(50+this.def*2);r=`🛡 ${u} AEGIS DIVINE! -${d} + Bouclier ${50+this.def*2} tous!`;spawnP(this.element,'#4499cc',12)}
+        else if(cls==='champion'){let td=0;for(let i=0;i<5;i++){td+=hit(1.2)};r=`⚔ ${u} EXÉCUTION! 5 frappes → -${td}!`;spawnP(this.element,'#ff0000',14)}
+        else if(cls==='warlord'){buffGrp('atk',8,15000);const d=hit(2);r=`🗡 ${u} COMMANDEMENT! +8 ATK groupe 15s + -${d}!`;spawnP(this.element,'#8b0000',12)}
+        else if(cls==='elementaliste'){const d1=hit(2);const d2=hit(2);const d3=hit(2);r=`🌊 ${u} TEMPÊTE! Feu -${d1} + Glace -${d2} + Foudre -${d3} = -${d1+d2+d3}!`;spawnP(this.element,'#0088ff',14)}
+        else if(cls==='liche'){const steal=hit(4);me.heal(Math.floor(steal*0.5));game.allies.push({name:'💀 Revenants',hp:300,atk:25,dur:25000});r=`💀 ${u} DRAIN D'ÂME! -${steal} + Vol ${Math.floor(steal*0.5)} PV + Revenants!`;spawnP(this.element,'#330055',14)}
+        else if(cls==='enchanteur'){buffGrp('atk',5,15000);buffGrp('def',5,15000);buffGrp('spd',3,15000);r=`✨ ${u} ENCHANTEMENT! +5 ATK/DEF +3 SPD groupe 15s!`;spawnP(this.element,'#9966cc',12)}
+        else if(cls==='tireur_elite'){const d=hit(6);r=`🎯 ${u} BALLE PARFAITE! -${d} (ignore DEF x6)!`;spawnP(this.element,'#33cc33',14)}
+        else if(cls==='maitre_chasse'){for(let i=0;i<3;i++)game.allies.push({name:'🐺 Loup '+i,hp:200,atk:20+this.atk,dur:30000});r=`🐺 ${u} MEUTE! 3 loups invoqués (30s)!`;spawnP(this.element,'#446633',12)}
+        else if(cls==='artilleur'){let td=0;for(let i=0;i<4;i++){td+=hit(1.5)};r=`💣 ${u} BOMBARDEMENT! 4x AoE → -${td}!`;spawnP(this.element,'#cc8833',14)}
+        else if(cls==='archange'){const h=healGrp(this.maxHp);if(allChars)allChars.forEach(c=>{if(!c.alive){c.alive=true;c.hp=Math.floor(c.maxHp*0.5);c.element.classList.remove('char-dead');c.element.classList.add('anim-idle');c.updateBars();c.popup('MIRACLE!','popup popup-lvl')}});r=`👼 ${u} MIRACLE! Full heal groupe + revive morts!`;spawnP(this.element,'#ffffaa',14)}
+        else if(cls==='sage'){buffGrp('atk',6,10000);buffGrp('def',6,10000);buffGrp('crit',15,10000);if(allChars)allChars.forEach(c=>{if(c.alive)c.mana=c.maxMana});r=`📖 ${u} SAGESSE! +50% stats + full MP groupe 10s!`;spawnP(this.element,'#aa66ff',14)}
+        else if(cls==='inquisiteur'){const d=hit(3);const h=healGrp(25+this.atk);r=`⚜ ${u} JUGEMENT! -${d} + ${h} PV groupe!`;spawnP(this.element,'#ccaa22',12)}
+        else if(cls==='maitre_ombre'){if(bAlive&&boss.hp<boss.maxHp*0.5){const d=boss.takeDmg(Math.floor(boss.hp*0.5));me.totalDmg+=d;r=`🌑 ${u} MORT SILENCIEUSE! -50% PV boss → -${d}!`}else{const d=hit(5);r=`🌑 ${u} MORT SILENCIEUSE! -${d}!`};spawnP(this.element,'#110022',16)}
+        else if(cls==='shinobi'){let td=0;for(let i=0;i<3;i++){td+=hit(2)};r=`🥷 ${u} JUTSU! 3 clones → -${td} total!`;spawnP(this.element,'#222244',14)}
+        else if(cls==='phantom'){this._invisible=true;setTimeout(()=>{this._invisible=false},8000);const d=hit(5);r=`👻 ${u} ÉVANESCENCE! Esquive tout 8s + -${d} CRIT x5!`;spawnP(this.element,'#443355',14)}
+        else if(cls==='ancien'){game.allies.push({name:'🌳 Tréant',hp:500+this.def*5,atk:30+this.atk,dur:45000});buffGrp('def',4,20000);r=`🌳 ${u} FORÊT VIVANTE! Tréant invoqué (45s) + DEF +4 groupe 20s!`;spawnP(this.element,'#005522',14)}
+        else if(cls==='dragon_ancien'){const d=hit(5);if(bAlive){let ticks=6;const bi=setInterval(()=>{if(boss&&boss.alive&&ticks>0){const bd=boss.takeDmg(Math.floor(me.atk));me.totalDmg+=Math.floor(me.atk);ticks--}else clearInterval(bi)},1500)};r=`🐲 ${u} INFERNO! -${d} + brûlure massive!`;spawnP(this.element,'#ff2200',16)}
+        else if(cls==='avatar_nature'){const h=healGrp(this.maxHp*2);const d=hit(3);r=`🌍 ${u} GAÏA! Full heal groupe (${h} PV) + -${d} nature!`;spawnP(this.element,'#22cc44',14)}
+        // ═══ T4 LEGENDARY SPECIALS ═══
+        else if(cls==='dieu_guerre'){
+            const d=hit(10);shieldGrp(50);
+            r=`⚡ ${u} RAGNARÖK! -${d} dégâts x10 + Bouclier 50 tous!`;spawnP(this.element,'#ff2222',25);
         }
-        // Paladin/Chevalier shield
-        if((cls==='paladin'||cls==='chevalier')&&allChars){
-            allChars.forEach(c=>{if(c.alive)c.setShield(25+this.def*2)});
-            r+=' Bouclier groupe!';
+        else if(cls==='empereur'){
+            const d=hit(8);buffGrp('atk',10,20000);buffGrp('def',10,20000);
+            r=`👑 ${u} DÉCRET IMPÉRIAL! -${d} x8 + ATK/DEF +10 groupe 20s!`;spawnP(this.element,'#d4af37',25);
         }
-        // TIER 4 LEGENDARY SPECIALS
-        if(cls==='dieu_guerre'&&boss&&boss.alive){
-            const d2=boss.takeDmg(Math.floor(this.atk*8));this.totalDmg+=d2;
-            if(allChars)allChars.forEach(c=>{if(c.alive)c.setShield(50)});
-            r=`⚡ ${this.username} RAGNARÖK! -${d2+Math.floor(this.atk*2.5)} + Bouclier x50 tous!`;
-            spawnP(this.element,'#ff2222',20);
+        else if(cls==='archonte'){
+            const d=hit(15);
+            r=`🌀 ${u} APOCALYPSE ARCANIQUE! -${d} NUKE x15!`;spawnP(this.element,'#aa00ff',30);
         }
-        if(cls==='archonte'&&boss&&boss.alive){
-            const d2=boss.takeDmg(Math.floor(this.atk*12));this.totalDmg+=d2;
-            r=`🌀 ${this.username} APOCALYPSE ARCANIQUE! -${d2+Math.floor(this.atk*3.5)} dégâts!`;
-            spawnP(this.element,'#aa00ff',25);
+        else if(cls==='oeil_faucon'){
+            const d=hit(10);
+            r=`🎯 ${u} FLÈCHE DIVINE! -${d} (100% crit, ignore DEF)!`;spawnP(this.element,'#22ff44',25);
         }
-        if(cls==='oeil_faucon'&&boss&&boss.alive){
-            const d2=boss.takeDmg(Math.floor(this.atk*10));this.totalDmg+=d2;
-            r=`🎯 ${this.username} FLÈCHE DIVINE! -${d2+Math.floor(this.atk*3)} (ignore DEF)!`;
-            spawnP(this.element,'#22ff44',20);
+        else if(cls==='arme_divine'){
+            const d=hit(10);
+            r=`⚡ ${u} FRAPPE CÉLESTE! -${d} x10 (ignore TOUTE DEF)!`;spawnP(this.element,'#ffaa00',25);
         }
-        if(cls==='divin'&&allChars){
-            allChars.forEach(c=>{
+        else if(cls==='divin'){
+            if(allChars)allChars.forEach(c=>{
                 if(!c.alive){c.alive=true;c.hp=c.maxHp;c.mana=c.maxMana;c.element.classList.remove('char-dead');c.element.style.opacity='1';c.element.classList.add('anim-idle');c.updateBars();spawnP(c.element,'#ffffaa',15);c.popup('MIRACLE!','popup popup-lvl')}
                 else{c.heal(c.maxHp);c.mana=c.maxMana;c.updateBars();spawnP(c.element,'#ffffaa',8)}
             });
-            r=`✝ ${this.username} RÉSURRECTION DIVINE! Full heal + revive ALL!`;
+            r=`✝ ${u} RÉSURRECTION DIVINE! Full heal + revive ALL + full MP!`;
         }
-        if(cls==='spectre'&&boss&&boss.alive){
-            if(boss.hp<boss.maxHp*0.2){const d2=boss.takeDmg(boss.hp);this.totalDmg+=d2;r=`💀 ${this.username} FAUCHEUSE! EXÉCUTION -${d2}!`;spawnP(this.element,'#220033',25)}
-            else{const d2=boss.takeDmg(Math.floor(this.atk*8));this.totalDmg+=d2;r=`👻 ${this.username} FAUCHEUSE! -${d2+Math.floor(this.atk*3)} dégâts!`;spawnP(this.element,'#220033',15)}
+        else if(cls==='eternel'){
+            if(allChars)allChars.forEach(c=>{if(c.alive){c.heal(c.maxHp);c._invulnerable=true;setTimeout(()=>{c._invulnerable=false},5000)}});
+            r=`♾ ${u} ÉTERNITÉ! Full heal ALL + Invulnérable 5s!`;spawnP(this.element,'#eeffee',25);
         }
-        if(cls==='titan_nature'&&boss&&boss.alive){
-            const d2=boss.takeDmg(Math.floor(this.atk*6));this.totalDmg+=d2;
-            if(allChars)allChars.forEach(c=>{if(c.alive){c.def+=10;setTimeout(()=>c.def-=10,15000)}});
-            r=`🌍 ${this.username} CATACLYSME! -${d2+Math.floor(this.atk*2)} + DEF +10 tous (15s)!`;
-            spawnP(this.element,'#00aa22',25);
+        else if(cls==='spectre'){
+            if(bAlive&&boss.hp<boss.maxHp*0.2){const d=boss.takeDmg(boss.hp);me.totalDmg+=d;r=`💀 ${u} FAUCHEUSE! EXÉCUTION → -${d}! INSTANT KILL!`;spawnP(this.element,'#220033',30)}
+            else{const d=hit(8);r=`👻 ${u} FAUCHEUSE! -${d} dégâts!`;spawnP(this.element,'#220033',20)}
         }
+        else if(cls==='neant'){
+            if(bAlive&&boss.hp<boss.maxHp*0.25){const d=boss.takeDmg(boss.hp);me.totalDmg+=d;r=`🕳 ${u} NÉANT ABSOLU! DELETE → -${d}! BOSS EFFACÉ!`;spawnP(this.element,'#110011',30)}
+            else{const d=hit(9);r=`🕳 ${u} NÉANT ABSOLU! -${d} dégâts!`;spawnP(this.element,'#110011',20)}
+        }
+        else if(cls==='titan_nature'){
+            const d=hit(6);buffGrp('def',10,15000);
+            if(bAlive){boss._stunned=true;setTimeout(()=>{if(boss)boss._stunned=false},5000)};
+            r=`🌍 ${u} CATACLYSME! -${d} + DEF +10 tous 15s + Boss STUN 5s!`;spawnP(this.element,'#00aa22',25);
+        }
+        else if(cls==='phenix'){
+            const d=hit(7);this._autoRevive=true;
+            if(bAlive){let ticks=4;const bi=setInterval(()=>{if(boss&&boss.alive&&ticks>0){const bd=boss.takeDmg(Math.floor(me.atk*2));me.totalDmg+=bd;ticks--}else clearInterval(bi)},2000)};
+            r=`🔥 ${u} RENAISSANCE! -${d} + brûlure AoE + Auto-revive activé!`;spawnP(this.element,'#ff6600',25);
+        }
+        // ═══ FALLBACK ═══
+        else{const d=hit(1.5+(cd.tier||0)*0.5);r=`${u} ${cd.special.name}! -${d} dégâts!`;spawnP(this.element,cd.color,8)}
         this.popup('★'+cd.special.name,'popup popup-crit');
         return r;
     }
@@ -3150,7 +3269,10 @@ class GameManager{
             this.boss.maxHp=Math.floor(this.boss.maxHp*1.5);this.boss.hp=this.boss.maxHp;
             this.boss.atk=Math.floor(this.boss.atk*1.2);
             const pc=Math.max(1,Object.values(this.characters).filter(c=>c.alive).length);
-            const scale=0.5+0.4*pc;this.boss.maxHp=Math.floor(this.boss.maxHp*scale);this.boss.hp=this.boss.maxHp;this.boss.atk=Math.floor(this.boss.atk*(0.7+0.15*pc));
+            const avgLvl=Object.values(this.characters).filter(c=>c.alive).reduce((s,c)=>s+c.level,0)/pc;
+            const lvlF=0.7+avgLvl*0.01;const scale=pc===1?0.25*lvlF:(0.3+0.35*pc)*Math.min(lvlF,2);
+            this.boss.maxHp=Math.floor(this.boss.maxHp*scale);this.boss.hp=this.boss.maxHp;
+            this.boss.atk=Math.floor(this.boss.atk*(pc===1?0.35*lvlF:(0.5+0.12*pc)*Math.min(lvlF,2)));
             Object.values(this.characters).forEach(c=>{c.totalDmg=0;c.totalHeal=0});
             const modInfo=mod?` [${mod.emoji} ${mod.name}]`:'';
             this.log(`💀 MEGA BOSS! ${this.boss.name}${modInfo} (${this.boss.maxHp} PV)`,'log-special');
@@ -3174,7 +3296,10 @@ class GameManager{
             this.boss.maxHp=Math.floor(this.boss.maxHp*0.6);this.boss.hp=this.boss.maxHp;
             this.boss.atk=Math.floor(this.boss.atk*0.7);
             const pc=Math.max(1,Object.values(this.characters).filter(c=>c.alive).length);
-            const scale=0.5+0.4*pc;this.boss.maxHp=Math.floor(this.boss.maxHp*scale);this.boss.hp=this.boss.maxHp;this.boss.atk=Math.floor(this.boss.atk*(0.7+0.15*pc));
+            const avgLvl=Object.values(this.characters).filter(c=>c.alive).reduce((s,c)=>s+c.level,0)/pc;
+            const lvlF=0.7+avgLvl*0.01;const scale=pc===1?0.25*lvlF:(0.3+0.35*pc)*Math.min(lvlF,2);
+            this.boss.maxHp=Math.floor(this.boss.maxHp*scale);this.boss.hp=this.boss.maxHp;
+            this.boss.atk=Math.floor(this.boss.atk*(pc===1?0.35*lvlF:(0.5+0.12*pc)*Math.min(lvlF,2)));
             Object.values(this.characters).forEach(c=>{c.totalDmg=0;c.totalHeal=0});
             const modInfo=mod?` [${mod.emoji} ${mod.name}]`:'';
             this.log(`⚔ Mini-Boss! ${this.boss.name}${modInfo} (${this.boss.maxHp} PV)`,'log-special');
@@ -3267,9 +3392,12 @@ class GameManager{
                 }
             };
             this.boss.spawnTime=Date.now();this.boss.enrageTime=50000+this.wave*4000;
-            // Scale army by player count (1p=base, 5p=x2.5, 10p=x4.5, 20p=x8.5)
+            // Scale army by player count + level
             const pc=Math.max(1,Object.values(this.characters).filter(c=>c.alive).length);
-            const scale=0.5+0.4*pc;this.boss.maxHp=Math.floor(this.boss.maxHp*scale);this.boss.hp=this.boss.maxHp;this.boss.atk=Math.floor(this.boss.atk*(0.7+0.15*pc));
+            const avgLvl=Object.values(this.characters).filter(c=>c.alive).reduce((s,c)=>s+c.level,0)/pc;
+            const lvlF=0.7+avgLvl*0.01;const scale=pc===1?0.25*lvlF:(0.3+0.35*pc)*Math.min(lvlF,2);
+            this.boss.maxHp=Math.floor(this.boss.maxHp*scale);this.boss.hp=this.boss.maxHp;
+            this.boss.atk=Math.floor(this.boss.atk*(pc===1?0.35*lvlF:(0.5+0.12*pc)*Math.min(lvlF,2)));
             this.boss.render();
             Object.values(this.characters).forEach(c=>{c.totalDmg=0;c.totalHeal=0});
             this.log(`⚔ ${this.boss.name} déferle! (${totalHp} PV total)`,'log-special');
@@ -3291,7 +3419,10 @@ class GameManager{
             this.boss.name=`${pack.emoji} ${pack.name} (x${pack.count})`;
             this.boss.baseGold=pack.gold;
             const pc=Math.max(1,Object.values(this.characters).filter(c=>c.alive).length);
-            const scale=0.5+0.4*pc;this.boss.maxHp=Math.floor(this.boss.maxHp*scale);this.boss.hp=this.boss.maxHp;this.boss.atk=Math.floor(this.boss.atk*(0.7+0.15*pc));
+            const avgLvl=Object.values(this.characters).filter(c=>c.alive).reduce((s,c)=>s+c.level,0)/pc;
+            const lvlF=0.7+avgLvl*0.01;const scale=pc===1?0.25*lvlF:(0.3+0.35*pc)*Math.min(lvlF,2);
+            this.boss.maxHp=Math.floor(this.boss.maxHp*scale);this.boss.hp=this.boss.maxHp;
+            this.boss.atk=Math.floor(this.boss.atk*(pc===1?0.35*lvlF:(0.5+0.12*pc)*Math.min(lvlF,2)));
             this.boss.render();
             Object.values(this.characters).forEach(c=>{c.totalDmg=0;c.totalHeal=0});
             this.log(`${pack.emoji} ${pack.name} x${pack.count} approche! (${this.boss.maxHp} PV)`,'log-info');
@@ -3340,7 +3471,10 @@ class GameManager{
     }
 
     processCmd(username,cmd,args){
-        if(!this.characters[username]&&!['class','stats','do','notdo','help','commandes','info','classement','top','leaderboard'].includes(cmd)){this.addChar(username,'apprenti')}
+        // Short aliases
+        const aliases={atk:'attaque',att:'attaque',def:'defense',heal:'soin',hp:'soin',mag:'sort',evo:'evoluer',inv:'equip',biere:'taverne',beer:'taverne'};
+        if(aliases[cmd]){if(cmd==='biere'||cmd==='beer')args=['biere'];cmd=aliases[cmd]}
+        if(!this.characters[username]&&!['class','stats','do','notdo','help','commandes','aide','info','classement','top','leaderboard'].includes(cmd)){this.addChar(username,'apprenti')}
         const c=this.characters[username];
         switch(cmd){
             case 'class':{
@@ -3449,7 +3583,7 @@ class GameManager{
                 const eqNames=Object.entries(c.equipment||{}).filter(([,v])=>v&&EQUIPMENT[v]).map(([,v])=>`${EQUIPMENT[v].emoji}T${EQUIPMENT[v].tier}`);
                 if(eqNames.length)sLines.push({t:`Équip: ${eqNames.join(' ')} (${eqCount}/5)`,c:'#5588cc'});
                 if(!c.alive)sLines.push({t:`Mort (${c._deathCause||'Boss'})`,c:'#cc4444'});
-                showSB(sLines,5000);return`${cd.name} Nv.${c.level} | ❤${c.hp}/${c.maxHp} ⚔${c.atk} 🛡${c.def} | 💰${c.gold}g 💀${c.kills}kills`;
+                return`${cd.name} Nv.${c.level} | ❤${c.hp}/${c.maxHp} ⚔${c.atk} 🛡${c.def} | 💰${c.gold}g 💀${c.kills}kills`;
             }
             case 'shop':case 'marche':{
                 if(!c)return'!class pour rejoindre!';
@@ -3463,21 +3597,50 @@ class GameManager{
                 }
                 // !shop <item_key> → direct buy via chat (no vote needed)
                 if(item&&EQUIPMENT[item]){shopBuy(username,item);return null}
+                // Pickaxe buy
+                if(item&&PICKAXES[item]){
+                    const pk=PICKAXES[item];
+                    if(c.gold<pk.cost)return`Pas assez d'or! (${c.gold}/${pk.cost}g)`;
+                    if(!c._inventory)c._inventory={};
+                    if(c._inventory[item])return`Tu as déjà ${pk.name}!`;
+                    c.gold-=pk.cost;c._inventory[item]=true;
+                    c.popup(pk.emoji,'popup popup-gold');spawnP(c.element,'#8B7355',5);
+                    return`${pk.emoji} ${pk.name} achetée! Bonus mine +${pk.bonus} | -${pk.cost}g`;
+                }
                 if(item){
                     const allC=this.blackMarketOpen?{...CONSUMABLES,...BLACK_MARKET}:CONSUMABLES;
                     if(allC[item]){shopBuyConsum(username,item);return null}
-                    // Slot browsing shortcut
+                    // Slot browsing + new categories
                     const slotMap={arme:'weapon',weapon:'weapon',armure:'armor',armor:'armor',botte:'boots',bottes:'boots',boots:'boots',amulette:'amulet',amulet:'amulet',anneau:'ring',ring:'ring'};
                     if(slotMap[item]){
                         const slot=slotMap[item];
                         const items=Object.entries(EQUIPMENT).filter(([,v])=>v.slot===slot).map(([k,v])=>{
                             const owned=c.equipment[slot]===k?'✅':'';
-                            return`${v.emoji}${v.name} T${v.tier}(${v.cost}g)${owned}`;
+                            const afford=c.gold>=v.cost?'💰':'🔒';
+                            return`${v.emoji}${v.name} T${v.tier}(${v.cost}g)${owned||afford}`;
                         }).join(' | ');
                         chatSay(`⚒ ${SLOT_NAMES[slot].toUpperCase()}: ${items}`);
                         return null;
                     }
-                    return`Item inconnu! !shop arme/armure/botte/amulette/anneau ou !shop <item>`;
+                    if(item==='potion'||item==='potions'||item==='conso'){
+                        const allC=this.blackMarketOpen?{...CONSUMABLES,...BLACK_MARKET}:CONSUMABLES;
+                        const items=Object.entries(allC).map(([k,v])=>{
+                            const afford=c.gold>=v.cost?'💰':'🔒';
+                            return`${v.emoji}${v.name}(${v.cost}g)${afford} ${v.desc}`;
+                        }).join(' | ');
+                        chatSay(`🧪 POTIONS: ${items} | !shop <nom> pour acheter`);
+                        return null;
+                    }
+                    if(item==='pioche'||item==='outil'||item==='outils'){
+                        const items=Object.entries(PICKAXES).map(([k,v])=>{
+                            const owned=c._inventory&&c._inventory[k]?'✅':'';
+                            const afford=c.gold>=v.cost?'💰':'🔒';
+                            return`${v.emoji}${v.name} T${v.tier}(${v.cost}g) +${v.bonus}${owned||afford}`;
+                        }).join(' | ');
+                        chatSay(`⛏ PIOCHES: ${items} | !shop <nom> pour acheter`);
+                        return null;
+                    }
+                    return`Item inconnu! !shop arme/armure/botte/amulette/anneau/potion/pioche ou !shop <item>`;
                 }
                 // !shop → VOTE system (need 3 viewers to agree)
                 return this.shopVote(username);
@@ -3488,7 +3651,7 @@ class GameManager{
                 c.getEquipSummary().forEach(l=>eLines.push({t:l,c:'#88aaff'}));
                 eLines.push({t:`Total: ATK:${c.atk} DEF:${c.def} SPD:${c.spd} CRIT:${c.crit}%`,c:'#ffcc44'});
                 const eqCount=Object.values(c.equipment||{}).filter(Boolean).length;
-                showSB(eLines,5000);return`🛡 Équipement (${eqCount}/5) | ATK:${c.atk} DEF:${c.def} SPD:${c.spd} CRIT:${c.crit}%`;
+                return`🛡 Équipement (${eqCount}/5) | ATK:${c.atk} DEF:${c.def} SPD:${c.spd} CRIT:${c.crit}%`;
             }
             case 'evoluer':case 'evolution':{
                 if(!c)return null;
@@ -3525,18 +3688,22 @@ class GameManager{
                 return`${username} → ${CLASS_DATA[choice].name}! Nv.1 — 30% bonus stats conservés!`;
             }
             case 'reclass':{
-                // Change class - reset level but x2 XP
+                // Change class - reset to T0, small XP bonus (max x3), costs gold
                 if(!c)return null;
                 const cls=(args[0]||'').toLowerCase();
-                if(!cls)return`!reclass <classe> - Reset niv.0 mais x2 XP!`;
+                if(!cls)return`!reclass <classe> - Recommencer T0 (coûte 200g, XP bonus +50% max x3)`;
                 if(!CLASS_DATA[cls])return`Classe inconnue!`;
                 if(CLASS_DATA[cls].tier>0)return`Reclass T0 seulement: apprenti/paysan/chat/ecuyer/brigand/herboriste/barde/squelette`;
-                const oldG=c.gold,oldK=c.kills,oldMul=c.xpMulti,col=c.customColor,oldGender=c.gender,oldMount=c.mount;
-                const oldEquip=c.equipment?{...c.equipment}:{};const oldCC=c.classChanges||0;
+                const reclassCost=200;
+                if(c.gold<reclassCost)return`Pas assez d'or! (${c.gold}/${reclassCost}g)`;
+                const oldCC=c.classChanges||0;
+                if(oldCC>=3)return`Max 3 reclass! Tu as déjà reclass ${oldCC} fois.`;
+                const oldG=c.gold-reclassCost,oldK=c.kills,oldMul=Math.min(c.xpMulti*1.5,3),col=c.customColor,oldGender=c.gender,oldMount=c.mount;
+                const oldEquip=c.equipment?{...c.equipment}:{};
                 c.remove();
                 this.characters[username]=new Character(username,cls);
                 const nc=this.characters[username];
-                nc.gold=oldG;nc.kills=oldK;nc.xpMulti=oldMul*2;nc.classChanges=oldCC+1;
+                nc.gold=oldG;nc.kills=oldK;nc.xpMulti=oldMul;nc.classChanges=oldCC+1;
                 // Re-apply equipment
                 nc.equipment=oldEquip;
                 Object.values(oldEquip).forEach(k=>{if(k&&EQUIPMENT[k]){Object.entries(EQUIPMENT[k].stats).forEach(([st,v])=>{if(st==='maxHp'){nc.maxHp+=v;nc.hp+=v}else if(st==='maxMana'){nc.maxMana+=v;nc.mana+=v}else{nc[st]=(nc[st]||0)+v}})}});
@@ -3621,20 +3788,21 @@ class GameManager{
                 helpLines.push({t:'━━ COMMANDES ━━',c:'#9a8340'});
                 helpLines.push({t:'COMBAT: !attaque · !soin · !sort · !skill',c:'#cc6644'});
                 helpLines.push({t:'DEFENSE: !defense · !special · !esquive',c:'#cc6644'});
-                helpLines.push({t:'SHOP: !shop · !shop arme/armure/botte/amulette/anneau',c:'#5588cc'});
-                helpLines.push({t:'EQUIP: !equip (voir) · !marche noir',c:'#5588cc'});
+                helpLines.push({t:'SHOP: !shop arme/armure/botte/amulette/anneau/potion/pioche',c:'#5588cc'});
+                helpLines.push({t:'EQUIP: !equip · !inventaire · !marche noir',c:'#5588cc'});
                 helpLines.push({t:'INFO: !stats · !classement · !info [classe] · !recap',c:'#5588cc'});
                 helpLines.push({t:'PROG: !evoluer [classe] · !reclass · !succes',c:'#55aa55'});
-                helpLines.push({t:'SOCIAL: !don · !duel · !combat · !highfive <pseudo>',c:'#cc5588'});
-                helpLines.push({t:'DÉTENTE: !taverne · !manger · !repos',c:'#cc8844'});
+                helpLines.push({t:'SOCIAL: !don · !duel · !combat · !clap <pseudo>',c:'#cc5588'});
+                helpLines.push({t:'CRAFT: !mine · !forge · !recolte · !mission',c:'#cc8844'});
+                helpLines.push({t:'DÉTENTE: !taverne · !manger · !repos · !saison',c:'#cc8844'});
                 helpLines.push({t:'MINI-JEU: !chercher · !pecher · !courir · !repondre',c:'#44aacc'});
+                helpLines.push({t:'PARI: !pari <montant> <pseudo> · Saisonnier: !neige/!feuilles/!fleurs',c:'#44aacc'});
                 helpLines.push({t:'PERSO: !design 1/2/3 · !homme/!femme · !couleur [nom/hex]',c:'#8855cc'});
                 helpLines.push({t:'EVENT: !do / !notdo · !buffs',c:'#8855cc'});
                 if(c){const cd=CLASS_DATA[c.className];if(cd.evolutions&&cd.evolutions.length)helpLines.push({t:`Evo: !evoluer ${cd.evolutions.join('/')} (Nv.${cd.evoLevel})`,c:'#44cc44'})}
                 else{helpLines.push({t:'REJOINDRE: !class apprenti/paysan/chat/ecuyer/brigand/herboriste/barde/squelette',c:'#44cc44'})}
                 helpLines.push({t:'Combo x3+ = bonus · Revive auto 30s · Roulette 20min',c:'#555'});
-                showSB(helpLines,10000);
-                return`📜 !attaque !soin !sort !skill !defense !special !shop !stats !evoluer !reclass !duel !highfive !taverne !manger !help`;
+                return`📜 !attaque !soin !sort !skill !defense !special !shop !stats !evoluer !reclass !duel !clap !taverne !manger !mine !forge !recolte !pari !help`;
             }
             case 'succes':case 'achievements':{
                 if(!c)return'!class pour rejoindre!';
@@ -3644,8 +3812,7 @@ class GameManager{
                 const aLines=[{t:`━━ ${c.username} ━━`,c:'#d4af37'},{t:`${unlocked.length}/${ACHIEVEMENTS.length} Succès débloqués`,c:'#aaa'}];
                 unlocked.forEach(a=>aLines.push({t:`${a.emoji} ${a.name}`,c:'#44ff44'}));
                 if(locked.length>0)aLines.push({t:`🔒 ${locked.length} restants`,c:'#666'});
-                showSB(aLines,6000);
-                return`🏆 Succès affichés!`;
+                return`🏆 ${unlocked.length}/${ACHIEVEMENTS.length} succès | ${unlocked.map(a=>a.emoji+a.name).join(' ')}${locked.length?` | 🔒${locked.length} restants`:''}`;
             }
             case 'do':{if(this.eventActive){this.voteEvent('do',username);return`✅ Vote accepté!`}return'Pas d\'event en cours!'}
             case 'notdo':{if(this.eventActive){this.voteEvent('notdo',username);return`❌ Vote refusé!`}return'Pas d\'event en cours!'}
@@ -3664,8 +3831,8 @@ class GameManager{
                 byKills.forEach((ch,i)=>lines.push({t:`${medals[i]} ${ch.username} (${ch.kills})`,c:'#ff6666'}));
                 lines.push({t:'💰 FORTUNE',c:'#aaa'});
                 byGold.forEach((ch,i)=>lines.push({t:`${medals[i]} ${ch.username} (${ch.gold}g)`,c:'#ffcc44'}));
-                showSB(lines,6000);
-                return'🏆 Classement affiché!';
+                const clTxt=byLvl.map((ch,i)=>`${medals[i]}${ch.username} Nv.${ch.level}`).join(' ');
+                return`🏆 ${clTxt} | 💀 ${byKills[0]?.username}(${byKills[0]?.kills}) | 💰 ${byGold[0]?.username}(${byGold[0]?.gold}g)`;
             }
             case 'don':case 'give':{
                 if(!c)return'!class pour rejoindre!';
@@ -3735,10 +3902,10 @@ class GameManager{
                 this.log(`${food} pour ${username}! +${heal} PV`,'log-heal');
                 return`${food}! +${heal} PV (-5g) Miam!`;
             }
-            case 'highfive':case 'hf':case 'salut':{
+            case 'clap':case 'hf':case 'salut':{
                 if(!c||!c.alive)return'!class pour rejoindre!';
                 const target=(args[0]||'').toLowerCase();
-                if(!target)return'!highfive <pseudo> — Tape dans la main!';
+                if(!target)return'!clap <pseudo> — Tape dans la main!';
                 const tc=Object.values(this.characters).find(t=>t.username.toLowerCase()===target);
                 if(!tc||!tc.alive)return`${target} indisponible!`;
                 if(tc===c)return'Tu ne peux pas te high-five toi-même! 😂';
@@ -3759,6 +3926,143 @@ class GameManager{
                 const mg=MINI_GAMES.find(m=>m.cmd===cmd);
                 if(!mg||mg.id!==this._mg.id)return`Mini-jeu actuel: ${this._mgName}! Utilisez !${this._mg.cmd}`;
                 return mg.onCmd(this,username,args);
+            }
+            case 'mine':{
+                if(!c||!c.alive)return'!class pour rejoindre!';
+                if(c._lastMine&&Date.now()-c._lastMine<45000)return`⛏ Repos! Attends ${Math.ceil((45000-(Date.now()-c._lastMine))/1000)}s`;
+                c._lastMine=Date.now();
+                if(!c._resources)c._resources={};
+                // Check pickaxe
+                const pickKey=Object.keys(PICKAXES).reverse().find(k=>c._inventory&&c._inventory[k]);
+                const pick=pickKey?PICKAXES[pickKey]:null;
+                const bonus=pick?pick.bonus:0;
+                const rolls=1+Math.floor(bonus/2);
+                let loot=[];let totalGold=0;
+                for(let i=0;i<rolls;i++){
+                    const r=Math.random();let cum=0;
+                    for(const item of MINE_LOOT){cum+=item.chance+(bonus*0.02);if(r<=cum){
+                        const qty=item.base+Math.floor(Math.random()*(1+bonus));
+                        const resKey=item.name.toLowerCase().replace(/ /g,'_');
+                        c._resources[resKey]=(c._resources[resKey]||0)+qty;
+                        loot.push(`${item.emoji}${item.name}x${qty}`);totalGold+=item.gold*qty;break;
+                    }}
+                }
+                c.gold+=totalGold;
+                const emote=document.createElement('div');emote.className='idle-emote';emote.textContent='⛏';c.element.appendChild(emote);setTimeout(()=>emote.remove(),2000);
+                spawnP(c.element,'#8B7355',5);c.popup('⛏','popup popup-gold');
+                // Check mission progress
+                _activeMissions.forEach(m=>{const resKey=m.resource;if(c._resources[resKey]>=m.qty&&!m.claimed.has(username)){m.claimed.add(username);c.gold+=m.gold;c.popup(`+${m.gold}g!`,'popup popup-crit');game.log(`🏆 ${username} complète la mission: ${m.emoji}${m.resource} x${m.qty}! +${m.gold}g`,'log-special')}});
+                return`⛏ ${username} mine! ${loot.join(' ')} +${totalGold}g${pick?` (${pick.emoji}${pick.name})`:''} | CD:45s`;
+            }
+            case 'forge':{
+                if(!c||!c.alive)return'!class pour rejoindre!';
+                const item=(args[0]||'').toLowerCase();
+                if(!item){
+                    const recipes=Object.entries(FORGE_RECIPES).map(([k,r])=>{
+                        const needs=Object.entries(r.need).map(([res,qty])=>`${res}x${qty}`).join('+');
+                        const have=Object.entries(r.need).every(([res,qty])=>(c._resources||{})[res]>=qty);
+                        return`${r.emoji}${r.name}(${needs})${have?'✅':'❌'}`;
+                    }).join(' | ');
+                    return`🔨 FORGE: ${recipes} | !forge <item>`;
+                }
+                const recipe=FORGE_RECIPES[item];
+                if(!recipe)return`Item inconnu! !forge pour la liste`;
+                if(!c._resources)c._resources={};
+                const missing=Object.entries(recipe.need).filter(([res,qty])=>(c._resources[res]||0)<qty);
+                if(missing.length>0)return`❌ Manque: ${missing.map(([res,qty])=>`${res}(${c._resources[res]||0}/${qty})`).join(' ')}`;
+                // Consume resources
+                Object.entries(recipe.need).forEach(([res,qty])=>{c._resources[res]-=qty});
+                // Give equipment
+                const eq=EQUIPMENT[recipe.result];
+                if(eq){
+                    const oldEq=c.equipment[eq.slot];
+                    if(oldEq&&EQUIPMENT[oldEq]){Object.entries(EQUIPMENT[oldEq].stats).forEach(([s,v])=>{c[s]-=v})}
+                    c.equipment[eq.slot]=recipe.result;
+                    Object.entries(eq.stats).forEach(([s,v])=>{c[s]+=v});c.updateBars();
+                }
+                const emote=document.createElement('div');emote.className='idle-emote';emote.textContent='🔨';c.element.appendChild(emote);setTimeout(()=>emote.remove(),2500);
+                spawnP(c.element,'#ff6600',8);c.popup('🔨FORGÉ!','popup popup-crit');screenShake(false);
+                this.log(`🔨 ${username} forge ${recipe.emoji}${recipe.name}!`,'log-special');
+                chatSay(`🔨🔥 @${username} forge ${recipe.emoji}${recipe.name} à la Forge! L'enclume résonne! ⚒`);
+                return null;
+            }
+            case 'recolte':{
+                if(!c||!c.alive)return'!class pour rejoindre!';
+                if(c._lastHarvest&&Date.now()-c._lastHarvest<40000)return`🌾 Repos! Attends ${Math.ceil((40000-(Date.now()-c._lastHarvest))/1000)}s`;
+                c._lastHarvest=Date.now();
+                if(!c._resources)c._resources={};
+                let loot=[];let totalGold=0;
+                const r=Math.random();let cum=0;
+                for(const item of HARVEST_ITEMS){cum+=item.chance;if(r<=cum){
+                    const qty=item.base+Math.floor(Math.random()*2);
+                    const resKey=item.name.toLowerCase().replace(/ /g,'_');
+                    c._resources[resKey]=(c._resources[resKey]||0)+qty;
+                    loot.push(`${item.emoji}${item.name}x${qty}`);totalGold+=item.gold*qty;break;
+                }}
+                c.gold+=totalGold;
+                const emote=document.createElement('div');emote.className='idle-emote';emote.textContent='🌾';c.element.appendChild(emote);setTimeout(()=>emote.remove(),2000);
+                spawnP(c.element,'#ddaa33',4);c.popup('🌾','popup popup-heal');
+                // Check mission progress
+                _activeMissions.forEach(m=>{const resKey=m.resource;if(c._resources[resKey]>=m.qty&&!m.claimed.has(username)){m.claimed.add(username);c.gold+=m.gold;c.popup(`+${m.gold}g!`,'popup popup-crit');game.log(`🏆 ${username} complète la mission: ${m.emoji}${m.resource} x${m.qty}! +${m.gold}g`,'log-special')}});
+                return`🌾 ${username} récolte! ${loot.join(' ')} +${totalGold}g | CD:40s`;
+            }
+            case 'mission':case 'missions':{
+                if(!c)return'!class pour rejoindre!';
+                if(_activeMissions.length===0)return'Aucune mission en cours!';
+                const mList=_activeMissions.map((m,i)=>{
+                    const prog=c._resources?(c._resources[m.resource]||0):0;
+                    const done=m.claimed.has(username)?'✅':'';
+                    return`${m.emoji}${m.resource}(${prog}/${m.qty}) +${m.gold}g${done}`;
+                }).join(' | ');
+                return`📋 MISSIONS: ${mList}`;
+            }
+            case 'inventaire':case 'ressources':case 'inv':{
+                if(!c)return'!class pour rejoindre!';
+                if(!c._resources||Object.keys(c._resources).length===0)return'📦 Inventaire vide! !mine ou !recolte pour commencer';
+                const inv=Object.entries(c._resources).filter(([,v])=>v>0).map(([k,v])=>`${k}:${v}`).join(' ');
+                return`📦 ${username}: ${inv}`;
+            }
+            case 'pari':case 'bet':{
+                if(!c||!c.alive)return'!class pour rejoindre!';
+                const amt=parseInt(args[0])||0;
+                const target=(args[1]||'').toLowerCase();
+                if(!amt||amt<=0)return'!pari <montant> <pseudo> — Parie sur qui fera le plus de dégâts!';
+                if(amt>c.gold)return`Pas assez d'or! (${c.gold}g)`;
+                if(!target)return'!pari <montant> <pseudo>';
+                const tc=Object.values(this.characters).find(t=>t.username.toLowerCase()===target);
+                if(!tc)return`${target} introuvable!`;
+                // Create or join bet
+                if(!c._activeBet){
+                    c.gold-=amt;c._activeBet={on:target,amt,id:++_betId};
+                    this.log(`🎲 ${username} parie ${amt}g sur ${target}!`,'log-info');
+                    chatSay(`🎲💰 @${username} parie ${amt}g que @${target} fera le plus de dégâts ce combat! Qui suit? !pari <montant> <pseudo> 🎰`);
+                    return null;
+                }
+                return'Tu as déjà un pari en cours! Attends la fin du combat.';
+            }
+            case 'saison':case 'season':{
+                const seasons=['spring','summer','autumn','winter'];
+                const seasonNames={spring:'🌸 Printemps',summer:'☀ Été',autumn:'🍂 Automne',winter:'❄ Hiver'};
+                const s=seasons[Math.floor(Date.now()/7776000000)%4];
+                const sa=SEASONAL_ACTIVITIES[s];
+                return`${seasonNames[s]} | ${sa?`Activité: ${sa.emoji}${sa.name} — ${sa.desc} !${sa.cmd}`:'Pas d\'activité saisonnière'}`;
+            }
+            case 'neige':case 'feuilles':case 'peche':case 'fleurs':{
+                if(!c||!c.alive)return'!class pour rejoindre!';
+                const seasons=['spring','summer','autumn','winter'];
+                const s=seasons[Math.floor(Date.now()/7776000000)%4];
+                const sa=SEASONAL_ACTIVITIES[s];
+                if(!sa||sa.cmd!==cmd)return`Ce n'est pas la bonne saison! !saison pour voir l'activité`;
+                if(c._lastSeasonal&&Date.now()-c._lastSeasonal<60000)return`${sa.emoji} Attends ${Math.ceil((60000-(Date.now()-c._lastSeasonal))/1000)}s!`;
+                c._lastSeasonal=Date.now();
+                const reward=sa.reward+Math.floor(Math.random()*sa.reward);
+                c.gold+=reward;if(!c._resources)c._resources={};
+                c._resources[sa.cmd]=(c._resources[sa.cmd]||0)+1;
+                const emote=document.createElement('div');emote.className='idle-emote';emote.textContent=sa.emoji;c.element.appendChild(emote);setTimeout(()=>emote.remove(),2000);
+                spawnP(c.element,'#ffcc44',5);c.popup(sa.emoji,'popup popup-gold');
+                // Mission check
+                _activeMissions.forEach(m=>{if(m.resource===sa.cmd&&c._resources[sa.cmd]>=m.qty&&!m.claimed.has(username)){m.claimed.add(username);c.gold+=m.gold;c.popup(`+${m.gold}g!`,'popup popup-crit')}});
+                return`${sa.emoji} ${username} ${sa.name}! +${reward}g`;
             }
             case 'info':{
                 const cls=(args[0]||'').toLowerCase();
@@ -3791,12 +4095,12 @@ class GameManager{
                     const eqIcons=Object.entries(c.equipment||{}).filter(([,v])=>v&&EQUIPMENT[v]).map(([,v])=>`${EQUIPMENT[v].emoji}T${EQUIPMENT[v].tier}`);
                     const rLines=[{t:`━━ ${c.username} ━━`,c:'#9a8340'},{t:`❤ ${c.hp}/${c.maxHp} PV · 💎 ${c.mana}/${c.maxMana} MP`,c:'#44cc44'},{t:`⚔ ATK:${c.atk} 🛡 DEF:${c.def} 💨 SPD:${c.spd} 🎯 CRIT:${c.crit}%`,c:'#5588cc'},{t:`💰 ${c.gold}g · 💀 ${c.kills} kills · DMG: ${c.totalDmg}`,c:'#bb9933'},{t:`${CLASS_DATA[c.className]?.name||c.className} Nv.${c.level} (${c.xp}/${c.xpNext} XP)`,c:'#888'}];
                     if(eqIcons.length)rLines.push({t:`Équip: ${eqIcons.join(' ')}`,c:'#5588cc'});
-                    showSB(rLines,5000);return`📋 ${CLASS_DATA[c.className]?.name} Nv.${c.level} | ❤${c.hp}/${c.maxHp} ⚔${c.atk} | 💰${c.gold}g`;
+                    return`📋 ${CLASS_DATA[c.className]?.name} Nv.${c.level} | ❤${c.hp}/${c.maxHp} ⚔${c.atk} 🛡${c.def} | 💰${c.gold}g 💀${c.kills} | DMG:${c.totalDmg}`;
                 }
                 const ago=Math.floor((Date.now()-c._deathTime)/1000);
                 const reviveIn=Math.max(0,30-ago);
                 const rLines=[{t:`━━ ☠ MORT ━━`,c:'#cc0000'},{t:`${c.username} (${CLASS_DATA[c.className]?.name||c.className} Nv.${c.level})`,c:'#ff6666'},{t:`Tué par: ${c._deathCause||'Boss'}`,c:'#ff4444'},{t:`Il y a ${ago}s · Revive dans ${reviveIn}s`,c:'#ff8844'},{t:`⚔ DMG: ${c.totalDmg} · ❤ Heal: ${c.totalHeal} · 💀 Kills: ${c.kills}`,c:'#aaa'},{t:`💰 ${c.gold}g restants`,c:'#ffcc44'}];
-                showSB(rLines,5000);return`☠ MORT! Revive dans ${reviveIn}s`;
+                return`☠ MORT! (${c._deathCause||'Boss'}) Revive dans ${reviveIn}s | ${CLASS_DATA[c.className]?.name} Nv.${c.level} 💰${c.gold}g`;
             }
         }
         return null;
@@ -3837,9 +4141,10 @@ class GameManager{
             let xpGain=Math.floor(bXp*c.xpMulti*(this.xpBonus||1));
             if(c.className==='paysan')xpGain=Math.floor(xpGain*sn.paysanXP*1.3);
             c.xp+=xpGain;
-            if(c.xp>=c.xpNext){
-                c.level++;c.xp=0;c.xpNext=Math.floor(c.xpNext*1.4);
-                c.maxHp+=8+Math.floor(c.level*2);c.atk+=2;c.def+=1;c.maxMana+=5;
+            if(c.xp>=c.xpNext&&c.level<99){
+                c.level++;c.xp=0;c.xpNext=Math.floor(c.xpNext*1.3);
+                c.maxHp+=6+Math.floor(c.level*1.5);c.atk+=2;c.def+=1;c.maxMana+=4;
+                if(c.level===99){c.atk=Math.floor(c.atk*2);c.def=Math.floor(c.def*2);c.maxHp=Math.floor(c.maxHp*1.5);c.hp=c.maxHp;c.maxMana=Math.floor(c.maxMana*1.5);c.mana=c.maxMana;c.popup('⚡MAX x2!','popup popup-crit');c._maxLevel=true;game.log(`🌟 ${c.username} atteint le NIVEAU 99! Stats x2! LÉGENDE!`,'log-special');chatSay(`🌟⚡ @${c.username} atteint le NIVEAU 99 MAXIMUM! Stats DOUBLÉES! Une LÉGENDE vivante! 🏆👑`)}
                 if(c.className==='paysan'){c.atk+=2;c.def+=2;c.maxHp+=10;c.maxMana+=3;c.crit+=0.5;if(c.level%5===0){c.atk+=3;c.def+=3;this.log(`🌾 ${c.username} PAYSAN Nv.${c.level}! Bonus secret ATK/DEF +3!`,'log-special')}}
                 c.hp=c.maxHp;c.mana=c.maxMana;c.popup('LEVEL UP!','popup popup-lvl');spawnP(c.element,'#44ff44',12);spawnP(c.element,'#ffffff',6);c.element.classList.remove('lvl-up-glow');void c.element.offsetWidth;c.element.classList.add('lvl-up-glow');setTimeout(()=>c.element.classList.remove('lvl-up-glow'),1200);
                 if(c.level%5===0){showBanner(`⭐ Nv.${c.level}!`,`${c.username} progresse!`,2000);spawnP(c.element,'#d4af37',15)}
@@ -3901,13 +4206,31 @@ class GameManager{
                 this.log(`${loot.emoji} ${c.username} trouve ${loot.name}! (+${val} ${loot.stat.toUpperCase()})`,'log-gold');
             }
         });
+        // Resolve bets — who did most damage?
+        if(mvpD){
+            const betResults=[];
+            Object.values(this.characters).forEach(c=>{
+                if(c._activeBet){
+                    if(c._activeBet.on===mvpD.username.toLowerCase()){
+                        const win=c._activeBet.amt*2;c.gold+=win;
+                        betResults.push(`✅ @${c.username} gagne ${win}g (pari sur @${mvpD.username})`);
+                        c.popup(`+${win}g!`,'popup popup-crit');spawnP(c.element,'#ffdd00',8);
+                    } else {
+                        betResults.push(`❌ @${c.username} perd ${c._activeBet.amt}g`);
+                        c.popup(`-${c._activeBet.amt}g`,'popup popup-dmg');
+                    }
+                    c._activeBet=null;
+                }
+            });
+            if(betResults.length>0)chatSay(`🎲 PARIS: MVP = @${mvpD.username}! ${betResults.join(' | ')}`);
+        }
         // Clean expired allies
         this.allies=this.allies.filter(a=>{if(a.dur===-1)return true;a.dur-=15000;return a.dur>0});
         // Event chance removed: streamer triggers manually via panel
         // Boss countdown with cinematic warning
         let cd=1800;
         this.log('⏳ Prochaine vague dans 30 min... Profitez du répit!','log-info');
-        chatSay(`⏳ Le calme avant la tempête... 30 min de répit! 🍺 !taverne pour boire | !shop pour forger | !evoluer pour évoluer | !duel pour combattre! 🎮`);
+        chatSay(`⏳ 30 min de répit! ⛏!mine 🌾!recolte 🔨!forge 🍺!taverne 🛒!shop 🎲!pari — Préparez-vous! 🎮`);
         // Trigger mini-game after 2 min
         setTimeout(()=>this.startMiniGame(),120000);
         const cdI=setInterval(()=>{cd--;
@@ -4418,7 +4741,7 @@ function rouletteEvent(){
     }
     spinStep();
 }
-setInterval(rouletteEvent,1200000); // Every 20 minutes
+setInterval(rouletteEvent,2400000); // Every 40 minutes
 // In test mode, also fire first roulette after 2 minutes
 if(CONFIG.testMode)setTimeout(rouletteEvent,120000);
 
@@ -4494,7 +4817,9 @@ setInterval(()=>{
         if(rv){
             if(!c.alive&&c._deathTime){
                 const left=Math.max(0,30-Math.floor((now-c._deathTime)/1000));
-                rv.textContent=`⏳ ${left}s`;rv.style.display='block';
+                rv.textContent=`${left}`;rv.style.display='block';
+                rv.style.fontSize=left<=10?'8px':'6px';
+                rv.style.color=left<=5?'#ff2222':left<=10?'#ff8844':'#aaa';
             }else{rv.style.display='none'}
         }
     });
@@ -4646,7 +4971,7 @@ function initTwitch(){
         if(self)return;const u=tags['display-name']||tags.username;
         const m=msg.trim().toLowerCase();if(!m.startsWith('!'))return;
         const parts=m.split(' '),cmd=parts[0].substring(1),args=parts.slice(1);
-        const valid=['class','attaque','soin','sort','defense','esquive','special','stats','couleur','design','look','style','shop','marche','evolution','evoluer','reclass','do','notdo','skill','help','commandes','succes','achievements','classement','top','leaderboard','don','give','duel','combat','info','buffs','recap','equip','equipement','homme','femme','gender','sexe'];
+        const valid=['class','attaque','atk','att','soin','heal','hp','sort','mag','defense','def','esquive','special','stats','couleur','design','look','style','shop','marche','evolution','evoluer','evo','reclass','do','notdo','skill','help','commandes','aide','succes','achievements','classement','top','leaderboard','don','give','duel','combat','info','buffs','recap','equip','equipement','inv','homme','femme','gender','sexe','taverne','bar','boire','biere','beer','manger','eat','repos','clap','hf','salut','chercher','pecher','courir','repondre','mine','forge','recolte','pari','bet','mission','missions','inventaire','ressources','saison','season','neige','feuilles','fleurs'];
         if(valid.includes(cmd)){console.log(`CMD: ${u} !${cmd} ${args.join(' ')}`);const r=game.processCmd(u,cmd,args);if(r&&CONFIG.botToken)chatSay(`@${u} ${r}`)}
         // Streamer-only commands (broadcaster or mod)
         const isBroadcaster=tags.badges&&(tags.badges.broadcaster||tags.badges.moderator);
