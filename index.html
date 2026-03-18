@@ -637,7 +637,7 @@ static drawChar(ctx,s,cls,tint,variant,gender){
         tireur_elite:'tireur_elite',maitre_chasse:'maitre_chasse',archange:'archange',sage:'sage',
         maitre_ombre:'maitre_ombre',shinobi:'shinobi',ancien:'ancien',dragon_ancien:'dragon_ancien',
         dragon:'dragon_form',warlord:'guerrier',enchanteur:'mage',artilleur:'archer',inquisiteur:'pretre',phantom:'voleur',avatar_nature:'druide',gladiateur:'guerrier',sorcier:'mage',chasseur:'archer',templier:'paladin',pirate:'voleur',chamane:'druide',
-        dieu_guerre:'dieu_guerre',empereur:'champion',archonte:'archonte',oeil_faucon:'oeil_faucon',arme_divine:'archer',divin:'divin',eternel:'pretre',spectre:'spectre',neant:'voleur',titan_nature:'titan_nature',phenix:'druide'
+        dieu_guerre:'dieu_guerre',empereur:'champion',archonte:'archonte',oeil_faucon:'oeil_faucon',arme_divine:'arme_divine',divin:'divin',eternel:'eternel',spectre:'spectre',neant:'neant',titan_nature:'titan_nature',phenix:'phenix'
     };
     const base=spriteMap[cls]||'guerrier';
     switch(base){
@@ -1126,6 +1126,95 @@ static drawChar(ctx,s,cls,tint,variant,gender){
             c(13,0,'#00ff44');c(14,0,'#44ff88');c(13,1,'#1a5a0a');c(13,2,'#3a2a0a');c(13,3,'#3a2a0a');c(13,4,'#2a1a0a');c(13,5,'#2a1a0a');
             // Vine tendrils on ground
             c(3,13,'#1a3a0a');c(14,12,'#1a3a0a');c(1,12,'#0a2a0a');
+            break;
+        // ========= TIER 4 UNIQUE (remaining) =========
+        case 'arme_divine':
+            // Divine Weapon - celestial golden archer, radiant bow, halo, light wings
+            c(7,0,'#ffdd44');c(8,0,'#ffee66');c(6,0,'#ffcc22');c(9,0,'#ffcc22');// halo
+            c(5,1,'#ddbb88');c(6,1,'#eeccaa');c(7,1,'#ffeedd');c(8,1,'#ffeedd');c(9,1,'#eeccaa');c(10,1,'#ddbb88');
+            c(6,2,'#ddbb88');c(7,2,'#eeccaa');c(8,2,'#eeccaa');c(9,2,'#ddbb88');
+            c(6,3,'#ddbb88');c(7,3,'#ffcc00');c(8,3,'#ffdd22');c(9,3,'#ddbb88');// golden eyes
+            c(4,4,'#ccaa33');c(5,4,'#ddbb44');c(6,4,'#eedd55');c(7,4,'#ffee66');c(8,4,'#ffee66');c(9,4,'#eedd55');c(10,4,'#ddbb44');c(11,4,'#ccaa33');
+            c(4,5,'#bbaa22');c(5,5,'#ccbb33');c(6,5,'#ddcc44');c(7,5,'#eedd55');c(8,5,'#eedd55');c(9,5,'#ddcc44');c(10,5,'#ccbb33');c(11,5,'#bbaa22');
+            c(5,6,'#aa9922');c(6,6,'#bbaa33');c(7,6,gold);c(8,6,gold);c(9,6,'#bbaa33');c(10,6,'#aa9922');
+            c(5,7,'#998811');c(6,7,'#aa9922');c(7,7,'#bbaa33');c(8,7,'#bbaa33');c(9,7,'#aa9922');c(10,7,'#998811');
+            c(6,8,'#887700');c(7,8,gold);c(8,8,gold);c(9,8,'#887700');
+            c(6,9,'#aa9922');c(7,9,'#998811');c(8,9,'#998811');c(9,9,'#aa9922');
+            c(6,10,'#887700');c(7,10,'#776600');c(8,10,'#776600');c(9,10,'#887700');
+            c(5,11,'#776600');c(6,11,'#887700');c(9,11,'#887700');c(10,11,'#776600');
+            c(5,12,'#665500');c(6,12,'#776600');c(9,12,'#776600');c(10,12,'#665500');
+            c(5,13,'#554400');c(6,13,'#665500');c(9,13,'#665500');c(10,13,'#554400');
+            // Celestial bow (glowing)
+            c(2,1,'#ffdd44');c(2,2,gold);c(2,3,'#ffcc22');c(2,4,gold);c(2,5,'#ffcc22');c(2,6,gold);c(2,7,'#ffcc22');c(2,8,gold);c(2,9,'#ffdd44');
+            c(3,2,'#fff');c(3,3,'#fff');c(3,4,'#fff');c(3,5,'#fff');c(3,6,'#fff');c(3,7,'#fff');c(3,8,'#fff');// light string
+            // Light wings
+            c(0,3,'#ffee88');c(1,3,'#ffdd66');c(0,4,'#ffcc44');c(1,4,'#ffdd66');c(14,3,'#ffee88');c(13,3,'#ffdd66');c(15,4,'#ffcc44');c(14,4,'#ffdd66');
+            break;
+        case 'eternel':
+            // Eternal - time-bending white/blue robes, hourglass staff, temporal distortion
+            c(6,0,'#aaddff');c(7,0,'#bbeeFF');c(8,0,'#bbeeFF');c(9,0,'#aaddff');// temporal crown
+            c(5,1,'#eeeeff');c(6,1,'#ffffff');c(7,1,'#ffffff');c(8,1,'#ffffff');c(9,1,'#ffffff');c(10,1,'#eeeeff');
+            c(6,2,'#ffeedd');c(7,2,'#ffeeee');c(8,2,'#ffeeee');c(9,2,'#ffeedd');
+            c(6,3,'#ffeedd');c(7,3,'#88ccff');c(8,3,'#aaddff');c(9,3,'#ffeedd');// time-blue eyes
+            c(4,4,'#ddeeff');c(5,4,'#eeeeff');c(6,4,'#ffffff');c(7,4,'#ffffff');c(8,4,'#ffffff');c(9,4,'#ffffff');c(10,4,'#eeeeff');c(11,4,'#ddeeff');
+            c(4,5,'#ccddee');c(5,5,'#ddeeff');c(6,5,'#eeeeff');c(7,5,'#88ccff');c(8,5,'#aaddff');c(9,5,'#eeeeff');c(10,5,'#ddeeff');c(11,5,'#ccddee');
+            c(5,6,'#bbccdd');c(6,6,'#ccddee');c(7,6,'#ddeeff');c(8,6,'#ddeeff');c(9,6,'#ccddee');c(10,6,'#bbccdd');
+            c(5,7,'#aabbcc');c(6,7,'#bbccdd');c(7,7,'#ccddee');c(8,7,'#ccddee');c(9,7,'#bbccdd');c(10,7,'#aabbcc');
+            c(6,8,'#99aabb');c(7,8,'#aabbcc');c(8,8,'#aabbcc');c(9,8,'#99aabb');
+            c(6,9,gold);c(7,9,'#99aabb');c(8,9,'#99aabb');c(9,9,gold);// golden sash
+            c(6,10,'#8899aa');c(7,10,'#99aabb');c(8,10,'#99aabb');c(9,10,'#8899aa');
+            c(5,11,'#778899');c(6,11,'#8899aa');c(9,11,'#8899aa');c(10,11,'#778899');
+            c(5,12,bt);c(6,12,bt);c(9,12,bt);c(10,12,bt);c(5,13,bt2);c(6,13,bt2);c(9,13,bt2);c(10,13,bt2);
+            // Hourglass staff
+            c(13,0,'#88ccff');c(12,0,'#aaddff');c(14,0,'#aaddff');c(13,1,'#ffdd44');c(12,1,'#ffcc22');c(14,1,'#ffcc22');
+            c(13,2,'#886611');c(13,3,'#775500');c(13,4,'#775500');c(13,5,'#664400');c(13,6,'#664400');
+            // Time distortion particles
+            c(1,2,'#88ccff');c(2,5,'#aaddff');c(0,8,'#88ccff');c(14,3,'#aaddff');c(15,6,'#88ccff');
+            break;
+        case 'neant':
+            // Void/Nothingness - pure black form, void tears, reality cracks, anti-matter daggers
+            c(6,0,'#030306');c(7,0,'#050510');c(8,0,'#050510');c(9,0,'#030306');
+            c(5,1,'#020205');c(6,1,'#040408');c(7,1,'#060612');c(8,1,'#060612');c(9,1,'#040408');c(10,1,'#020205');
+            c(6,2,'#030306');c(7,2,'#050510');c(8,2,'#050510');c(9,2,'#030306');
+            c(6,3,'#020205');c(7,3,'#ff00ff');c(8,3,'#ff22ff');c(9,3,'#020205');// void-pink eyes
+            c(4,4,'#010103');c(5,4,'#020205');c(6,4,'#030308');c(7,4,'#040410');c(8,4,'#040410');c(9,4,'#030308');c(10,4,'#020205');c(11,4,'#010103');
+            c(4,5,'#010102');c(5,5,'#020204');c(6,5,'#030306');c(7,5,'#040408');c(8,5,'#040408');c(9,5,'#030306');c(10,5,'#020204');c(11,5,'#010102');
+            c(5,6,'#020204');c(6,6,'#030306');c(7,6,'#040408');c(8,6,'#030306');c(9,6,'#030306');c(10,6,'#020204');
+            c(5,7,'#010102');c(6,7,'#020204');c(7,7,'#030306');c(8,7,'#030306');c(9,7,'#020204');c(10,7,'#010102');
+            c(6,8,'#010103');c(7,8,'#020205');c(8,8,'#020205');c(9,8,'#010103');
+            c(6,9,'#220033');c(7,9,'#110022');c(8,9,'#110022');c(9,9,'#220033');// void belt
+            c(6,10,'#010102');c(7,10,'#010101');c(8,10,'#010101');c(9,10,'#010102');
+            c(5,11,'#010101');c(6,11,'#010102');c(9,11,'#010102');c(10,11,'#010101');
+            c(5,12,'#000001');c(6,12,'#010101');c(9,12,'#010101');c(10,12,'#000001');
+            c(5,13,'#000000');c(6,13,'#000001');c(9,13,'#000001');c(10,13,'#000000');
+            // Anti-matter daggers
+            c(2,2,'#ff00ff');c(3,3,'#cc00cc');c(3,4,'#aa00aa');c(4,5,'#330033');
+            c(13,2,'#ff00ff');c(12,3,'#cc00cc');c(12,4,'#aa00aa');c(11,5,'#330033');
+            // Reality cracks
+            c(1,5,'#ff00ff');c(0,6,'#cc00cc');c(14,7,'#ff00ff');c(15,8,'#cc00cc');c(1,10,'#aa00aa');
+            break;
+        case 'phenix':
+            // Phoenix - blazing fire bird form, spread flame wings, rebirth glow
+            c(6,0,'#ff6600');c(7,0,'#ff8800');c(8,0,'#ffaa00');c(9,0,'#ff6600');// flame crest
+            c(5,0,'#ff4400');c(10,0,'#ff4400');c(4,1,'#ff2200');c(11,1,'#ff2200');
+            c(5,1,'#ff6600');c(6,1,'#ff8800');c(7,1,'#ffaa22');c(8,1,'#ffcc44');c(9,1,'#ff8800');c(10,1,'#ff6600');
+            c(6,2,'#ffaa22');c(7,2,'#ffcc44');c(8,2,'#ffee66');c(9,2,'#ffaa22');
+            c(6,3,'#ff8800');c(7,3,'#ffdd00');c(8,3,'#ffee22');c(9,3,'#ff8800');// golden eyes
+            c(4,4,'#cc4400');c(5,4,'#dd5500');c(6,4,'#ee6600');c(7,4,'#ff8800');c(8,4,'#ff8800');c(9,4,'#ee6600');c(10,4,'#dd5500');c(11,4,'#cc4400');
+            c(4,5,'#aa3300');c(5,5,'#cc4400');c(6,5,'#dd5500');c(7,5,'#ee6600');c(8,5,'#ee6600');c(9,5,'#dd5500');c(10,5,'#cc4400');c(11,5,'#aa3300');
+            c(5,6,'#993300');c(6,6,'#bb4400');c(7,6,'#cc5500');c(8,6,'#bb4400');c(9,6,'#bb4400');c(10,6,'#993300');
+            c(5,7,'#882200');c(6,7,'#993300');c(7,7,'#aa3300');c(8,7,'#993300');c(9,7,'#993300');c(10,7,'#882200');
+            c(6,8,'#882200');c(7,8,'#993300');c(8,8,'#993300');c(9,8,'#882200');
+            c(6,9,'#ffcc00');c(7,9,'#ffdd22');c(8,9,'#ffdd22');c(9,9,'#ffcc00');// fire belt
+            c(6,10,'#772200');c(7,10,'#882200');c(8,10,'#882200');c(9,10,'#772200');
+            c(5,11,'#661100');c(6,11,'#772200');c(9,11,'#772200');c(10,11,'#661100');
+            c(5,12,'#551100');c(6,12,'#661100');c(9,12,'#661100');c(10,12,'#551100');
+            c(5,13,'#440000');c(6,13,'#551100');c(9,13,'#551100');c(10,13,'#440000');
+            // Flame wings spread
+            c(2,2,'#ff6600');c(1,3,'#ff4400');c(0,4,'#ee3300');c(1,4,'#ff6600');c(2,3,'#ff8800');c(0,3,'#cc2200');c(0,5,'#aa1100');c(1,5,'#cc2200');
+            c(13,2,'#ff6600');c(14,3,'#ff4400');c(15,4,'#ee3300');c(14,4,'#ff6600');c(13,3,'#ff8800');c(15,3,'#cc2200');c(15,5,'#aa1100');c(14,5,'#cc2200');
+            // Tail flame
+            c(3,9,'#ff4400');c(2,10,'#ff6600');c(1,11,'#ffaa00');c(0,12,'#ffcc22');
             break;
         // ========= TIER 3 UNIQUE SPRITES =========
         case 'champion':
