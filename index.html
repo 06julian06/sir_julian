@@ -636,7 +636,7 @@ static drawChar(ctx,s,cls,tint,variant,gender){
         champion:'champion',elementaliste:'elementaliste',liche:'liche',
         tireur_elite:'tireur_elite',maitre_chasse:'maitre_chasse',archange:'archange',sage:'sage',
         maitre_ombre:'maitre_ombre',shinobi:'shinobi',ancien:'ancien',dragon_ancien:'dragon_ancien',
-        dragon:'dragon_form',warlord:'guerrier',enchanteur:'mage',artilleur:'archer',inquisiteur:'pretre',phantom:'voleur',avatar_nature:'druide',
+        dragon:'dragon_form',warlord:'guerrier',enchanteur:'mage',artilleur:'archer',inquisiteur:'pretre',phantom:'voleur',avatar_nature:'druide',gladiateur:'guerrier',sorcier:'mage',chasseur:'archer',templier:'paladin',pirate:'voleur',chamane:'druide',
         dieu_guerre:'dieu_guerre',empereur:'champion',archonte:'archonte',oeil_faucon:'oeil_faucon',arme_divine:'archer',divin:'divin',eternel:'pretre',spectre:'spectre',neant:'voleur',titan_nature:'titan_nature',phenix:'druide'
     };
     const base=spriteMap[cls]||'guerrier';
@@ -4188,7 +4188,7 @@ class GameManager{
                 }).join(' | ');
                 return`📋 MISSIONS: ${mList}`;
             }
-            case 'inventaire':case 'ressources':case 'inv':{
+            case 'inventaire':case 'ressources':{
                 if(!c)return'!class pour rejoindre!';
                 if(!c._resources||Object.keys(c._resources).length===0)return'📦 Inventaire vide! !mine ou !recolte pour commencer';
                 const inv=Object.entries(c._resources).filter(([,v])=>v>0).map(([k,v])=>`${k}:${v}`).join(' ');
