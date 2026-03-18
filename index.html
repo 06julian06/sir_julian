@@ -109,6 +109,15 @@ canvas{image-rendering:pixelated}
 .boss-dmg-popup{position:absolute;pointer-events:none;z-index:60;font-family:'Press Start 2P',monospace;font-weight:bold;animation:floatUp 1.2s forwards}
 .loot-particle{position:fixed;pointer-events:none;z-index:200;font-size:16px;animation:lootRain 1.5s forwards}
 @keyframes pulse{0%,100%{opacity:.7;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.1)}}
+@keyframes mineSwing{0%{transform:rotate(0deg)}15%{transform:rotate(-35deg)}30%{transform:rotate(15deg) scale(1.1)}45%{transform:rotate(-30deg)}60%{transform:rotate(10deg)}75%{transform:rotate(-25deg)}100%{transform:rotate(0deg)}}
+@keyframes forgeHammer{0%{transform:translateY(0) scale(1)}20%{transform:translateY(-12px) scale(1.1)}35%{transform:translateY(4px) scale(.95)}50%{transform:translateY(-10px) scale(1.08)}65%{transform:translateY(3px) scale(.97)}80%{transform:translateY(-6px) scale(1.03)}100%{transform:translateY(0) scale(1)}}
+@keyframes harvestBend{0%{transform:rotate(0deg)}25%{transform:rotate(8deg) translateY(4px)}50%{transform:rotate(-5deg) translateY(0)}75%{transform:rotate(6deg) translateY(3px)}100%{transform:rotate(0deg)}}
+@keyframes sparkTrail{0%{opacity:1;transform:translateY(0) scale(1.2)}50%{opacity:.8;transform:translateY(-15px) scale(.8)}100%{opacity:0;transform:translateY(-30px) scale(.3)}}
+.char-mining{animation:mineSwing .6s ease-in-out 3!important}
+.char-forging{animation:forgeHammer .5s ease-in-out 4!important}
+.char-harvesting{animation:harvestBend .7s ease-in-out 3!important}
+.action-spark{position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:14px;pointer-events:none;animation:sparkTrail .8s forwards;z-index:55}
+.forge-fire{position:absolute;bottom:0;left:50%;transform:translateX(-50%);font-size:10px;pointer-events:none;z-index:45;animation:floatUp 1.5s forwards}
 @keyframes particleFly{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--px),var(--py)) scale(0)}}
 .anim-idle{animation:idle 1.5s ease-in-out infinite}
 .anim-atk{animation:atkR .4s ease-in-out}
@@ -633,313 +642,344 @@ static drawChar(ctx,s,cls,tint,variant,gender){
     const base=spriteMap[cls]||'guerrier';
     switch(base){
         case 'apprenti':
-            // Hooded figure, rune staff - dark mysterious
-            c(7,0,t2);c(8,0,t2);
-            c(5,1,t2);c(6,1,t1);c(7,1,t2);c(8,1,t2);c(9,1,t1);c(10,1,t2);
-            c(5,2,t2);c(6,2,t1);c(7,2,t1);c(8,2,t1);c(9,2,t1);c(10,2,t2);
-            c(6,3,t2);c(7,3,'#111');c(8,3,'#111');c(9,3,t2);
-            c(6,4,'#111');c(7,4,'#559');c(8,4,'#559');c(9,4,'#111');
-            c(6,5,sk2);c(7,5,sk);c(8,5,sk);c(9,5,sk2);
-            c(5,6,t2);c(6,6,t1);c(7,6,t1);c(8,6,t1);c(9,6,t1);c(10,6,t2);
-            c(5,7,t2);c(6,7,t1);c(7,7,t2);c(8,7,t2);c(9,7,t1);c(10,7,t2);
-            c(5,8,shade(t2,-10));c(6,8,t2);c(7,8,t1);c(8,8,t1);c(9,8,t2);c(10,8,shade(t2,-10));
-            c(6,9,belt);c(7,9,belt);c(8,9,belt);c(9,9,belt);
-            c(5,10,shade(t2,-15));c(6,10,t2);c(7,10,t2);c(8,10,t2);c(9,10,t2);c(10,10,shade(t2,-15));
-            c(5,11,shade(t2,-20));c(6,11,shade(t2,-10));c(7,11,shade(t2,-10));c(8,11,shade(t2,-10));c(9,11,shade(t2,-10));c(10,11,shade(t2,-20));
-            c(5,12,bt);c(6,12,bt);c(9,12,bt);c(10,12,bt);
-            c(5,13,bt2);c(6,13,bt2);c(9,13,bt2);c(10,13,bt2);
-            // Rune staff with glowing tip
-            c(12,0,'#448');c(12,1,'#66a');c(12,2,'#553');c(12,3,'#442');c(12,4,'#442');c(12,5,'#331');c(12,6,'#331');c(12,7,'#220');
+            // Hooded apprentice, mysterious rune staff - detailed shading
+            c(6,0,t2);c(7,0,shade(t2,10));c(8,0,shade(t2,10));c(9,0,t2);
+            c(5,1,shade(t2,-10));c(6,1,t1);c(7,1,shade(t1,10));c(8,1,shade(t1,10));c(9,1,t1);c(10,1,shade(t2,-10));
+            c(5,2,shade(t2,-5));c(6,2,t1);c(7,2,shade(t1,15));c(8,2,shade(t1,15));c(9,2,t1);c(10,2,shade(t2,-5));
+            c(5,3,t2);c(6,3,shade(t2,-5));c(7,3,'#0a0a0a');c(8,3,'#0a0a0a');c(9,3,shade(t2,-5));c(10,3,t2);
+            c(6,4,'#0a0a0a');c(7,4,'#5566aa');c(8,4,'#6677bb');c(9,4,'#0a0a0a');
+            c(6,5,sk2);c(7,5,sk);c(8,5,shade(sk,5));c(9,5,sk2);
+            c(5,6,shade(t2,-5));c(6,6,t1);c(7,6,shade(t1,5));c(8,6,shade(t1,5));c(9,6,t1);c(10,6,shade(t2,-5));
+            c(4,7,shade(t2,-15));c(5,7,t2);c(6,7,t1);c(7,7,t2);c(8,7,t2);c(9,7,t1);c(10,7,t2);c(11,7,shade(t2,-15));
+            c(4,8,shade(t2,-20));c(5,8,shade(t2,-10));c(6,8,t2);c(7,8,t1);c(8,8,t1);c(9,8,t2);c(10,8,shade(t2,-10));c(11,8,shade(t2,-20));
+            c(5,9,shade(t2,-15));c(6,9,belt);c(7,9,shade(belt,10));c(8,9,shade(belt,10));c(9,9,belt);c(10,9,shade(t2,-15));
+            c(5,10,shade(t2,-15));c(6,10,t2);c(7,10,shade(t2,5));c(8,10,shade(t2,5));c(9,10,t2);c(10,10,shade(t2,-15));
+            c(5,11,shade(t2,-20));c(6,11,shade(t2,-10));c(7,11,shade(t2,-5));c(8,11,shade(t2,-5));c(9,11,shade(t2,-10));c(10,11,shade(t2,-20));
+            c(5,12,bt);c(6,12,shade(bt,5));c(9,12,shade(bt,5));c(10,12,bt);
+            c(5,13,bt2);c(6,13,bt);c(9,13,bt);c(10,13,bt2);
+            // Rune staff with glowing tip + sparkle
+            c(12,0,'#5577cc');c(13,0,'#88aaff');c(12,1,'#6688bb');c(12,2,'#556');c(12,3,'#445');c(12,4,'#445');c(12,5,'#334');c(12,6,'#334');c(12,7,'#223');
+            c(14,0,'#4466aa');
             break;
         case 'paysan':
-            // Weathered farmer, straw hat, iron pitchfork
-            c(5,0,'#6a5a2a');c(6,0,'#7a6a3a');c(7,0,'#8a7a4a');c(8,0,'#8a7a4a');c(9,0,'#7a6a3a');c(10,0,'#6a5a2a');
-            c(6,1,'#7a6a3a');c(7,1,'#8a7a4a');c(8,1,'#8a7a4a');c(9,1,'#7a6a3a');
-            c(6,2,sk2);c(7,2,sk);c(8,2,sk);c(9,2,sk2);
-            c(6,3,sk);c(7,3,sk);c(8,3,sk);c(9,3,sk);
-            c(6,4,sk2);c(7,4,eye);c(8,4,eye);c(9,4,sk2);
-            c(6,5,sk2);c(7,5,sk2);c(8,5,sk2);c(9,5,sk2);
-            c(5,6,'#554433');c(6,6,'#665544');c(7,6,'#665544');c(8,6,'#665544');c(9,6,'#665544');c(10,6,'#554433');
-            c(5,7,'#4a3a2a');c(6,7,'#5a4a3a');c(7,7,'#5a4a3a');c(8,7,'#5a4a3a');c(9,7,'#5a4a3a');c(10,7,'#4a3a2a');
-            c(5,8,'#443322');c(6,8,'#4a3a2a');c(7,8,'#4a3a2a');c(8,8,'#4a3a2a');c(9,8,'#4a3a2a');c(10,8,'#443322');
-            c(6,9,'#3a2a1a');c(7,9,'#3a2a1a');c(8,9,'#3a2a1a');c(9,9,'#3a2a1a');
-            c(6,10,'#4a3a2a');c(7,10,'#3a2a1a');c(8,10,'#3a2a1a');c(9,10,'#4a3a2a');
+            // Weathered farmer - straw hat, patches, iron pitchfork
+            c(4,0,'#5a4a1a');c(5,0,'#7a6a3a');c(6,0,'#8a7a4a');c(7,0,'#9a8a5a');c(8,0,'#9a8a5a');c(9,0,'#8a7a4a');c(10,0,'#7a6a3a');c(11,0,'#5a4a1a');
+            c(5,1,'#6a5a2a');c(6,1,'#8a7a4a');c(7,1,'#9a8a5a');c(8,1,'#9a8a5a');c(9,1,'#8a7a4a');c(10,1,'#6a5a2a');
+            c(6,2,sk2);c(7,2,sk);c(8,2,shade(sk,5));c(9,2,sk2);
+            c(6,3,sk);c(7,3,shade(sk,8));c(8,3,shade(sk,8));c(9,3,sk);
+            c(6,4,sk2);c(7,4,eye);c(8,4,eye);c(9,4,sk2);c(7,3,'#8a7a6a');c(8,3,'#8a7a6a');
+            c(6,5,sk2);c(7,5,'#aa9070');c(8,5,'#aa9070');c(9,5,sk2);
+            c(5,6,'#504030');c(6,6,'#665544');c(7,6,'#706050');c(8,6,'#706050');c(9,6,'#665544');c(10,6,'#504030');
+            c(4,7,'#443322');c(5,7,'#4a3a2a');c(6,7,'#5a4a3a');c(7,7,'#5a4a3a');c(8,7,'#5a4a3a');c(9,7,'#5a4a3a');c(10,7,'#4a3a2a');c(11,7,'#443322');
+            c(5,8,'#3a2a1a');c(6,8,'#4a3a2a');c(7,8,'#504030');c(8,8,'#3a2a1a');c(9,8,'#4a3a2a');c(10,8,'#3a2a1a');
+            c(6,9,'#3a2a1a');c(7,9,'#332a1a');c(8,9,'#332a1a');c(9,9,'#3a2a1a');
+            c(6,10,'#443322');c(7,10,'#3a2a1a');c(8,10,'#3a2a1a');c(9,10,'#443322');
             c(6,11,'#3a2a1a');c(7,11,'#2a1a0a');c(8,11,'#2a1a0a');c(9,11,'#3a2a1a');
-            c(5,12,bt);c(6,12,bt);c(9,12,bt);c(10,12,bt);
-            c(5,13,bt2);c(6,13,bt2);c(9,13,bt2);c(10,13,bt2);
-            // Iron pitchfork
-            c(12,0,stl2);c(13,0,stl2);c(14,0,stl2);c(13,1,stl);c(13,2,'#553');c(13,3,'#442');c(13,4,'#442');c(13,5,'#331');c(13,6,'#331');c(13,7,'#220');
+            c(5,12,bt);c(6,12,shade(bt,5));c(9,12,shade(bt,5));c(10,12,bt);
+            c(5,13,bt2);c(6,13,bt);c(9,13,bt);c(10,13,bt2);
+            // Patch on shirt
+            c(8,7,'#665533');
+            // Iron pitchfork with rust
+            c(11,0,stl2);c(12,0,stl);c(13,0,stl2);c(14,0,'#8a6a5a');c(12,1,stl);c(13,1,stl2);c(13,2,'#664');c(13,3,'#553');c(13,4,'#553');c(13,5,'#442');c(13,6,'#442');c(13,7,'#331');
             break;
         case 'chat':
-            // Real cat on all fours - horizontal body, 4 legs, pointed ears, long tail
-            const cf='#eebb66',cf2='#dd9944',cf3='#cc8833',cfd='#aa7733',cfn='#ffaa99',cfe='#22cc44';
-            // Ears (pointed, triangular)
-            c(3,2,cf3);c(5,2,cf3);
-            c(2,3,cf2);c(3,3,cf);c(4,3,cf2);c(5,3,cf);c(6,3,cf2);
-            // Head
-            c(2,4,cf2);c(3,4,cf);c(4,4,cf);c(5,4,cf);c(6,4,cf2);
-            c(2,5,cf3);c(3,5,cfe);c(4,5,cf);c(5,5,cfe);c(6,5,cf3); // green eyes
-            c(2,6,cf2);c(3,6,cf);c(4,6,cfn);c(5,6,cf);c(6,6,cf2); // pink nose
-            c(1,5,cfd);c(7,5,cfd); // whiskers left/right
-            c(0,4,cfd);c(8,4,cfd); // whiskers outer
-            // Neck + body (horizontal)
-            c(6,7,cf2);c(7,7,cf);c(8,7,cf);c(9,7,cf);c(10,7,cf);c(11,7,cf2);
-            c(6,8,cf3);c(7,8,cf2);c(8,8,cf);c(9,8,cf);c(10,8,cf2);c(11,8,cf3);
-            c(7,9,cf3);c(8,9,cf2);c(9,9,cf2);c(10,9,cf3);
+            // Real cat on all fours - detailed orange tabby with fur texture
+            const cf='#eebb66',cf2='#dd9944',cf3='#cc8833',cfd='#aa7733',cfn='#ffaa99',cfe='#22dd44',cf4='#bb7722',cf5='#ffcc77';
+            // Ears (pointed, triangular with inner pink)
+            c(3,2,cf3);c(4,2,'#ddaa88');c(5,2,cf3);c(6,2,'#ddaa88');
+            c(2,3,cf2);c(3,3,cf);c(4,3,cf5);c(5,3,cf);c(6,3,cf5);c(7,3,cf2);
+            // Head with detail
+            c(2,4,cf2);c(3,4,cf);c(4,4,cf5);c(5,4,cf5);c(6,4,cf);c(7,4,cf2);
+            c(2,5,cf3);c(3,5,cfe);c(4,5,cf);c(5,5,cfe);c(6,5,cf);c(7,5,cf3);
+            c(2,6,cf2);c(3,6,cf);c(4,6,cfn);c(5,6,cf);c(6,6,cf2);c(7,6,cf3);
+            // Whiskers (fine lines)
+            c(0,4,cfd);c(1,5,cfd);c(8,4,cfd);c(8,5,cfd);c(0,6,cfd);c(9,6,cfd);
+            // Neck transition
+            c(5,7,cf3);c(6,7,cf2);c(7,7,cf);
+            // Body (horizontal, wider)
+            c(5,8,cf3);c(6,8,cf2);c(7,8,cf);c(8,8,cf5);c(9,8,cf);c(10,8,cf2);c(11,8,cf3);
+            c(5,9,cf4);c(6,9,cf3);c(7,9,cf2);c(8,9,cf);c(9,9,cf);c(10,9,cf2);c(11,9,cf3);c(12,9,cf4);
+            c(6,10,cf4);c(7,10,cf3);c(8,10,cf2);c(9,10,cf2);c(10,10,cf3);c(11,10,cf4);
             // Belly (lighter)
-            c(7,10,'#ffdd88');c(8,10,'#ffdd88');c(9,10,'#ffdd88');c(10,10,'#ffdd88');
-            // Front legs
-            c(6,9,cf3);c(6,10,cf2);c(6,11,cf);c(6,12,cf2);c(6,13,cfd);
-            c(7,11,cf);c(7,12,cf2);c(7,13,cfd);
-            // Back legs
-            c(10,9,cf3);c(11,9,cf2);c(11,10,cf);c(11,11,cf2);c(11,12,cf);c(11,13,cfd);
-            c(10,11,cf);c(10,12,cf2);c(10,13,cfd);
-            // Tail (curving up)
-            c(12,8,cf2);c(13,7,cf3);c(14,6,cf2);c(15,5,cf3);c(15,4,cf2);
-            // Stripe patterns on body
-            c(8,8,cf3);c(9,7,'#bb8822');
+            c(7,11,'#ffdd88');c(8,11,'#ffee99');c(9,11,'#ffdd88');c(10,11,'#ffdd88');
+            // Front legs (two visible)
+            c(5,10,cf3);c(5,11,cf2);c(5,12,cf);c(5,13,cfd);
+            c(6,11,cf2);c(6,12,cf);c(6,13,cfd);
+            // Back legs (two visible, thicker thigh)
+            c(11,10,cf2);c(11,11,cf);c(11,12,cf2);c(11,13,cfd);c(12,10,cf3);c(12,11,cf2);c(12,12,cf);c(12,13,cfd);
+            // Tail (curving up gracefully)
+            c(13,8,cf2);c(14,7,cf3);c(14,6,cf2);c(15,5,cf);c(15,4,cf3);c(15,3,cf4);
+            // Tiger stripes on body
+            c(7,8,cf4);c(9,9,cf4);c(8,8,cf3);c(10,9,cf4);c(6,9,cf4);
             break;
         case 'ecuyer':
-            // Squire - light armor, small shield, short sword
-            c(7,0,stl2);c(8,0,stl2);
-            c(6,1,stl);c(7,1,stl3);c(8,1,stl3);c(9,1,stl);
-            c(6,2,sk2);c(7,2,sk);c(8,2,sk);c(9,2,sk2);
-            c(6,3,sk);c(7,3,sk);c(8,3,sk);c(9,3,sk);
-            c(6,4,sk2);c(7,4,eye);c(8,4,eye);c(9,4,sk2);
-            c(6,5,sk);c(7,5,sk2);c(8,5,sk2);c(9,5,sk);
-            c(5,6,'#4466aa');c(6,6,'#5577bb');c(7,6,'#5577bb');c(8,6,'#5577bb');c(9,6,'#5577bb');c(10,6,'#4466aa');
-            c(5,7,'#3355aa');c(6,7,'#4466bb');c(7,7,stl);c(8,7,stl);c(9,7,'#4466bb');c(10,7,'#3355aa');
+            // Young squire - chainmail over blue tabard, shield + short sword
+            c(6,0,stl2);c(7,0,stl);c(8,0,stl3);c(9,0,stl2);
+            c(5,1,stl2);c(6,1,stl);c(7,1,stl3);c(8,1,stl3);c(9,1,stl);c(10,1,stl2);
+            c(6,2,sk2);c(7,2,sk);c(8,2,shade(sk,5));c(9,2,sk2);
+            c(6,3,sk);c(7,3,shade(sk,8));c(8,3,shade(sk,8));c(9,3,sk);
+            c(6,4,sk2);c(7,4,eye);c(8,4,eye);c(9,4,sk2);c(7,3,'#b09870');
+            c(6,5,sk);c(7,5,sk2);c(8,5,'#b09070');c(9,5,sk);
+            c(4,6,'#3355aa');c(5,6,'#4466bb');c(6,6,'#5577cc');c(7,6,stl);c(8,6,stl);c(9,6,'#5577cc');c(10,6,'#4466bb');c(11,6,'#3355aa');
+            c(4,7,'#2a4499');c(5,7,'#3355aa');c(6,7,'#4466bb');c(7,7,stl3);c(8,7,stl3);c(9,7,'#4466bb');c(10,7,'#3355aa');c(11,7,'#2a4499');
             c(5,8,'#3355aa');c(6,8,'#4466bb');c(7,8,'#4466bb');c(8,8,'#4466bb');c(9,8,'#4466bb');c(10,8,'#3355aa');
-            c(6,9,belt);c(7,9,gold);c(8,9,gold);c(9,9,belt);
+            c(6,9,belt);c(7,9,gold);c(8,9,shade(gold,10));c(9,9,belt);
             c(6,10,'#3355aa');c(7,10,'#2a4488');c(8,10,'#2a4488');c(9,10,'#3355aa');
             c(6,11,'#2a4488');c(7,11,'#1a3366');c(8,11,'#1a3366');c(9,11,'#2a4488');
             c(5,12,bt);c(6,12,'#3a2a1a');c(9,12,'#3a2a1a');c(10,12,bt);
-            c(5,13,bt2);c(6,13,bt2);c(9,13,bt2);c(10,13,bt2);
-            // Short sword
-            c(12,2,stl3);c(12,3,stl);c(12,4,stl);c(12,5,'#553');c(12,6,'#442');
-            // Small shield
-            c(3,5,'#4466aa');c(3,6,'#5577bb');c(3,7,'#4466aa');c(4,5,'#5577bb');c(4,6,gold);c(4,7,'#5577bb');
+            c(5,13,bt2);c(6,13,bt);c(9,13,bt);c(10,13,bt2);
+            // Short sword with guard detail
+            c(12,1,stl3);c(12,2,stl3);c(12,3,stl);c(12,4,stl);c(11,4,gold);c(13,4,gold);c(12,5,'#553');c(12,6,'#442');
+            // Detailed shield with emblem
+            c(2,4,stl2);c(3,4,stl);c(4,4,stl2);c(2,5,'#4466aa');c(3,5,'#5577bb');c(4,5,'#4466aa');c(2,6,'#3355aa');c(3,6,gold);c(4,6,'#3355aa');c(2,7,'#4466aa');c(3,7,'#5577bb');c(4,7,'#4466aa');c(3,8,stl2);
             break;
         case 'brigand':
-            // Hooded thug, scarred, dual daggers
-            c(6,0,'#443322');c(7,0,'#554433');c(8,0,'#554433');c(9,0,'#443322');
-            c(5,1,'#443322');c(6,1,'#554433');c(7,1,'#554433');c(8,1,'#554433');c(9,1,'#554433');c(10,1,'#443322');
-            c(6,2,'#443322');c(7,2,'#554433');c(8,2,'#554433');c(9,2,'#443322');
-            c(6,3,sk2);c(7,3,sk);c(8,3,sk);c(9,3,sk2);
-            c(6,4,sk2);c(7,4,eye);c(8,4,'#a00');c(9,4,sk2); // scar on eye
-            c(6,5,sk);c(7,5,sk2);c(8,5,sk2);c(9,5,sk);
-            c(5,6,'#3a2a1a');c(6,6,'#4a3a2a');c(7,6,'#4a3a2a');c(8,6,'#4a3a2a');c(9,6,'#4a3a2a');c(10,6,'#3a2a1a');
-            c(5,7,'#332211');c(6,7,'#3a2a1a');c(7,7,'#3a2a1a');c(8,7,'#3a2a1a');c(9,7,'#3a2a1a');c(10,7,'#332211');
+            // Hooded thug, scarred face, leather armor, dual daggers
+            c(6,0,'#3a2a1a');c(7,0,'#4a3a2a');c(8,0,'#4a3a2a');c(9,0,'#3a2a1a');
+            c(5,1,'#3a2a1a');c(6,1,'#4a3a2a');c(7,1,'#554433');c(8,1,'#554433');c(9,1,'#4a3a2a');c(10,1,'#3a2a1a');
+            c(5,2,'#332211');c(6,2,'#443322');c(7,2,'#554433');c(8,2,'#554433');c(9,2,'#443322');c(10,2,'#332211');
+            c(6,3,sk2);c(7,3,sk);c(8,3,shade(sk,5));c(9,3,sk2);
+            c(6,4,sk2);c(7,4,eye);c(8,4,'#bb2222');c(9,4,sk2);c(8,3,'#aa3333');
+            c(6,5,sk);c(7,5,'#998870');c(8,5,'#998870');c(9,5,sk);
+            c(4,6,'#2a1a0a');c(5,6,'#3a2a1a');c(6,6,'#4a3a2a');c(7,6,'#4a3a2a');c(8,6,'#4a3a2a');c(9,6,'#4a3a2a');c(10,6,'#3a2a1a');c(11,6,'#2a1a0a');
+            c(4,7,'#221100');c(5,7,'#332211');c(6,7,'#3a2a1a');c(7,7,'#443322');c(8,7,'#3a2a1a');c(9,7,'#3a2a1a');c(10,7,'#332211');c(11,7,'#221100');
             c(5,8,'#2a1a0a');c(6,8,'#332211');c(7,8,'#332211');c(8,8,'#332211');c(9,8,'#332211');c(10,8,'#2a1a0a');
-            c(6,9,belt);c(7,9,'#555');c(8,9,'#555');c(9,9,belt);
+            c(6,9,belt);c(7,9,'#555');c(8,9,'#666');c(9,9,belt);
             c(6,10,'#332211');c(7,10,'#2a1a0a');c(8,10,'#2a1a0a');c(9,10,'#332211');
             c(6,11,'#2a1a0a');c(7,11,'#1a0f05');c(8,11,'#1a0f05');c(9,11,'#2a1a0a');
-            c(5,12,bt);c(6,12,bt);c(9,12,bt);c(10,12,bt);
-            c(5,13,bt2);c(6,13,bt2);c(9,13,bt2);c(10,13,bt2);
-            // Dual daggers
-            c(3,4,stl3);c(3,5,stl);c(3,6,'#553');c(12,4,stl3);c(12,5,stl);c(12,6,'#553');
+            c(5,12,bt);c(6,12,shade(bt,5));c(9,12,shade(bt,5));c(10,12,bt);
+            c(5,13,bt2);c(6,13,bt);c(9,13,bt);c(10,13,bt2);
+            // Dual daggers with gleam
+            c(2,3,stl3);c(3,4,stl3);c(3,5,stl);c(3,6,'#664');c(12,3,stl3);c(12,4,stl3);c(12,5,stl);c(12,6,'#664');
+            // Throwing knife at belt
+            c(7,8,'#888');
             break;
         case 'herboriste':
-            // Green robe, herbs, nature staff
-            c(7,0,'#336633');c(8,0,'#336633');
-            c(6,1,'#447744');c(7,1,'#558855');c(8,1,'#558855');c(9,1,'#447744');
-            c(6,2,sk2);c(7,2,sk);c(8,2,sk);c(9,2,sk2);
-            c(6,3,sk);c(7,3,sk);c(8,3,sk);c(9,3,sk);
-            c(6,4,sk2);c(7,4,eye);c(8,4,eye);c(9,4,sk2);
+            // Herbalist - green hooded robe, herb pouch, living nature staff
+            c(6,0,'#2a5a2a');c(7,0,'#337733');c(8,0,'#337733');c(9,0,'#2a5a2a');
+            c(5,1,'#2a5a2a');c(6,1,'#448844');c(7,1,'#559955');c(8,1,'#559955');c(9,1,'#448844');c(10,1,'#2a5a2a');
+            c(6,2,sk2);c(7,2,sk);c(8,2,shade(sk,5));c(9,2,sk2);
+            c(6,3,sk);c(7,3,shade(sk,8));c(8,3,shade(sk,8));c(9,3,sk);
+            c(6,4,sk2);c(7,4,'#226622');c(8,4,'#226622');c(9,4,sk2);
             c(6,5,sk);c(7,5,sk2);c(8,5,sk2);c(9,5,sk);
-            c(5,6,'#336633');c(6,6,'#448844');c(7,6,'#558855');c(8,6,'#558855');c(9,6,'#448844');c(10,6,'#336633');
-            c(5,7,'#2a5a2a');c(6,7,'#336633');c(7,7,'#448844');c(8,7,'#448844');c(9,7,'#336633');c(10,7,'#2a5a2a');
-            c(5,8,'#2a5a2a');c(6,8,'#336633');c(7,8,'#336633');c(8,8,'#336633');c(9,8,'#336633');c(10,8,'#2a5a2a');
-            c(6,9,'#553');c(7,9,'#664');c(8,9,'#664');c(9,9,'#553');
-            c(6,10,'#336633');c(7,10,'#2a5a2a');c(8,10,'#2a5a2a');c(9,10,'#336633');
+            c(4,6,'#2a5a2a');c(5,6,'#337733');c(6,6,'#448844');c(7,6,'#559955');c(8,6,'#559955');c(9,6,'#448844');c(10,6,'#337733');c(11,6,'#2a5a2a');
+            c(4,7,'#1a4a1a');c(5,7,'#2a5a2a');c(6,7,'#337733');c(7,7,'#448844');c(8,7,'#448844');c(9,7,'#337733');c(10,7,'#2a5a2a');c(11,7,'#1a4a1a');
+            c(5,8,'#2a5a2a');c(6,8,'#337733');c(7,8,'#337733');c(8,8,'#337733');c(9,8,'#337733');c(10,8,'#2a5a2a');
+            c(6,9,'#553');c(7,9,'#664');c(8,9,'#775');c(9,9,'#553');
+            c(6,10,'#337733');c(7,10,'#2a5a2a');c(8,10,'#2a5a2a');c(9,10,'#337733');
             c(6,11,'#2a5a2a');c(7,11,'#1a4a1a');c(8,11,'#1a4a1a');c(9,11,'#2a5a2a');
-            c(5,12,bt);c(6,12,bt);c(9,12,bt);c(10,12,bt);
-            c(5,13,bt2);c(6,13,bt2);c(9,13,bt2);c(10,13,bt2);
-            // Nature staff with leaf
-            c(12,0,'#44aa44');c(13,0,'#33bb33');c(12,1,'#558855');c(12,2,'#664');c(12,3,'#553');c(12,4,'#553');c(12,5,'#442');c(12,6,'#331');
+            c(5,12,bt);c(6,12,shade(bt,5));c(9,12,shade(bt,5));c(10,12,bt);
+            c(5,13,bt2);c(6,13,bt);c(9,13,bt);c(10,13,bt2);
+            // Herb pouch at belt
+            c(5,9,'#5a4a2a');c(5,10,'#4a3a1a');
+            // Living nature staff with glowing leaf + vine
+            c(12,0,'#33cc33');c(13,0,'#55ee55');c(14,0,'#22aa22');c(12,1,'#448844');c(12,2,'#775');c(12,3,'#664');c(12,4,'#664');c(12,5,'#553');c(12,6,'#442');
+            c(13,2,'#33aa33');
             break;
         case 'barde':
-            // Purple/pink clothes, lute instrument
-            c(7,0,'#aa5588');c(8,0,'#aa5588');
-            c(6,1,'#bb6699');c(7,1,'#cc77aa');c(8,1,'#cc77aa');c(9,1,'#bb6699');
-            c(6,2,sk2);c(7,2,sk);c(8,2,sk);c(9,2,sk2);
-            c(6,3,sk);c(7,3,sk);c(8,3,sk);c(9,3,sk);
+            // Bard - feathered hat, purple/gold clothes, lute
+            c(6,0,'#aa5588');c(7,0,'#bb6699');c(8,0,'#cc77aa');c(9,0,'#bb6699');c(10,0,'#993377');
+            c(11,0,'#cc9944');c(12,0,'#ddaa55');
+            c(5,1,'#aa5588');c(6,1,'#bb6699');c(7,1,'#cc77aa');c(8,1,'#cc77aa');c(9,1,'#bb6699');c(10,1,'#aa5588');
+            c(6,2,sk2);c(7,2,sk);c(8,2,shade(sk,5));c(9,2,sk2);
+            c(6,3,sk);c(7,3,shade(sk,8));c(8,3,shade(sk,8));c(9,3,sk);
             c(6,4,sk2);c(7,4,eye);c(8,4,eye);c(9,4,sk2);
-            c(6,5,sk);c(7,5,'#d88');c(8,5,sk2);c(9,5,sk); // smile
-            c(5,6,'#884477');c(6,6,'#995588');c(7,6,'#aa6699');c(8,6,'#aa6699');c(9,6,'#995588');c(10,6,'#884477');
-            c(5,7,'#773366');c(6,7,'#884477');c(7,7,'#995588');c(8,7,'#995588');c(9,7,'#884477');c(10,7,'#773366');
+            c(6,5,sk);c(7,5,'#cc8888');c(8,5,sk2);c(9,5,sk);
+            c(4,6,'#773366');c(5,6,'#884477');c(6,6,'#995588');c(7,6,'#aa6699');c(8,6,'#aa6699');c(9,6,'#995588');c(10,6,'#884477');c(11,6,'#773366');
+            c(4,7,'#662255');c(5,7,'#773366');c(6,7,'#884477');c(7,7,gold);c(8,7,gold);c(9,7,'#884477');c(10,7,'#773366');c(11,7,'#662255');
             c(5,8,'#773366');c(6,8,'#884477');c(7,8,'#884477');c(8,8,'#884477');c(9,8,'#884477');c(10,8,'#773366');
-            c(6,9,belt);c(7,9,gold);c(8,9,gold);c(9,9,belt);
+            c(6,9,belt);c(7,9,gold);c(8,9,shade(gold,10));c(9,9,belt);
             c(6,10,'#884477');c(7,10,'#773366');c(8,10,'#773366');c(9,10,'#884477');
             c(6,11,'#773366');c(7,11,'#662255');c(8,11,'#662255');c(9,11,'#773366');
-            c(5,12,bt);c(6,12,bt);c(9,12,bt);c(10,12,bt);
-            c(5,13,bt2);c(6,13,bt2);c(9,13,bt2);c(10,13,bt2);
-            // Lute
-            c(12,4,'#8B6914');c(12,5,'#8B6914');c(12,6,'#A0762C');c(13,5,'#8B6914');c(13,6,'#8B6914');c(12,7,'#6a5010');c(12,8,'#553');
+            c(5,12,bt);c(6,12,shade(bt,5));c(9,12,shade(bt,5));c(10,12,bt);
+            c(5,13,bt2);c(6,13,bt);c(9,13,bt);c(10,13,bt2);
+            // Lute (detailed body + strings)
+            c(12,3,'#8B6914');c(12,4,'#A0762C');c(12,5,'#8B6914');c(13,4,'#A0762C');c(13,5,'#9a6a1a');c(13,6,'#8B6914');c(12,6,'#7a5a10');c(12,7,'#6a5010');c(12,8,'#553');
+            c(14,5,'#ccc');c(14,6,'#aaa');
             break;
         case 'squelette':
-            // Skeleton - bone white, hollow eyes, ragged cloth, bone sword
-            c(7,0,'#e8e0d0');c(8,0,'#e8e0d0');
-            c(6,1,'#d8d0c0');c(7,1,'#e8e0d0');c(8,1,'#e8e0d0');c(9,1,'#d8d0c0');
+            // Skeleton - detailed bone texture, hollow sockets, ragged purple cloth, bone sword
+            c(6,0,'#e0d8c8');c(7,0,'#e8e0d0');c(8,0,'#f0e8d8');c(9,0,'#e0d8c8');
+            c(5,1,'#d0c8b8');c(6,1,'#d8d0c0');c(7,1,'#e8e0d0');c(8,1,'#f0e8d8');c(9,1,'#d8d0c0');c(10,1,'#d0c8b8');
             c(6,2,'#d8d0c0');c(7,2,'#f0e8d8');c(8,2,'#f0e8d8');c(9,2,'#d8d0c0');
-            c(6,3,'#c8c0b0');c(7,3,'#f0e8d8');c(8,3,'#f0e8d8');c(9,3,'#c8c0b0');
-            c(6,4,'#1a0a0a');c(7,4,'#300');c(8,4,'#300');c(9,4,'#1a0a0a'); // dark hollow eyes
-            c(6,5,'#c8c0b0');c(7,5,'#0a0a0a');c(8,5,'#0a0a0a');c(9,5,'#c8c0b0'); // jaw teeth
-            c(6,6,'#b0a890');c(7,6,'#c8c0b0');c(8,6,'#c8c0b0');c(9,6,'#b0a890'); // neck bones
-            c(5,7,'#3a2830');c(6,7,'#4a3040');c(7,7,'#c8c0b0');c(8,7,'#c8c0b0');c(9,7,'#4a3040');c(10,7,'#3a2830'); // ragged cloth+ribs
-            c(5,8,'#3a2830');c(6,8,'#b0a890');c(7,8,'#c8c0b0');c(8,8,'#c8c0b0');c(9,8,'#b0a890');c(10,8,'#3a2830');
-            c(6,9,'#4a3040');c(7,9,'#3a2830');c(8,9,'#3a2830');c(9,9,'#4a3040'); // belt
-            c(6,10,'#b0a890');c(7,10,'#c8c0b0');c(8,10,'#c8c0b0');c(9,10,'#b0a890'); // leg bones
+            c(6,3,'#c8c0b0');c(7,3,'#e0d8c8');c(8,3,'#e0d8c8');c(9,3,'#c8c0b0');
+            c(6,4,'#1a0808');c(7,4,'#330000');c(8,4,'#330000');c(9,4,'#1a0808');
+            c(6,5,'#d0c8b8');c(7,5,'#0a0a0a');c(8,5,'#0a0a0a');c(9,5,'#d0c8b8');c(7,5,'#e8e0d0');c(8,5,'#d8d0c0');
+            c(6,6,'#b0a890');c(7,6,'#c8c0b0');c(8,6,'#c8c0b0');c(9,6,'#b0a890');
+            c(4,7,'#2a1828');c(5,7,'#3a2830');c(6,7,'#4a3040');c(7,7,'#d0c8b8');c(8,7,'#c8c0b0');c(9,7,'#4a3040');c(10,7,'#3a2830');c(11,7,'#2a1828');
+            c(5,8,'#3a2830');c(6,8,'#b0a890');c(7,8,'#c8c0b0');c(8,8,'#d0c8b8');c(9,8,'#b0a890');c(10,8,'#3a2830');
+            c(6,9,'#4a3040');c(7,9,'#3a2830');c(8,9,'#3a2830');c(9,9,'#4a3040');
+            c(6,10,'#b0a890');c(7,10,'#c8c0b0');c(8,10,'#d0c8b8');c(9,10,'#b0a890');
             c(6,11,'#a09880');c(7,11,'#b0a890');c(8,11,'#b0a890');c(9,11,'#a09880');
             c(5,12,'#908070');c(6,12,'#a09880');c(9,12,'#a09880');c(10,12,'#908070');
             c(5,13,'#807060');c(6,13,'#908070');c(9,13,'#908070');c(10,13,'#807060');
-            // Bone sword
-            c(12,0,'#f0e8d8');c(12,1,'#e8e0d0');c(12,2,'#d8d0c0');c(12,3,'#c8c0b0');c(12,4,'#b0a890');c(12,5,'#4a3a2a');c(12,6,'#3a2a1a');c(12,7,'#2a1a0a');
+            // Bone sword with joints
+            c(12,0,'#f0e8d8');c(12,1,'#e8e0d0');c(12,2,'#d8d0c0');c(12,3,'#c8c0b0');c(11,3,'#b0a890');c(13,3,'#b0a890');c(12,4,'#b0a890');c(12,5,'#4a3a2a');c(12,6,'#3a2a1a');c(12,7,'#2a1a0a');
             break;
         case 'abomination':
-            // Grotesque undead hulk, stitched flesh, massive arms
-            c(6,0,'#4a3040');c(7,0,'#5a3848');c(8,0,'#5a3848');c(9,0,'#4a3040');
-            c(5,1,'#4a3040');c(6,1,'#5a3848');c(7,1,'#6a4858');c(8,1,'#6a4858');c(9,1,'#5a3848');c(10,1,'#4a3040');
-            c(5,2,'#5a3848');c(6,2,'#6a4858');c(7,2,'#7a5868');c(8,2,'#7a5868');c(9,2,'#6a4858');c(10,2,'#5a3848');
-            c(6,3,'#6a4858');c(7,3,'#7a5868');c(8,3,'#7a5868');c(9,3,'#6a4858');
-            c(6,4,'#0a0');c(7,4,'#0f0');c(8,4,'#ff0');c(9,4,'#f00'); // mismatched eyes green/red
-            c(6,5,'#5a3848');c(7,5,'#333');c(8,5,'#333');c(9,5,'#5a3848'); // stitched mouth
-            c(4,6,'#5a3848');c(5,6,'#6a4858');c(6,6,'#7a5868');c(7,6,'#7a5868');c(8,6,'#7a5868');c(9,6,'#7a5868');c(10,6,'#6a4858');c(11,6,'#5a3848');
-            c(4,7,'#4a3040');c(5,7,'#5a3848');c(6,7,'#6a4858');c(7,7,'#552');c(8,7,'#6a4858');c(9,7,'#552');c(10,7,'#5a3848');c(11,7,'#4a3040'); // stitches
+            // Grotesque undead hulk - stitched flesh, mismatched eyes, chains, meat hook
+            c(5,0,'#4a3040');c(6,0,'#5a3848');c(7,0,'#6a4858');c(8,0,'#6a4858');c(9,0,'#5a3848');c(10,0,'#4a3040');
+            c(5,1,'#4a3040');c(6,1,'#5a3848');c(7,1,'#6a4858');c(8,1,'#7a5868');c(9,1,'#5a3848');c(10,1,'#4a3040');
+            c(5,2,'#5a3848');c(6,2,'#6a4858');c(7,2,'#7a5868');c(8,2,'#8a6878');c(9,2,'#6a4858');c(10,2,'#5a3848');
+            c(6,3,'#6a4858');c(7,3,'#7a5868');c(8,3,'#8a6878');c(9,3,'#6a4858');
+            c(6,4,'#00bb00');c(7,4,'#00ff00');c(8,4,'#ffee00');c(9,4,'#ff2200');
+            c(6,5,'#5a3848');c(7,5,'#333');c(8,5,'#444');c(9,5,'#5a3848');
+            c(3,6,'#4a3040');c(4,6,'#5a3848');c(5,6,'#6a4858');c(6,6,'#7a5868');c(7,6,'#7a5868');c(8,6,'#7a5868');c(9,6,'#7a5868');c(10,6,'#6a4858');c(11,6,'#5a3848');c(12,6,'#4a3040');
+            c(3,7,'#3a2030');c(4,7,'#4a3040');c(5,7,'#5a3848');c(6,7,'#6a4858');c(7,7,'#665522');c(8,7,'#6a4858');c(9,7,'#665522');c(10,7,'#5a3848');c(11,7,'#4a3040');c(12,7,'#3a2030');
             c(4,8,'#5a3848');c(5,8,'#6a4858');c(6,8,'#7a5868');c(7,8,'#7a5868');c(8,8,'#7a5868');c(9,8,'#7a5868');c(10,8,'#6a4858');c(11,8,'#5a3848');
-            c(5,9,'#3a2030');c(6,9,'#552');c(7,9,'#3a2030');c(8,9,'#3a2030');c(9,9,'#552');c(10,9,'#3a2030'); // belt+chains
+            c(5,9,'#3a2030');c(6,9,'#665522');c(7,9,'#3a2030');c(8,9,'#3a2030');c(9,9,'#665522');c(10,9,'#3a2030');
             c(5,10,'#5a3848');c(6,10,'#6a4858');c(7,10,'#5a3848');c(8,10,'#5a3848');c(9,10,'#6a4858');c(10,10,'#5a3848');
             c(5,11,'#4a3040');c(6,11,'#5a3848');c(7,11,'#4a3040');c(8,11,'#4a3040');c(9,11,'#5a3848');c(10,11,'#4a3040');
             c(4,12,'#3a2030');c(5,12,'#4a3040');c(6,12,'#3a2030');c(9,12,'#3a2030');c(10,12,'#4a3040');c(11,12,'#3a2030');
             c(4,13,'#2a1020');c(5,13,'#3a2030');c(6,13,'#2a1020');c(9,13,'#2a1020');c(10,13,'#3a2030');c(11,13,'#2a1020');
-            // Meat hook weapon
-            c(13,0,stl3);c(13,1,stl);c(14,1,stl2);c(13,2,stl2);c(13,3,'#553');c(13,4,'#442');c(13,5,'#331');c(13,6,'#220');
+            // Meat hook + chain
+            c(13,0,stl3);c(14,0,stl);c(13,1,stl);c(14,1,stl2);c(13,2,stl2);c(13,3,'#664');c(13,4,'#553');c(13,5,'#442');c(13,6,'#331');
+            // Chain links on body
+            c(3,8,'#666');c(3,9,'#555');c(12,8,'#666');c(12,9,'#555');
             break;
         case 'guerrier':
-            // Heavy plate armor, great helm, greatsword + kite shield
-            c(6,0,stl2);c(7,0,stl);c(8,0,stl);c(9,0,stl2);
-            c(5,1,stl2);c(6,1,stl);c(7,1,stl3);c(8,1,stl3);c(9,1,stl);c(10,1,stl2);
-            c(5,2,arm2);c(6,2,arm);c(7,2,arm3);c(8,2,arm3);c(9,2,arm);c(10,2,arm2);
-            c(6,3,sk);c(7,3,sk);c(8,3,sk);c(9,3,sk);
-            c(6,4,'#333');c(7,4,eye);c(8,4,eye);c(9,4,'#333');
-            c(6,5,sk2);c(7,5,sk2);c(8,5,sk2);c(9,5,sk2);
-            c(4,6,arm2);c(5,6,arm);c(6,6,stl);c(7,6,stl3);c(8,6,stl3);c(9,6,stl);c(10,6,arm);c(11,6,arm2);
-            c(4,7,arm2);c(5,7,arm);c(6,7,stl);c(7,7,stl3);c(8,7,stl3);c(9,7,stl);c(10,7,arm);c(11,7,arm2);
-            c(5,8,arm2);c(6,8,arm);c(7,8,stl);c(8,8,stl);c(9,8,arm);c(10,8,arm2);
-            c(6,9,belt);c(7,9,gold);c(8,9,gold);c(9,9,belt);
-            c(6,10,arm);c(7,10,arm2);c(8,10,arm2);c(9,10,arm);
-            c(6,11,arm2);c(7,11,'#333');c(8,11,'#333');c(9,11,arm2);
+            // Heavy plate warrior - detailed helmet visor, pauldrons, greatsword + kite shield
+            c(6,0,stl2);c(7,0,stl);c(8,0,stl3);c(9,0,stl2);
+            c(5,1,stl2);c(6,1,stl);c(7,1,stl3);c(8,1,'#aaabb8');c(9,1,stl);c(10,1,stl2);
+            c(5,2,arm2);c(6,2,arm3);c(7,2,stl);c(8,2,stl3);c(9,2,arm3);c(10,2,arm2);
+            c(6,3,sk);c(7,3,shade(sk,5));c(8,3,shade(sk,5));c(9,3,sk);
+            c(6,4,'#2a2a2a');c(7,4,eye);c(8,4,eye);c(9,4,'#2a2a2a');c(7,3,'#b0987a');
+            c(6,5,sk2);c(7,5,sk2);c(8,5,'#a08860');c(9,5,sk2);
+            // Pauldrons + chest plate
+            c(3,6,arm2);c(4,6,stl2);c(5,6,stl);c(6,6,stl3);c(7,6,'#aaabb8');c(8,6,'#aaabb8');c(9,6,stl3);c(10,6,stl);c(11,6,stl2);c(12,6,arm2);
+            c(3,7,arm2);c(4,7,arm);c(5,7,stl);c(6,7,stl3);c(7,7,'#aaabb8');c(8,7,stl3);c(9,7,stl3);c(10,7,stl);c(11,7,arm);c(12,7,arm2);
+            c(5,8,arm2);c(6,8,stl);c(7,8,stl3);c(8,8,stl);c(9,8,stl);c(10,8,arm2);
+            c(6,9,belt);c(7,9,gold);c(8,9,shade(gold,10));c(9,9,belt);
+            c(6,10,arm);c(7,10,arm2);c(8,10,arm3);c(9,10,arm);
+            c(6,11,arm2);c(7,11,'#333');c(8,11,'#3a3a3a');c(9,11,arm2);
             c(5,12,stl2);c(6,12,stl);c(9,12,stl);c(10,12,stl2);
             c(5,13,stl2);c(6,13,stl2);c(9,13,stl2);c(10,13,stl2);
-            c(12,1,stl3);c(12,2,stl3);c(12,3,stl);c(12,4,stl);c(12,5,stl);c(12,6,stl);c(12,7,'#442');c(12,8,'#331');
-            c(2,5,arm2);c(3,4,arm);c(3,5,stl);c(3,6,stl3);c(3,7,stl);c(3,8,arm);c(4,5,arm);c(4,6,gold);c(4,7,arm);c(2,6,arm2);c(2,7,arm2);
+            // Greatsword with guard + blade shine
+            c(13,0,'#bbbccc');c(13,1,stl3);c(13,2,stl3);c(13,3,stl);c(12,4,gold);c(13,4,stl);c(14,4,gold);c(13,5,stl);c(13,6,'#553');c(13,7,'#442');c(13,8,'#331');
+            // Kite shield with gold cross
+            c(1,5,arm2);c(2,4,stl2);c(2,5,stl);c(2,6,stl3);c(2,7,stl);c(2,8,stl2);c(3,4,arm);c(3,5,stl);c(3,6,gold);c(3,7,stl);c(3,8,arm);c(4,5,stl2);c(4,6,gold);c(4,7,stl2);c(3,9,stl2);
             break;
         case 'mage':
-            // Dark arcane hood, glowing cyan eyes, crystal staff
-            c(6,0,'#1a1a3a');c(7,0,'#222244');c(8,0,'#222244');c(9,0,'#1a1a3a');
-            c(5,1,'#1a1a3a');c(6,1,'#222244');c(7,1,'#2a2a4a');c(8,1,'#2a2a4a');c(9,1,'#222244');c(10,1,'#1a1a3a');
-            c(5,2,t2);c(6,2,t1);c(7,2,t1);c(8,2,t1);c(9,2,t1);c(10,2,t2);
-            c(6,3,'#1a1a2a');c(7,3,'#111');c(8,3,'#111');c(9,3,'#1a1a2a');
-            c(6,4,'#111');c(7,4,'#44ccff');c(8,4,'#44ccff');c(9,4,'#111');
-            c(7,5,sk2);c(8,5,sk2);
-            c(5,6,t2);c(6,6,t1);c(7,6,t1);c(8,6,t1);c(9,6,t1);c(10,6,t2);
-            c(5,7,shade(t2,-10));c(6,7,t2);c(7,7,t1);c(8,7,t1);c(9,7,t2);c(10,7,shade(t2,-10));
+            // Dark arcane mage - detailed hood, glowing cyan eyes, crystal staff, rune on chest
+            c(5,0,'#1a1a3a');c(6,0,'#222244');c(7,0,'#2a2a4e');c(8,0,'#2a2a4e');c(9,0,'#222244');c(10,0,'#1a1a3a');
+            c(5,1,'#181838');c(6,1,'#222244');c(7,1,'#2a2a50');c(8,1,'#2a2a50');c(9,1,'#222244');c(10,1,'#181838');
+            c(5,2,shade(t2,-5));c(6,2,t1);c(7,2,shade(t1,5));c(8,2,shade(t1,5));c(9,2,t1);c(10,2,shade(t2,-5));
+            c(6,3,'#151530');c(7,3,'#0e0e0e');c(8,3,'#0e0e0e');c(9,3,'#151530');
+            c(6,4,'#0e0e0e');c(7,4,'#44ccff');c(8,4,'#55ddff');c(9,4,'#0e0e0e');
+            c(7,5,sk2);c(8,5,'#a08860');
+            c(4,6,shade(t2,-15));c(5,6,t2);c(6,6,t1);c(7,6,shade(t1,5));c(8,6,shade(t1,5));c(9,6,t1);c(10,6,t2);c(11,6,shade(t2,-15));
+            c(4,7,shade(t2,-20));c(5,7,shade(t2,-10));c(6,7,t2);c(7,7,'#44ccff');c(8,7,'#44ccff');c(9,7,t2);c(10,7,shade(t2,-10));c(11,7,shade(t2,-20));
             c(5,8,shade(t2,-15));c(6,8,shade(t2,-10));c(7,8,t2);c(8,8,t2);c(9,8,shade(t2,-10));c(10,8,shade(t2,-15));
-            c(5,9,shade(t2,-15));c(6,9,shade(t2,-10));c(7,9,'#336');c(8,9,'#336');c(9,9,shade(t2,-10));c(10,9,shade(t2,-15));
+            c(5,9,shade(t2,-15));c(6,9,shade(t2,-10));c(7,9,'#336');c(8,9,'#447');c(9,9,shade(t2,-10));c(10,9,shade(t2,-15));
             c(5,10,shade(t2,-20));c(6,10,shade(t2,-15));c(7,10,shade(t2,-10));c(8,10,shade(t2,-10));c(9,10,shade(t2,-15));c(10,10,shade(t2,-20));
             c(5,11,shade(t2,-25));c(6,11,shade(t2,-20));c(7,11,shade(t2,-15));c(8,11,shade(t2,-15));c(9,11,shade(t2,-20));c(10,11,shade(t2,-25));
-            c(5,12,bt);c(6,12,bt);c(9,12,bt);c(10,12,bt);c(5,13,bt2);c(6,13,bt2);c(9,13,bt2);c(10,13,bt2);
-            c(13,0,'#66ddff');c(13,1,'#44aacc');c(13,2,'#336');c(13,3,'#336');c(13,4,'#225');c(13,5,'#225');c(13,6,'#114');c(13,7,'#114');
+            c(5,12,bt);c(6,12,shade(bt,5));c(9,12,shade(bt,5));c(10,12,bt);c(5,13,bt2);c(6,13,bt);c(9,13,bt);c(10,13,bt2);
+            // Crystal staff with glow aura
+            c(13,0,'#66ddff');c(14,0,'#88eeff');c(12,0,'#44aadd');c(13,1,'#44aacc');c(13,2,'#336');c(13,3,'#336');c(13,4,'#225');c(13,5,'#225');c(13,6,'#114');c(13,7,'#114');
+            // Arcane particles
+            c(2,4,'#44ccff');c(14,6,'#44ccff');
             break;
         case 'archer':
-            // Leather armor, deep hood, longbow, quiver on back
-            c(6,0,'#2a3a22');c(7,0,'#334428');c(8,0,'#334428');c(9,0,'#2a3a22');
-            c(5,1,'#2a3a22');c(6,1,'#334428');c(7,1,'#3a4a30');c(8,1,'#3a4a30');c(9,1,'#334428');c(10,1,'#2a3a22');
-            c(5,2,t2);c(6,2,t1);c(7,2,t1);c(8,2,t1);c(9,2,t1);c(10,2,t2);
-            c(6,3,sk);c(7,3,sk);c(8,3,sk);c(9,3,sk);
-            c(6,4,sk2);c(7,4,'#2a4');c(8,4,'#2a4');c(9,4,sk2);
-            c(6,5,sk2);c(7,5,sk2);c(8,5,sk2);c(9,5,sk2);
-            c(5,6,'#4a3a2a');c(6,6,'#5a4a3a');c(7,6,'#5a4a3a');c(8,6,'#5a4a3a');c(9,6,'#5a4a3a');c(10,6,'#4a3a2a');
-            c(5,7,'#3a2a1a');c(6,7,'#4a3a2a');c(7,7,'#4a3a2a');c(8,7,'#4a3a2a');c(9,7,'#4a3a2a');c(10,7,'#3a2a1a');
+            // Forest archer - detailed leather, deep green hood, longbow, quiver with arrows
+            c(5,0,'#1a2a18');c(6,0,'#2a3a22');c(7,0,'#334428');c(8,0,'#3a4a30');c(9,0,'#334428');c(10,0,'#2a3a22');
+            c(5,1,'#1a2a18');c(6,1,'#2a3a22');c(7,1,'#3a4a30');c(8,1,'#3a4a30');c(9,1,'#334428');c(10,1,'#2a3a22');
+            c(5,2,shade(t2,-5));c(6,2,t1);c(7,2,shade(t1,5));c(8,2,shade(t1,5));c(9,2,t1);c(10,2,shade(t2,-5));
+            c(6,3,sk);c(7,3,shade(sk,5));c(8,3,shade(sk,5));c(9,3,sk);
+            c(6,4,sk2);c(7,4,'#225533');c(8,4,'#225533');c(9,4,sk2);c(7,3,'#b0987a');
+            c(6,5,sk2);c(7,5,sk2);c(8,5,'#a08860');c(9,5,sk2);
+            c(4,6,'#3a2a1a');c(5,6,'#4a3a2a');c(6,6,'#5a4a3a');c(7,6,'#5a4a3a');c(8,6,'#5a4a3a');c(9,6,'#5a4a3a');c(10,6,'#4a3a2a');c(11,6,'#3a2a1a');
+            c(4,7,'#2a1a0a');c(5,7,'#3a2a1a');c(6,7,'#4a3a2a');c(7,7,'#504030');c(8,7,'#4a3a2a');c(9,7,'#4a3a2a');c(10,7,'#3a2a1a');c(11,7,'#2a1a0a');
             c(5,8,'#332a1a');c(6,8,'#3a2a1a');c(7,8,'#3a2a1a');c(8,8,'#3a2a1a');c(9,8,'#3a2a1a');c(10,8,'#332a1a');
-            c(6,9,belt);c(7,9,belt);c(8,9,belt);c(9,9,belt);
+            c(6,9,belt);c(7,9,shade(belt,5));c(8,9,belt);c(9,9,belt);
             c(6,10,'#3a4a2a');c(7,10,'#2a3a1a');c(8,10,'#2a3a1a');c(9,10,'#3a4a2a');
             c(6,11,'#2a3a1a');c(7,11,'#1a2a0a');c(8,11,'#1a2a0a');c(9,11,'#2a3a1a');
-            c(5,12,bt);c(6,12,'#3a2a1a');c(9,12,'#3a2a1a');c(10,12,bt);c(5,13,bt2);c(6,13,bt2);c(9,13,bt2);c(10,13,bt2);
-            c(2,2,'#5a3a1a');c(2,3,'#4a2a0a');c(2,4,'#4a2a0a');c(2,5,'#4a2a0a');c(2,6,'#4a2a0a');c(2,7,'#4a2a0a');c(2,8,'#4a2a0a');c(2,9,'#4a2a0a');c(2,10,'#5a3a1a');
-            c(3,3,'#aaa');c(3,4,'#aaa');c(3,5,'#aaa');c(3,6,'#aaa');c(3,7,'#aaa');c(3,8,'#aaa');c(3,9,'#aaa');
-            c(11,4,'#4a2a0a');c(11,5,'#4a2a0a');c(11,6,'#4a2a0a');c(11,7,'#4a2a0a');c(12,3,stl2);c(12,4,stl2);
+            c(5,12,bt);c(6,12,'#3a2a1a');c(9,12,'#3a2a1a');c(10,12,bt);c(5,13,bt2);c(6,13,bt);c(9,13,bt);c(10,13,bt2);
+            // Longbow (detailed curve + string)
+            c(2,1,'#5a3a1a');c(2,2,'#5a3a1a');c(2,3,'#4a2a0a');c(2,4,'#4a2a0a');c(2,5,'#4a2a0a');c(2,6,'#4a2a0a');c(2,7,'#4a2a0a');c(2,8,'#4a2a0a');c(2,9,'#4a2a0a');c(2,10,'#5a3a1a');
+            c(3,2,'#bbb');c(3,3,'#aaa');c(3,4,'#aaa');c(3,5,'#aaa');c(3,6,'#aaa');c(3,7,'#aaa');c(3,8,'#aaa');c(3,9,'#bbb');
+            // Quiver with arrow tips
+            c(11,3,'#4a2a0a');c(11,4,'#4a2a0a');c(11,5,'#4a2a0a');c(11,6,'#4a2a0a');c(12,2,stl3);c(12,3,stl2);c(13,2,stl3);
+            // Arrow nocked
+            c(4,5,stl2);
             break;
         case 'pretre':
-            // Dark religious robes, gold holy symbol
-            c(6,0,gold);c(7,0,'#aa8822');c(8,0,'#aa8822');c(9,0,gold);
-            c(6,1,'#888');c(7,1,'#999');c(8,1,'#999');c(9,1,'#888');
-            c(5,2,'#777');c(6,2,'#888');c(7,2,'#999');c(8,2,'#999');c(9,2,'#888');c(10,2,'#777');
-            c(6,3,sk);c(7,3,sk);c(8,3,sk);c(9,3,sk);
-            c(6,4,sk2);c(7,4,eye);c(8,4,eye);c(9,4,sk2);
-            c(6,5,sk2);c(7,5,sk);c(8,5,sk);c(9,5,sk2);
-            c(5,6,'#666');c(6,6,'#777');c(7,6,'#888');c(8,6,'#888');c(9,6,'#777');c(10,6,'#666');
-            c(5,7,'#555');c(6,7,'#666');c(7,7,gold);c(8,7,gold);c(9,7,'#666');c(10,7,'#555');
+            // Priest - ornate dark robes, gold holy symbol, cross staff
+            c(6,0,gold);c(7,0,'#bb9933');c(8,0,'#bb9933');c(9,0,gold);
+            c(5,1,'#777');c(6,1,'#888');c(7,1,'#999');c(8,1,'#aaa');c(9,1,'#888');c(10,1,'#777');
+            c(5,2,'#666');c(6,2,'#888');c(7,2,'#999');c(8,2,'#aaa');c(9,2,'#888');c(10,2,'#666');
+            c(6,3,sk);c(7,3,shade(sk,5));c(8,3,shade(sk,5));c(9,3,sk);
+            c(6,4,sk2);c(7,4,eye);c(8,4,eye);c(9,4,sk2);c(7,3,'#b0987a');
+            c(6,5,sk2);c(7,5,sk);c(8,5,shade(sk,5));c(9,5,sk2);
+            c(4,6,'#555');c(5,6,'#666');c(6,6,'#777');c(7,6,'#888');c(8,6,'#888');c(9,6,'#777');c(10,6,'#666');c(11,6,'#555');
+            c(4,7,'#444');c(5,7,'#555');c(6,7,'#666');c(7,7,gold);c(8,7,shade(gold,10));c(9,7,'#666');c(10,7,'#555');c(11,7,'#444');
             c(5,8,'#444');c(6,8,'#555');c(7,8,'#666');c(8,8,'#666');c(9,8,'#555');c(10,8,'#444');
-            c(5,9,'#444');c(6,9,'#555');c(7,9,'#555');c(8,9,'#555');c(9,9,'#555');c(10,9,'#444');
+            c(5,9,'#3a3a3a');c(6,9,'#555');c(7,9,'#555');c(8,9,'#555');c(9,9,'#555');c(10,9,'#3a3a3a');
             c(5,10,'#333');c(6,10,'#444');c(7,10,'#555');c(8,10,'#555');c(9,10,'#444');c(10,10,'#333');
-            c(5,11,'#333');c(6,11,'#444');c(7,11,'#444');c(8,11,'#444');c(9,11,'#444');c(10,11,'#333');
-            c(5,12,bt);c(6,12,bt);c(9,12,bt);c(10,12,bt);c(5,13,bt2);c(6,13,bt2);c(9,13,bt2);c(10,13,bt2);
-            c(13,0,gold);c(12,0,gold);c(14,0,gold);c(13,1,gold);c(13,2,'#553');c(13,3,'#442');c(13,4,'#442');c(13,5,'#331');
+            c(5,11,'#2a2a2a');c(6,11,'#3a3a3a');c(7,11,'#444');c(8,11,'#444');c(9,11,'#3a3a3a');c(10,11,'#2a2a2a');
+            c(5,12,bt);c(6,12,shade(bt,5));c(9,12,shade(bt,5));c(10,12,bt);c(5,13,bt2);c(6,13,bt);c(9,13,bt);c(10,13,bt2);
+            // Cross staff with golden tip
+            c(12,0,gold);c(13,0,shade(gold,15));c(14,0,gold);c(13,1,gold);c(13,2,'#664');c(13,3,'#553');c(13,4,'#553');c(13,5,'#442');
             break;
         case 'voleur':
-            // Full mask, dark leather, dual daggers, red menacing eyes
-            c(6,0,'#111');c(7,0,'#1a1a1a');c(8,0,'#1a1a1a');c(9,0,'#111');
-            c(5,1,'#111');c(6,1,'#1a1a1a');c(7,1,'#222');c(8,1,'#222');c(9,1,'#1a1a1a');c(10,1,'#111');
-            c(5,2,'#0a0a0a');c(6,2,'#111');c(7,2,'#1a1a1a');c(8,2,'#1a1a1a');c(9,2,'#111');c(10,2,'#0a0a0a');
-            c(6,3,'#0a0a0a');c(7,3,'#111');c(8,3,'#111');c(9,3,'#0a0a0a');
-            c(6,4,'#0a0a0a');c(7,4,'#cc2222');c(8,4,'#cc2222');c(9,4,'#0a0a0a');
-            c(6,5,'#111');c(7,5,'#0a0a0a');c(8,5,'#0a0a0a');c(9,5,'#111');
-            c(5,6,'#1a1a1a');c(6,6,'#222');c(7,6,'#222');c(8,6,'#222');c(9,6,'#222');c(10,6,'#1a1a1a');
-            c(5,7,'#111');c(6,7,'#1a1a1a');c(7,7,'#1a1a1a');c(8,7,'#1a1a1a');c(9,7,'#1a1a1a');c(10,7,'#111');
-            c(5,8,'#0a0a0a');c(6,8,'#111');c(7,8,'#111');c(8,8,'#111');c(9,8,'#111');c(10,8,'#0a0a0a');
-            c(6,9,'#333');c(7,9,'#444');c(8,9,'#444');c(9,9,'#333');
-            c(6,10,'#1a1a1a');c(7,10,'#111');c(8,10,'#111');c(9,10,'#1a1a1a');
-            c(6,11,'#111');c(7,11,'#0a0a0a');c(8,11,'#0a0a0a');c(9,11,'#111');
-            c(5,12,'#0a0a0a');c(6,12,'#111');c(9,12,'#111');c(10,12,'#0a0a0a');c(5,13,'#050505');c(6,13,'#050505');c(9,13,'#050505');c(10,13,'#050505');
-            c(2,4,stl3);c(2,5,stl);c(2,6,stl2);c(2,7,'#333');
-            c(13,4,stl3);c(13,5,stl);c(13,6,stl2);c(13,7,'#333');
+            // Thief - full dark mask, red eyes, dual daggers, shadow cloak
+            c(5,0,'#0a0a0a');c(6,0,'#111');c(7,0,'#181818');c(8,0,'#181818');c(9,0,'#111');c(10,0,'#0a0a0a');
+            c(5,1,'#0a0a0a');c(6,1,'#151515');c(7,1,'#1e1e1e');c(8,1,'#222');c(9,1,'#151515');c(10,1,'#0a0a0a');
+            c(5,2,'#080808');c(6,2,'#0e0e0e');c(7,2,'#151515');c(8,2,'#181818');c(9,2,'#0e0e0e');c(10,2,'#080808');
+            c(6,3,'#0a0a0a');c(7,3,'#111');c(8,3,'#131313');c(9,3,'#0a0a0a');
+            c(6,4,'#0a0a0a');c(7,4,'#cc2222');c(8,4,'#dd3333');c(9,4,'#0a0a0a');
+            c(6,5,'#0e0e0e');c(7,5,'#080808');c(8,5,'#080808');c(9,5,'#0e0e0e');
+            c(4,6,'#111');c(5,6,'#1a1a1a');c(6,6,'#222');c(7,6,'#262626');c(8,6,'#222');c(9,6,'#222');c(10,6,'#1a1a1a');c(11,6,'#111');
+            c(4,7,'#0a0a0a');c(5,7,'#111');c(6,7,'#1a1a1a');c(7,7,'#1e1e1e');c(8,7,'#1a1a1a');c(9,7,'#1a1a1a');c(10,7,'#111');c(11,7,'#0a0a0a');
+            c(5,8,'#0a0a0a');c(6,8,'#111');c(7,8,'#131313');c(8,8,'#111');c(9,8,'#111');c(10,8,'#0a0a0a');
+            c(6,9,'#2a2a2a');c(7,9,'#3a3a3a');c(8,9,'#3a3a3a');c(9,9,'#2a2a2a');
+            c(6,10,'#151515');c(7,10,'#111');c(8,10,'#111');c(9,10,'#151515');
+            c(6,11,'#0e0e0e');c(7,11,'#080808');c(8,11,'#080808');c(9,11,'#0e0e0e');
+            c(5,12,'#080808');c(6,12,'#0e0e0e');c(9,12,'#0e0e0e');c(10,12,'#080808');c(5,13,'#050505');c(6,13,'#080808');c(9,13,'#080808');c(10,13,'#050505');
+            // Dual daggers with gleam
+            c(2,3,stl3);c(2,4,stl3);c(2,5,stl);c(2,6,stl2);c(2,7,'#333');
+            c(13,3,stl3);c(13,4,stl3);c(13,5,stl);c(13,6,stl2);c(13,7,'#333');
+            // Poison vials at belt
+            c(7,8,'#22aa44');c(8,8,'#22aa44');
             break;
         case 'druide':
-            // Antlered hood, vine staff, bark armor
-            c(4,0,'#3a2a0a');c(5,0,'#3a2a0a');c(10,0,'#3a2a0a');c(11,0,'#3a2a0a');
-            c(3,1,'#3a2a0a');c(12,1,'#3a2a0a');
-            c(6,1,'#2a4a1a');c(7,1,'#3a5a2a');c(8,1,'#3a5a2a');c(9,1,'#2a4a1a');
+            // Druid - antlered hood, bark armor, vine staff, green rune veins
+            c(3,0,'#4a3a0a');c(4,0,'#3a2a0a');c(5,0,'#3a2a0a');c(10,0,'#3a2a0a');c(11,0,'#3a2a0a');c(12,0,'#4a3a0a');
+            c(2,1,'#3a2a0a');c(3,1,'#4a3a1a');c(12,1,'#3a2a0a');c(13,1,'#4a3a1a');
+            c(5,1,'#1a3a0a');c(6,1,'#2a4a1a');c(7,1,'#3a5a2a');c(8,1,'#3a5a2a');c(9,1,'#2a4a1a');c(10,1,'#1a3a0a');
             c(6,2,'#1a3a0a');c(7,2,'#2a4a1a');c(8,2,'#2a4a1a');c(9,2,'#1a3a0a');
-            c(6,3,sk);c(7,3,sk);c(8,3,sk);c(9,3,sk);
-            c(6,4,sk2);c(7,4,'#2a6a2a');c(8,4,'#2a6a2a');c(9,4,sk2);
-            c(6,5,sk2);c(7,5,sk);c(8,5,sk);c(9,5,sk2);
-            c(5,6,'#3a2a1a');c(6,6,'#4a3a2a');c(7,6,'#2a5a1a');c(8,6,'#2a5a1a');c(9,6,'#4a3a2a');c(10,6,'#3a2a1a');
-            c(5,7,'#2a1a0a');c(6,7,'#3a2a1a');c(7,7,'#3a2a1a');c(8,7,'#3a2a1a');c(9,7,'#3a2a1a');c(10,7,'#2a1a0a');
+            c(6,3,sk);c(7,3,shade(sk,5));c(8,3,shade(sk,5));c(9,3,sk);
+            c(6,4,sk2);c(7,4,'#2a7a2a');c(8,4,'#33883a');c(9,4,sk2);
+            c(6,5,sk2);c(7,5,sk);c(8,5,shade(sk,5));c(9,5,sk2);
+            c(4,6,'#2a1a0a');c(5,6,'#3a2a1a');c(6,6,'#4a3a2a');c(7,6,'#2a5a1a');c(8,6,'#33661a');c(9,6,'#4a3a2a');c(10,6,'#3a2a1a');c(11,6,'#2a1a0a');
+            c(4,7,'#1a0a00');c(5,7,'#2a1a0a');c(6,7,'#3a2a1a');c(7,7,'#3a2a1a');c(8,7,'#3a2a1a');c(9,7,'#3a2a1a');c(10,7,'#2a1a0a');c(11,7,'#1a0a00');
             c(5,8,'#2a1a0a');c(6,8,'#2a1a0a');c(7,8,'#3a2a1a');c(8,8,'#3a2a1a');c(9,8,'#2a1a0a');c(10,8,'#2a1a0a');
-            c(5,9,'#1a1a0a');c(6,9,'#2a1a0a');c(7,9,'#1a4a0a');c(8,9,'#1a4a0a');c(9,9,'#2a1a0a');c(10,9,'#1a1a0a');
-            c(5,10,'#1a1a0a');c(6,10,'#1a1a0a');c(7,10,'#1a1a0a');c(8,10,'#1a1a0a');c(9,10,'#1a1a0a');c(10,10,'#1a1a0a');
-            c(5,11,'#0a0a0a');c(6,11,'#1a1a0a');c(7,11,'#1a1a0a');c(8,11,'#1a1a0a');c(9,11,'#1a1a0a');c(10,11,'#0a0a0a');
-            c(5,12,bt);c(6,12,bt);c(9,12,bt);c(10,12,bt);c(5,13,bt2);c(6,13,bt2);c(9,13,bt2);c(10,13,bt2);
-            c(13,0,'#1a5a0a');c(13,1,'#2a4a0a');c(13,2,'#3a2a0a');c(13,3,'#3a2a0a');c(13,4,'#2a1a0a');c(13,5,'#2a1a0a');c(13,6,'#1a0a0a');
+            c(5,9,'#1a3a0a');c(6,9,'#2a1a0a');c(7,9,'#1a5a0a');c(8,9,'#228a0a');c(9,9,'#2a1a0a');c(10,9,'#1a3a0a');
+            c(5,10,'#1a1a0a');c(6,10,'#1a1a0a');c(7,10,'#151a0a');c(8,10,'#151a0a');c(9,10,'#1a1a0a');c(10,10,'#1a1a0a');
+            c(5,11,'#0a0a0a');c(6,11,'#151a0a');c(7,11,'#1a1a0a');c(8,11,'#1a1a0a');c(9,11,'#151a0a');c(10,11,'#0a0a0a');
+            c(5,12,bt);c(6,12,shade(bt,5));c(9,12,shade(bt,5));c(10,12,bt);c(5,13,bt2);c(6,13,bt);c(9,13,bt);c(10,13,bt2);
+            // Vine staff with glowing tip
+            c(14,0,'#1a5a0a');c(14,1,'#33aa33');c(13,0,'#2a8a0a');c(13,2,'#3a2a0a');c(13,3,'#3a2a0a');c(13,4,'#2a1a0a');c(13,5,'#2a1a0a');c(13,6,'#1a0a0a');
+            c(14,2,'#22aa22');
             break;
         case 'paladin':
-            // Full ornate plate armor, holy sword + tower shield
-            c(6,0,stl);c(7,0,stl3);c(8,0,stl3);c(9,0,stl);
-            c(5,1,stl2);c(6,1,stl);c(7,1,stl3);c(8,1,stl3);c(9,1,stl);c(10,1,stl2);
-            c(5,2,arm2);c(6,2,stl2);c(7,2,stl);c(8,2,stl);c(9,2,stl2);c(10,2,arm2);
-            c(6,3,sk);c(7,3,sk);c(8,3,sk);c(9,3,sk);
-            c(6,4,sk2);c(7,4,eye);c(8,4,eye);c(9,4,sk2);
-            c(6,5,sk2);c(7,5,sk);c(8,5,sk);c(9,5,sk2);
-            c(4,6,stl2);c(5,6,stl);c(6,6,stl3);c(7,6,gold);c(8,6,gold);c(9,6,stl3);c(10,6,stl);c(11,6,stl2);
-            c(4,7,stl2);c(5,7,stl);c(6,7,stl3);c(7,7,stl3);c(8,7,stl3);c(9,7,stl3);c(10,7,stl);c(11,7,stl2);
-            c(5,8,arm2);c(6,8,stl);c(7,8,stl3);c(8,8,stl3);c(9,8,stl);c(10,8,arm2);
-            c(6,9,belt);c(7,9,gold);c(8,9,gold);c(9,9,belt);
-            c(6,10,stl2);c(7,10,stl);c(8,10,stl);c(9,10,stl2);
-            c(6,11,stl2);c(7,11,arm);c(8,11,arm);c(9,11,stl2);
+            // Paladin - full ornate holy plate, golden trim, holy sword + tower shield
+            c(6,0,stl);c(7,0,stl3);c(8,0,'#aaabb8');c(9,0,stl);
+            c(5,1,stl2);c(6,1,stl);c(7,1,stl3);c(8,1,'#aaabb8');c(9,1,stl);c(10,1,stl2);
+            c(5,2,arm2);c(6,2,stl2);c(7,2,stl);c(8,2,stl3);c(9,2,stl2);c(10,2,arm2);
+            c(6,3,sk);c(7,3,shade(sk,5));c(8,3,shade(sk,5));c(9,3,sk);
+            c(6,4,sk2);c(7,4,eye);c(8,4,eye);c(9,4,sk2);c(7,3,'#b0987a');
+            c(6,5,sk2);c(7,5,sk);c(8,5,shade(sk,5));c(9,5,sk2);
+            c(3,6,stl2);c(4,6,stl);c(5,6,stl3);c(6,6,'#aaabb8');c(7,6,gold);c(8,6,shade(gold,10));c(9,6,'#aaabb8');c(10,6,stl3);c(11,6,stl);c(12,6,stl2);
+            c(3,7,stl2);c(4,7,stl);c(5,7,stl3);c(6,7,'#aaabb8');c(7,7,stl3);c(8,8,'#aaabb8');c(9,7,'#aaabb8');c(10,7,stl3);c(11,7,stl);c(12,7,stl2);
+            c(5,8,arm2);c(6,8,stl);c(7,8,stl3);c(8,8,'#aaabb8');c(9,8,stl);c(10,8,arm2);
+            c(6,9,belt);c(7,9,gold);c(8,9,shade(gold,10));c(9,9,belt);
+            c(6,10,stl2);c(7,10,stl);c(8,10,stl3);c(9,10,stl2);
+            c(6,11,stl2);c(7,11,arm);c(8,11,arm3);c(9,11,stl2);
             c(5,12,stl2);c(6,12,stl);c(9,12,stl);c(10,12,stl2);c(5,13,stl2);c(6,13,stl2);c(9,13,stl2);c(10,13,stl2);
-            c(12,1,'#ddc');c(12,2,stl3);c(12,3,stl3);c(12,4,stl);c(12,5,stl);c(12,6,'#442');c(12,7,'#331');c(11,7,gold);c(13,7,gold);
-            c(2,5,stl2);c(2,6,stl);c(2,7,stl);c(2,8,stl2);c(3,4,stl2);c(3,5,stl);c(3,6,gold);c(3,7,stl);c(3,8,stl2);c(4,5,stl2);c(4,6,stl);c(4,7,stl);c(4,8,stl2);
+            // Holy sword with glowing blade
+            c(13,0,'#eee');c(13,1,'#ddc');c(13,2,stl3);c(13,3,stl3);c(12,4,gold);c(13,4,stl);c(14,4,gold);c(13,5,stl);c(13,6,'#553');c(13,7,'#442');c(12,7,gold);c(14,7,gold);
+            // Tower shield with gold cross
+            c(1,4,stl2);c(1,5,stl);c(1,6,stl3);c(1,7,stl);c(1,8,stl2);c(2,4,stl);c(2,5,stl3);c(2,6,gold);c(2,7,stl3);c(2,8,stl);c(3,4,stl2);c(3,5,stl);c(3,6,gold);c(3,7,stl);c(3,8,stl2);c(2,9,stl2);
             break;
         case 'dragon_form':
             // Draconic humanoid - dark scales, horns, wing silhouettes
@@ -1988,6 +2028,44 @@ function drawBG(){
         g.addColorStop(0,'rgba(255,220,100,.9)');g.addColorStop(.3,'rgba(255,150,30,.6)');g.addColorStop(.6,'rgba(255,80,0,.3)');g.addColorStop(1,'rgba(255,50,0,0)');
         bg.fillStyle=g;bg.fillRect(tx-12,by-50,24,20);
     });
+    // === RESOURCE NODES ON MAP ===
+    // Mine rocks (larger, with ore sparkles)
+    const mineSpots=[{x:180,emoji:'⛏'},{x:520,emoji:'⛏'},{x:1050,emoji:'⛏'},{x:1500,emoji:'⛏'}];
+    mineSpots.forEach(ms=>{
+        const rw=18,rh=14,rx=ms.x,ry=gY;
+        bg.fillStyle='#4a4a5a';bg.beginPath();
+        bg.moveTo(rx-rw,ry);bg.quadraticCurveTo(rx-rw,ry-rh*1.2,rx-rw/3,ry-rh*1.5);
+        bg.lineTo(rx+rw/3,ry-rh*1.6);bg.quadraticCurveTo(rx+rw,ry-rh*1.1,rx+rw,ry);bg.closePath();bg.fill();
+        bg.fillStyle='#5a5a6a';bg.beginPath();
+        bg.moveTo(rx-rw/2,ry);bg.quadraticCurveTo(rx,ry-rh,rx+rw/2,ry);bg.closePath();bg.fill();
+        // Ore sparkles
+        bg.fillStyle='#ffcc44';bg.fillRect(rx-5,ry-rh,2,2);bg.fillRect(rx+3,ry-rh+4,2,2);
+        bg.fillStyle='#88ccff';bg.fillRect(rx+8,ry-rh-2,2,2);
+        bg.fillStyle='#aaa';bg.font='8px monospace';bg.textAlign='center';bg.fillText('⛏',rx,ry-rh*1.6-4);
+    });
+    // Wheat fields
+    const wheatSpots=[{x:320,w:60},{x:880,w:50},{x:1300,w:55}];
+    wheatSpots.forEach(ws=>{
+        for(let i=0;i<ws.w/4;i++){
+            const wx=ws.x-ws.w/2+i*4+Math.random()*2,wh=10+Math.random()*8;
+            bg.strokeStyle=sn.name==='Hiver'?'#8a8a6a':'#c8a832';bg.lineWidth=1.5;
+            bg.beginPath();bg.moveTo(wx,gY);bg.quadraticCurveTo(wx+(Math.random()-.5)*3,gY-wh/2,wx,gY-wh);bg.stroke();
+            // Wheat head
+            bg.fillStyle=sn.name==='Hiver'?'#6a6a4a':'#d4af37';
+            bg.beginPath();bg.ellipse(wx,gY-wh-2,1.5,3,0,0,Math.PI*2);bg.fill();
+        }
+        bg.fillStyle='#aaa';bg.font='8px monospace';bg.textAlign='center';bg.fillText('🌾',ws.x,gY-22);
+    });
+    // Forge station (anvil + fire)
+    const forgeX=700;
+    bg.fillStyle='#3a3a3a';bg.fillRect(forgeX-8,gY-12,16,12); // anvil base
+    bg.fillStyle='#5a5a5a';bg.fillRect(forgeX-12,gY-16,24,4); // anvil top
+    bg.fillStyle='#6a6a6a';bg.fillRect(forgeX-6,gY-14,12,2); // anvil shine
+    // Forge fire glow
+    const fg=bg.createRadialGradient(forgeX,gY-20,2,forgeX,gY-18,10);
+    fg.addColorStop(0,'rgba(255,150,30,.7)');fg.addColorStop(.5,'rgba(255,80,0,.3)');fg.addColorStop(1,'rgba(255,50,0,0)');
+    bg.fillStyle=fg;bg.fillRect(forgeX-10,gY-30,20,15);
+    bg.fillStyle='#aaa';bg.font='8px monospace';bg.textAlign='center';bg.fillText('🔨',forgeX,gY-32);
     // Ambient fog (subtle)
     if(isFullscreen){
         bg.globalAlpha=0.05;bg.fillStyle='#aabbcc';
@@ -3652,16 +3730,55 @@ class GameManager{
                     }
                     return`Item inconnu! !shop arme/armure/botte/amulette/anneau/potion/pioche ou !shop <item>`;
                 }
-                // !shop → VOTE system (need 3 viewers to agree)
-                return this.shopVote(username);
+                // !shop → Smart display: show what you can afford + next items
+                const myGold=c.gold;
+                const canBuy=[],soon=[];
+                // Equipment affordable
+                Object.entries(EQUIPMENT).forEach(([k,v])=>{
+                    const slot=v.slot;const owned=c.equipment[slot]===k;
+                    if(owned)return;
+                    if(myGold>=v.cost)canBuy.push(`${v.emoji}${v.name}(${v.cost}g)`);
+                    else if(myGold>=v.cost*0.5)soon.push(`${v.emoji}${v.name}(${v.cost}g)`);
+                });
+                // Consumables affordable
+                const allConso=this.blackMarketOpen?{...CONSUMABLES,...BLACK_MARKET}:CONSUMABLES;
+                Object.entries(allConso).forEach(([k,v])=>{
+                    if(myGold>=v.cost)canBuy.push(`${v.emoji}${v.name}(${v.cost}g)`);
+                    else if(myGold>=v.cost*0.5)soon.push(`${v.emoji}${v.name}(${v.cost}g)`);
+                });
+                // Pickaxes affordable
+                Object.entries(PICKAXES).forEach(([k,v])=>{
+                    if(c._inventory&&c._inventory[k])return;
+                    if(myGold>=v.cost)canBuy.push(`${v.emoji}${v.name}(${v.cost}g)`);
+                    else if(myGold>=v.cost*0.5)soon.push(`${v.emoji}${v.name}(${v.cost}g)`);
+                });
+                let shopMsg=`🛒 ${username} — 💰${myGold}g`;
+                if(canBuy.length>0)shopMsg+=` | ✅Achetable: ${canBuy.slice(0,8).join(' ')}`;
+                else shopMsg+=` | ❌ Rien d'achetable...`;
+                if(soon.length>0)shopMsg+=` | 🔜Bientôt: ${soon.slice(0,4).join(' ')}`;
+                shopMsg+=` | !shop arme/armure/potion/pioche pour détails`;
+                chatSay(shopMsg);
+                return null;
             }
             case 'equip':case 'equipement':{
                 if(!c)return'!class pour rejoindre!';
-                const eLines=[{t:`━━ Équipement de ${username} ━━`,c:'#d4af37'}];
-                c.getEquipSummary().forEach(l=>eLines.push({t:l,c:'#88aaff'}));
-                eLines.push({t:`Total: ATK:${c.atk} DEF:${c.def} SPD:${c.spd} CRIT:${c.crit}%`,c:'#ffcc44'});
+                // Chat-only: detailed equipment list
+                const eqSlots=['weapon','armor','boots','amulet','ring'];
+                const eqDetails=eqSlots.map(sl=>{
+                    const k=c.equipment[sl];const e=k?EQUIPMENT[k]:null;
+                    return e?`${SLOT_NAMES[sl]}:${e.emoji}${e.name}T${e.tier}`:`${SLOT_NAMES[sl]}:❌`;
+                }).join(' | ');
                 const eqCount=Object.values(c.equipment||{}).filter(Boolean).length;
-                return`🛡 Équipement (${eqCount}/5) | ATK:${c.atk} DEF:${c.def} SPD:${c.spd} CRIT:${c.crit}%`;
+                return`🛡 ${username} (${eqCount}/5) ${eqDetails} | ⚔${c.atk} 🛡${c.def} 💨${c.spd} 🎯${c.crit}%`;
+            }
+            case 'gear':{
+                // Stream overlay: shows equipment on screen
+                if(!c)return'!class pour rejoindre!';
+                const gLines=[{t:`━━ ${username} ÉQUIPEMENT ━━`,c:'#d4af37'}];
+                c.getEquipSummary().forEach(l=>gLines.push({t:l,c:'#88aaff'}));
+                gLines.push({t:`Total: ⚔${c.atk} 🛡${c.def} 💨${c.spd} 🎯${c.crit}%`,c:'#ffcc44'});
+                showSB(gLines,5000);
+                return null;
             }
             case 'evoluer':case 'evolution':{
                 if(!c)return null;
@@ -3958,8 +4075,12 @@ class GameManager{
                     }}
                 }
                 c.gold+=totalGold;
+                // Mining animation on character
+                c.element.classList.add('char-mining');setTimeout(()=>c.element.classList.remove('char-mining'),2000);
                 const emote=document.createElement('div');emote.className='idle-emote';emote.textContent='⛏';c.element.appendChild(emote);setTimeout(()=>emote.remove(),2000);
-                spawnP(c.element,'#8B7355',5);c.popup('⛏','popup popup-gold');
+                // Spark effects
+                for(let si=0;si<3;si++){setTimeout(()=>{const sp=document.createElement('div');sp.className='action-spark';sp.textContent=['✨','💎','🪨'][si%3];c.element.appendChild(sp);setTimeout(()=>sp.remove(),800)},si*400)}
+                spawnP(c.element,'#8B7355',8);c.popup('⛏','popup popup-gold');
                 // Check mission progress
                 _activeMissions.forEach(m=>{const resKey=m.resource;if(c._resources[resKey]>=m.qty&&!m.claimed.has(username)){m.claimed.add(username);c.gold+=m.gold;c.popup(`+${m.gold}g!`,'popup popup-crit');game.log(`🏆 ${username} complète la mission: ${m.emoji}${m.resource} x${m.qty}! +${m.gold}g`,'log-special')}});
                 return`⛏ ${username} mine! ${loot.join(' ')} +${totalGold}g${pick?` (${pick.emoji}${pick.name})`:''} | CD:45s`;
@@ -3990,8 +4111,13 @@ class GameManager{
                     c.equipment[eq.slot]=recipe.result;
                     Object.entries(eq.stats).forEach(([s,v])=>{c[s]+=v});c.updateBars();
                 }
+                // Forge animation on character
+                c.element.classList.add('char-forging');setTimeout(()=>c.element.classList.remove('char-forging'),2500);
                 const emote=document.createElement('div');emote.className='idle-emote';emote.textContent='🔨';c.element.appendChild(emote);setTimeout(()=>emote.remove(),2500);
-                spawnP(c.element,'#ff6600',8);c.popup('🔨FORGÉ!','popup popup-crit');screenShake(false);
+                // Fire + spark effects
+                for(let si=0;si<5;si++){setTimeout(()=>{const sp=document.createElement('div');sp.className='action-spark';sp.textContent=['🔥','✨','⚡','💥','🔥'][si%5];c.element.appendChild(sp);setTimeout(()=>sp.remove(),800)},si*350)}
+                for(let fi=0;fi<3;fi++){setTimeout(()=>{const ff=document.createElement('div');ff.className='forge-fire';ff.textContent='🔥';c.element.appendChild(ff);setTimeout(()=>ff.remove(),1500)},fi*500)}
+                spawnP(c.element,'#ff6600',12);c.popup('🔨FORGÉ!','popup popup-crit');screenShake(false);
                 this.log(`🔨 ${username} forge ${recipe.emoji}${recipe.name}!`,'log-special');
                 chatSay(`🔨🔥 @${username} forge ${recipe.emoji}${recipe.name} à la Forge! L'enclume résonne! ⚒`);
                 return null;
@@ -4010,8 +4136,11 @@ class GameManager{
                     loot.push(`${item.emoji}${item.name}x${qty}`);totalGold+=item.gold*qty;break;
                 }}
                 c.gold+=totalGold;
+                // Harvest animation on character
+                c.element.classList.add('char-harvesting');setTimeout(()=>c.element.classList.remove('char-harvesting'),2200);
                 const emote=document.createElement('div');emote.className='idle-emote';emote.textContent='🌾';c.element.appendChild(emote);setTimeout(()=>emote.remove(),2000);
-                spawnP(c.element,'#ddaa33',4);c.popup('🌾','popup popup-heal');
+                for(let si=0;si<2;si++){setTimeout(()=>{const sp=document.createElement('div');sp.className='action-spark';sp.textContent=['🌾','🌿'][si%2];c.element.appendChild(sp);setTimeout(()=>sp.remove(),800)},si*500)}
+                spawnP(c.element,'#ddaa33',6);c.popup('🌾','popup popup-heal');
                 // Check mission progress
                 _activeMissions.forEach(m=>{const resKey=m.resource;if(c._resources[resKey]>=m.qty&&!m.claimed.has(username)){m.claimed.add(username);c.gold+=m.gold;c.popup(`+${m.gold}g!`,'popup popup-crit');game.log(`🏆 ${username} complète la mission: ${m.emoji}${m.resource} x${m.qty}! +${m.gold}g`,'log-special')}});
                 return`🌾 ${username} récolte! ${loot.join(' ')} +${totalGold}g | CD:40s`;
@@ -4990,7 +5119,7 @@ function initTwitch(){
         if(self)return;const u=tags['display-name']||tags.username;
         const m=msg.trim().toLowerCase();if(!m.startsWith('!'))return;
         const parts=m.split(' '),cmd=parts[0].substring(1),args=parts.slice(1);
-        const valid=['class','attaque','atk','att','soin','heal','hp','sort','mag','defense','def','esquive','special','stats','couleur','design','look','style','shop','marche','evolution','evoluer','evo','reclass','do','notdo','skill','help','commandes','aide','succes','achievements','classement','top','leaderboard','don','give','duel','combat','info','buffs','recap','equip','equipement','inv','homme','femme','gender','sexe','taverne','bar','boire','biere','beer','manger','eat','repos','clap','hf','salut','chercher','pecher','courir','repondre','mine','forge','recolte','pari','bet','mission','missions','inventaire','ressources','saison','season','neige','feuilles','fleurs'];
+        const valid=['class','attaque','atk','att','soin','heal','hp','sort','mag','defense','def','esquive','special','stats','couleur','design','look','style','shop','marche','evolution','evoluer','evo','reclass','do','notdo','skill','help','commandes','aide','succes','achievements','classement','top','leaderboard','don','give','duel','combat','info','buffs','recap','equip','equipement','gear','inv','homme','femme','gender','sexe','taverne','bar','boire','biere','beer','manger','eat','repos','clap','hf','salut','chercher','pecher','courir','repondre','mine','forge','recolte','pari','bet','mission','missions','inventaire','ressources','saison','season','neige','feuilles','peche','fleurs'];
         if(valid.includes(cmd)){console.log(`CMD: ${u} !${cmd} ${args.join(' ')}`);const r=game.processCmd(u,cmd,args);if(r&&CONFIG.botToken)chatSay(`@${u} ${r}`)}
         // Streamer-only commands (broadcaster or mod)
         const isBroadcaster=tags.badges&&(tags.badges.broadcaster||tags.badges.moderator);
