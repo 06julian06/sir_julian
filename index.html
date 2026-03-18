@@ -671,23 +671,33 @@ static drawChar(ctx,s,cls,tint,variant,gender){
             c(12,0,stl2);c(13,0,stl2);c(14,0,stl2);c(13,1,stl);c(13,2,'#553');c(13,3,'#442');c(13,4,'#442');c(13,5,'#331');c(13,6,'#331');c(13,7,'#220');
             break;
         case 'chat':
-            // Cat character - ears, whiskers, tail, agile pose
-            c(6,0,'#cc8833');c(9,0,'#cc8833'); // ears
-            c(5,1,'#dd9944');c(6,1,'#eebb66');c(9,1,'#eebb66');c(10,1,'#dd9944');
-            c(6,2,'#eebb66');c(7,2,'#ffcc77');c(8,2,'#ffcc77');c(9,2,'#eebb66');
-            c(6,3,'#eebb66');c(7,3,'#ffcc77');c(8,3,'#ffcc77');c(9,3,'#eebb66');
-            c(6,4,'#dd9944');c(7,4,'#22aa22');c(8,4,'#22aa22');c(9,4,'#dd9944'); // green eyes
-            c(5,5,'#aa7733');c(6,5,'#cc8833');c(7,5,'#ffcc77');c(8,5,'#ffcc77');c(9,5,'#cc8833');c(10,5,'#aa7733'); // whiskers
-            c(6,6,'#dd9944');c(7,6,'#eebb66');c(8,6,'#eebb66');c(9,6,'#dd9944');
-            c(5,7,'#cc8833');c(6,7,'#dd9944');c(7,7,'#eebb66');c(8,7,'#eebb66');c(9,7,'#dd9944');c(10,7,'#cc8833');
-            c(6,8,'#cc8833');c(7,8,'#dd9944');c(8,8,'#dd9944');c(9,8,'#cc8833');
-            c(6,9,'#bb7722');c(7,9,'#cc8833');c(8,9,'#cc8833');c(9,9,'#bb7722');
-            c(6,10,'#dd9944');c(7,10,'#cc8833');c(8,10,'#cc8833');c(9,10,'#dd9944');
-            c(5,11,'#aa7733');c(6,11,'#bb7722');c(9,11,'#bb7722');c(10,11,'#aa7733');
-            c(5,12,'#bb7722');c(6,12,'#aa6622');c(9,12,'#aa6622');c(10,12,'#bb7722');
-            c(5,13,'#996622');c(6,13,'#884411');c(9,13,'#884411');c(10,13,'#996622');
-            // Tail
-            c(11,7,'#cc8833');c(12,6,'#dd9944');c(13,5,'#cc8833');c(14,4,'#dd9944');c(14,3,'#cc8833');
+            // Real cat on all fours - horizontal body, 4 legs, pointed ears, long tail
+            const cf='#eebb66',cf2='#dd9944',cf3='#cc8833',cfd='#aa7733',cfn='#ffaa99',cfe='#22cc44';
+            // Ears (pointed, triangular)
+            c(3,2,cf3);c(5,2,cf3);
+            c(2,3,cf2);c(3,3,cf);c(4,3,cf2);c(5,3,cf);c(6,3,cf2);
+            // Head
+            c(2,4,cf2);c(3,4,cf);c(4,4,cf);c(5,4,cf);c(6,4,cf2);
+            c(2,5,cf3);c(3,5,cfe);c(4,5,cf);c(5,5,cfe);c(6,5,cf3); // green eyes
+            c(2,6,cf2);c(3,6,cf);c(4,6,cfn);c(5,6,cf);c(6,6,cf2); // pink nose
+            c(1,5,cfd);c(7,5,cfd); // whiskers left/right
+            c(0,4,cfd);c(8,4,cfd); // whiskers outer
+            // Neck + body (horizontal)
+            c(6,7,cf2);c(7,7,cf);c(8,7,cf);c(9,7,cf);c(10,7,cf);c(11,7,cf2);
+            c(6,8,cf3);c(7,8,cf2);c(8,8,cf);c(9,8,cf);c(10,8,cf2);c(11,8,cf3);
+            c(7,9,cf3);c(8,9,cf2);c(9,9,cf2);c(10,9,cf3);
+            // Belly (lighter)
+            c(7,10,'#ffdd88');c(8,10,'#ffdd88');c(9,10,'#ffdd88');c(10,10,'#ffdd88');
+            // Front legs
+            c(6,9,cf3);c(6,10,cf2);c(6,11,cf);c(6,12,cf2);c(6,13,cfd);
+            c(7,11,cf);c(7,12,cf2);c(7,13,cfd);
+            // Back legs
+            c(10,9,cf3);c(11,9,cf2);c(11,10,cf);c(11,11,cf2);c(11,12,cf);c(11,13,cfd);
+            c(10,11,cf);c(10,12,cf2);c(10,13,cfd);
+            // Tail (curving up)
+            c(12,8,cf2);c(13,7,cf3);c(14,6,cf2);c(15,5,cf3);c(15,4,cf2);
+            // Stripe patterns on body
+            c(8,8,cf3);c(9,7,'#bb8822');
             break;
         case 'ecuyer':
             // Squire - light armor, small shield, short sword
@@ -4134,7 +4144,8 @@ class GameManager{
         // MVP
         let mvpD=null,maxD=0,mvpH=null,maxH=0;
         Object.values(this.characters).forEach(c=>{if(c.totalDmg>maxD){maxD=c.totalDmg;mvpD=c}if(c.totalHeal>maxH){maxH=c.totalHeal;mvpH=c}});
-        // Rewards
+        // Rewards — batch chat messages to avoid spam
+        const _lvlUps=[];const _evoReady=[];const _max99=[];
         Object.values(this.characters).forEach(c=>{
             let ge=bGold;if(c===mvpD)ge=Math.floor(ge*1.5);
             c.gold+=ge;c.kills++;goldPopHUD(ge);
@@ -4144,22 +4155,30 @@ class GameManager{
             if(c.xp>=c.xpNext&&c.level<99){
                 c.level++;c.xp=0;c.xpNext=Math.floor(c.xpNext*1.3);
                 c.maxHp+=6+Math.floor(c.level*1.5);c.atk+=2;c.def+=1;c.maxMana+=4;
-                if(c.level===99){c.atk=Math.floor(c.atk*2);c.def=Math.floor(c.def*2);c.maxHp=Math.floor(c.maxHp*1.5);c.hp=c.maxHp;c.maxMana=Math.floor(c.maxMana*1.5);c.mana=c.maxMana;c.popup('⚡MAX x2!','popup popup-crit');c._maxLevel=true;game.log(`🌟 ${c.username} atteint le NIVEAU 99! Stats x2! LÉGENDE!`,'log-special');chatSay(`🌟⚡ @${c.username} atteint le NIVEAU 99 MAXIMUM! Stats DOUBLÉES! Une LÉGENDE vivante! 🏆👑`)}
+                if(c.level===99){c.atk=Math.floor(c.atk*2);c.def=Math.floor(c.def*2);c.maxHp=Math.floor(c.maxHp*1.5);c.hp=c.maxHp;c.maxMana=Math.floor(c.maxMana*1.5);c.mana=c.maxMana;c.popup('⚡MAX x2!','popup popup-crit');c._maxLevel=true;_max99.push(c.username);game.log(`🌟 ${c.username} atteint le NIVEAU 99! Stats x2! LÉGENDE!`,'log-special')}
                 if(c.className==='paysan'){c.atk+=2;c.def+=2;c.maxHp+=10;c.maxMana+=3;c.crit+=0.5;if(c.level%5===0){c.atk+=3;c.def+=3;this.log(`🌾 ${c.username} PAYSAN Nv.${c.level}! Bonus secret ATK/DEF +3!`,'log-special')}}
                 c.hp=c.maxHp;c.mana=c.maxMana;c.popup('LEVEL UP!','popup popup-lvl');spawnP(c.element,'#44ff44',12);spawnP(c.element,'#ffffff',6);c.element.classList.remove('lvl-up-glow');void c.element.offsetWidth;c.element.classList.add('lvl-up-glow');setTimeout(()=>c.element.classList.remove('lvl-up-glow'),1200);
                 if(c.level%5===0){showBanner(`⭐ Nv.${c.level}!`,`${c.username} progresse!`,2000);spawnP(c.element,'#d4af37',15)}
                 this.log(`${c.username} → Nv.${c.level}!`,'log-info');
-                chatSay(`⬆🔥 @${c.username} monte Nv.${c.level}! ${CLASS_DATA[c.className]?.name||c.className} devient plus fort! ⚔${c.atk} 🛡${c.def} ❤${c.maxHp} — Qui sera le prochain? 💪`);
+                _lvlUps.push(`@${c.username}→Nv.${c.level}`);
                 const cd=CLASS_DATA[c.className];
                 if(cd.evolutions&&cd.evolutions.length&&c.level>=cd.evoLevel){
                     this.log(`${c.username} peut évoluer! (!evoluer ${cd.evolutions.join('/')})`,`log-special`);
-                    chatSay(`🌟🔥 @${c.username} est PRÊT À ÉVOLUER! Choisis ta destinée: !evoluer ${cd.evolutions.join(' / !evoluer ')} — Deviens plus puissant! 💥`);
+                    _evoReady.push(`@${c.username}(!evoluer ${cd.evolutions.join('/')})`);
                 }
             }
             if(!c.alive){c.alive=true;c.hp=c.maxHp;c.mana=c.maxMana;c.element.classList.remove('char-dead');c.element.style.opacity='1';c.element.classList.add('anim-idle');c.updateBars();spawnP(c.element,'#ffdd44',8);c.popup('REVIVE!','popup popup-lvl')}
             else{c.heal(c.maxHp);c.mana=c.maxMana;c.updateBars()}
             checkAchievements(c,this);
         });
+        // Single combined chat message for all level ups
+        let bossMsg=`🎉 ${this.boss.name} vaincu! 💰+${bGold}g ⭐+${bXp}XP`;
+        if(mvpD)bossMsg+=` | 🗡MVP: @${mvpD.username}(${maxD}dmg)`;
+        if(mvpH&&maxH>0)bossMsg+=` | 💚@${mvpH.username}(${maxH}heal)`;
+        if(_lvlUps.length>0)bossMsg+=` | ⬆ ${_lvlUps.join(' ')}`;
+        if(_evoReady.length>0)bossMsg+=` | 🌟ÉVOLUTION: ${_evoReady.join(' ')}`;
+        if(_max99.length>0)bossMsg+=` | 👑 ${_max99.join(',')} NIVEAU 99 MAX! x2!`;
+        chatSay(bossMsg);
         // Scoreboard with full stats
         const lines=[{t:`━━ ⚔ VAGUE ${this.wave} TERMINÉE ━━`,c:'#d4af37'}];
         lines.push({t:`${this.boss.name} vaincu!`,c:'#ff8844'});
