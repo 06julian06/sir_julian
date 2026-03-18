@@ -2615,6 +2615,21 @@ class Character{
         this.defending=false;return fd;
     }
     heal(amt){if(!this.alive)return 0;const sn=SEASONS[currentSeason];const h=Math.min(amt+(sn.healBonus||0),this.maxHp-this.hp);this.hp+=h;this.updateBars();if(h>0){this.popup('+'+h,'popup popup-heal');spawnP(this.element,'#44ff44',3)}this.totalHeal+=h;return h}
+    checkLevelUp(){
+        while(this.xp>=this.xpNext&&this.level<99){
+            this.level++;this.xp-=this.xpNext;this.xpNext=Math.floor(this.xpNext*1.3);
+            this.maxHp+=6+Math.floor(this.level*1.5);this.atk+=2;this.def+=1;this.maxMana+=4;
+            if(this.className==='paysan'){this.atk+=2;this.def+=2;this.maxHp+=10;this.maxMana+=3;this.crit+=0.5;if(this.level%5===0){this.atk+=3;this.def+=3}}
+            if(this.level===99){this.atk=Math.floor(this.atk*2);this.def=Math.floor(this.def*2);this.maxHp=Math.floor(this.maxHp*1.5);this.hp=this.maxHp;this.maxMana=Math.floor(this.maxMana*1.5);this.mana=this.maxMana;this.popup('⚡MAX x2!','popup popup-crit')}
+            this.hp=this.maxHp;this.mana=this.maxMana;
+            this.popup('LEVEL UP!','popup popup-lvl');spawnP(this.element,'#44ff44',12);
+            this.element.classList.remove('lvl-up-glow');void this.element.offsetWidth;this.element.classList.add('lvl-up-glow');setTimeout(()=>this.element.classList.remove('lvl-up-glow'),1200);
+            const lv=document.querySelector('.char-lvl');
+        }
+        this.updateBars();
+        // Update level display
+        const lvEl=this.element.querySelector('.char-lvl');if(lvEl)lvEl.textContent='Lv'+this.level;
+    }
     updateTierGlow(){
         let maxT=0;Object.values(this.equipment).forEach(k=>{if(k&&EQUIPMENT[k])maxT=Math.max(maxT,EQUIPMENT[k].tier)});
         for(let t=1;t<=5;t++)this.element.classList.remove('tier-'+t);
@@ -5290,7 +5305,134 @@ function initTwitch(){
         // Streamer-only commands (broadcaster or mod)
         const isBroadcaster=tags.badges&&(tags.badges.broadcaster||tags.badges.moderator);
         if(isBroadcaster){
-            if(cmd==='event'){game.triggerEvent();chatSay(`🎲🔥 EVENT SPÉCIAL lancé par @${u}! Que va-t-il se passer?! 😱`)}
+            // ── EVENT SYSTEM (with choice!) ──
+            if(cmd==='event'){
+                const sub=(args[0]||'').toLowerCase();
+                if(!sub){
+                    // No argument = random event
+                    game.triggerEvent();chatSay(`🎲🔥 EVENT ALÉATOIRE lancé par @${u}! Que va-t-il se passer?! 😱`)
+                }else if(sub==='list'||sub==='liste'){
+                    // List all events in chat (split into multiple messages)
+                    const evList=EVENTS.map((e,i)=>`${i+1}. ${e.title}`);
+                    chatSay(`📜 ═══ EVENTS DISPONIBLES ═══`);
+                    for(let i=0;i<evList.length;i+=5){chatSay(evList.slice(i,i+5).join(' | '))}
+                    chatSay(`💡 Usage: !event <numéro> ou !event roulette`)
+                }else if(sub==='roulette'||sub==='wheel'||sub==='roue'){
+                    // Event Roulette — suspenseful spin!
+                    if(game.eventActive){chatSay(`@${u} ⚠ Un event est déjà en cours!`);return}
+                    const spinMsgs=['🎰 La ROUE DU DESTIN tourne...','🎰 tic... tic... tic...','🎰 Ça ralentit...','🎰 Presque...'];
+                    let spinIdx=0;
+                    chatSay(`🎰🔥 @${u} lance la ROUE DU DESTIN! Qu'est-ce que le sort vous réserve?! 💀`);
+                    game.log('🎰 ROULETTE DU DESTIN lancée!','log-event');
+                    showBanner('🎰 ROULETTE!','La roue tourne...',3000);
+                    const spinInterval=setInterval(()=>{
+                        if(spinIdx<spinMsgs.length){chatSay(spinMsgs[spinIdx]);spinIdx++}
+                        else{
+                            clearInterval(spinInterval);
+                            const chosen=EVENTS[Math.floor(Math.random()*EVENTS.length)];
+                            chatSay(`🎰💥 LA ROUE S'ARRÊTE SUR... ${chosen.title}! Préparez-vous! 😱🔥`);
+                            game.currentEvent=chosen;game.eventActive=true;game.eventVotes={do:new Set(),notdo:new Set()};
+                            const m=document.getElementById('event-modal');
+                            document.getElementById('ev-title').textContent=chosen.title;
+                            document.getElementById('ev-desc').textContent=chosen.desc;
+                            document.getElementById('ev-votes').textContent='!DO: 0 | !NOTDO: 0';
+                            m.classList.add('show');
+                            game.log(`🎰 ROULETTE: ${chosen.title}`,'log-event');
+                            showBanner('🎰 RÉSULTAT!',chosen.title,2000);
+                            let timer=20;const maxT=20;
+                            document.getElementById('ev-timer').textContent=timer+'s';
+                            const ef=document.getElementById('ev-timer-fill');if(ef)ef.style.width='100%';
+                            game.eventTimer=setInterval(()=>{
+                                timer--;document.getElementById('ev-timer').textContent=timer+'s';
+                                if(ef)ef.style.width=((timer/maxT)*100)+'%';
+                                if(timer<=5)document.getElementById('ev-timer').style.color='#ff0000';
+                                if(timer<=0){clearInterval(game.eventTimer);document.getElementById('ev-timer').style.color='#ff4444';game.resolveEvent()}
+                            },1000);
+                        }
+                    },1500);
+                }else{
+                    // Specific event by number or keyword
+                    const evNum=parseInt(sub);
+                    let chosen=null;
+                    if(evNum>0&&evNum<=EVENTS.length){chosen=EVENTS[evNum-1]}
+                    else{chosen=EVENTS.find(e=>e.title.toLowerCase().includes(sub))}
+                    if(chosen){
+                        if(game.eventActive){chatSay(`@${u} ⚠ Un event est déjà en cours!`);return}
+                        game.currentEvent=chosen;game.eventActive=true;game.eventVotes={do:new Set(),notdo:new Set()};
+                        const m=document.getElementById('event-modal');
+                        document.getElementById('ev-title').textContent=chosen.title;
+                        document.getElementById('ev-desc').textContent=chosen.desc;
+                        document.getElementById('ev-votes').textContent='!DO: 0 | !NOTDO: 0';
+                        m.classList.add('show');
+                        game.log(`🎲 EVENT: ${chosen.title}`,'log-event');
+                        showBanner('🎲 EVENT!',chosen.title,2000);
+                        chatSay(`🎲🔥 @${u} déclenche: ${chosen.title}! Votez !do ou !notdo! 😱`);
+                        let timer=20;const maxT=20;
+                        document.getElementById('ev-timer').textContent=timer+'s';
+                        const ef=document.getElementById('ev-timer-fill');if(ef)ef.style.width='100%';
+                        game.eventTimer=setInterval(()=>{
+                            timer--;document.getElementById('ev-timer').textContent=timer+'s';
+                            if(ef)ef.style.width=((timer/maxT)*100)+'%';
+                            if(timer<=5)document.getElementById('ev-timer').style.color='#ff0000';
+                            if(timer<=0){clearInterval(game.eventTimer);document.getElementById('ev-timer').style.color='#ff4444';game.resolveEvent()}
+                        },1000);
+                    }else{chatSay(`@${u} ⚠ Event introuvable! !event list pour la liste`)}
+                }
+            }
+            // ── GIVE COMMANDS (streamer powers) ──
+            else if(cmd==='sgold'){
+                const target=(args[0]||'').toLowerCase(),amt=parseInt(args[1])||100;
+                if(!target){chatSay(`@${u} Usage: !sgold <joueur> [montant]`);return}
+                const tc=Object.values(game.characters).find(t=>t.username.toLowerCase()===target);
+                if(!tc){chatSay(`@${u} ⚠ ${target} introuvable!`);return}
+                tc.gold+=amt;tc.popup(`+${amt}g`,'popup popup-gold');spawnP(tc.element,'#d4af37',10);
+                game.log(`👑 STREAMER GIFT: ${tc.username} reçoit ${amt}g!`,'log-gold');
+                chatSay(`👑💰 Le Seigneur @${u} accorde ${amt} pièces d'or à @${tc.username}! Générosité royale! ✨`)
+            }
+            else if(cmd==='sxp'){
+                const target=(args[0]||'').toLowerCase(),amt=parseInt(args[1])||50;
+                if(!target){chatSay(`@${u} Usage: !sxp <joueur> [montant]`);return}
+                const tc=Object.values(game.characters).find(t=>t.username.toLowerCase()===target);
+                if(!tc){chatSay(`@${u} ⚠ ${target} introuvable!`);return}
+                tc.xp+=amt;tc.checkLevelUp();tc.popup(`+${amt} XP`,'popup popup-crit');spawnP(tc.element,'#55ffaa',10);
+                game.log(`👑 STREAMER GIFT: ${tc.username} reçoit ${amt} XP!`,'log-event');
+                chatSay(`👑⚡ Bénédiction divine! @${u} confère ${amt} XP à @${tc.username}! 📈✨`)
+            }
+            else if(cmd==='sequip'){
+                const target=(args[0]||'').toLowerCase();
+                const tierArg=parseInt(args[1])||0;
+                if(!target){chatSay(`@${u} Usage: !sequip <joueur> [tier 1-5]`);return}
+                const tc=Object.values(game.characters).find(t=>t.username.toLowerCase()===target);
+                if(!tc){chatSay(`@${u} ⚠ ${target} introuvable!`);return}
+                // Pick random equipment of specified tier (or random tier 3-5)
+                const tier=tierArg>=1&&tierArg<=5?tierArg:(3+Math.floor(Math.random()*3));
+                const tierItems=Object.entries(EQUIPMENT).filter(([k,e])=>e.tier===tier);
+                if(tierItems.length===0){chatSay(`@${u} ⚠ Aucun équipement de tier ${tier}!`);return}
+                const [eKey,eData]=tierItems[Math.floor(Math.random()*tierItems.length)];
+                // Equip the item
+                const oldKey=tc.equipment[eData.slot];
+                if(oldKey){const oldE=EQUIPMENT[oldKey];if(oldE)Object.entries(oldE.stats).forEach(([s,v])=>{tc[s]=(tc[s]||0)-v})}
+                tc.equipment[eData.slot]=eKey;
+                Object.entries(eData.stats).forEach(([s,v])=>{tc[s]=(tc[s]||0)+v});
+                tc.updateBars();tc.popup(`${eData.emoji} ${eData.name}!`,'popup popup-crit');spawnP(tc.element,'#ffaa00',12);
+                const tierStars='⭐'.repeat(tier);
+                game.log(`👑 CADEAU ROYAL: ${tc.username} reçoit ${eData.emoji} ${eData.name} (T${tier})!`,'log-gold');
+                chatSay(`👑🎁 Le Seigneur @${u} offre ${eData.emoji} ${eData.name} ${tierStars} à @${tc.username}! Quel honneur! 🔥`)
+            }
+            // ── BUFF ALL / HEAL ALL ──
+            else if(cmd==='sheal'){
+                Object.values(game.characters).forEach(c=>{if(c.alive){c.hp=c.maxHp;c.mana=c.maxMana;c.updateBars();c.popup('❤ FULL!','popup popup-heal');spawnP(c.element,'#55ff55',6)}});
+                game.log('👑 SOIN ROYAL: Tous les héros sont soignés!','log-heal');
+                chatSay(`👑❤ @${u} invoque une bénédiction divine! TOUS les héros sont soignés à 100%! 🌟✨`)
+            }
+            else if(cmd==='sbuff'){
+                const dur=180000; // 3 min buff
+                Object.values(game.characters).forEach(c=>{if(c.alive){c.atk+=10;c.def+=10;c.spd+=5;c.popup('💪 BUFF!','popup popup-crit');spawnP(c.element,'#ff8800',8);
+                setTimeout(()=>{c.atk-=10;c.def-=10;c.spd-=5;c.updateBars()},dur)}});
+                game.log('👑 BUFF ROYAL: +10 ATK/DEF +5 SPD pour tous (3min)!','log-event');
+                chatSay(`👑💪 @${u} galvanise les troupes! +10 ATK +10 DEF +5 SPD pour TOUS pendant 3 minutes! CHARGEZ! 🔥⚔`)
+            }
+            // ── EXISTING COMMANDS ──
             else if(cmd==='loot'){game.spawnLootMonster();chatSay(`💎🔥 Monstre BUTIN invoqué par @${u}! Du loot ÉPIQUE en jeu! Foncez! ⚔`)}
             else if(cmd==='forceduel'){
                 const p1=(args[0]||'').toLowerCase(),p2=(args[1]||'').toLowerCase();
@@ -5307,6 +5449,14 @@ function initTwitch(){
                 const max=parseInt(args[0])||8;
                 game.startArena(max);
             }
+            // ── STREAMER HELP ──
+            else if(cmd==='shelp'||cmd==='scommands'){
+                chatSay(`👑 ═══ COMMANDES SEIGNEUR ═══`);
+                setTimeout(()=>chatSay(`⚔ !event [list|roulette|N°] — Events | !bossnow — Boss | !loot — Butin | !goldmonster — Or`),800);
+                setTimeout(()=>chatSay(`💰 !sgold <joueur> [montant] — Donner or | !sxp <joueur> [montant] — Donner XP`),1600);
+                setTimeout(()=>chatSay(`🎁 !sequip <joueur> [tier] — Donner équip | !sheal — Soigner tous | !sbuff — Buffer tous`),2400);
+                setTimeout(()=>chatSay(`⚔ !forceduel j1 j2 — Duel | !teamduel N — Équipes | !arene [max] — Arène PvP`),3200);
+            }
         }
     });
     // Remove character when viewer leaves the channel
@@ -5322,46 +5472,67 @@ function initTwitch(){
 }
 
 // ================================================================
-// PERIODIC CHAT GUIDE (every 20 min)
+// PERIODIC CHAT GUIDE (player: 20min, streamer: 5min)
 // ================================================================
 function startPeriodicGuide(){
     if(!CONFIG.botToken)return;
-    const msgs=[
-        `⚔🔥 TWITCH RPG ⚔ Rejoins le combat! !class apprenti/paysan/chat/ecuyer/brigand/herboriste/barde — Évolue au Nv.3 et deviens LÉGENDAIRE! 🎮💪`,
-        `📜 TU VEUX DOMINER? !attaque !sort !skill !special pour combattre | !shop pour t'équiper | !evoluer pour monter en puissance | !duel pour défier! 🔥`,
-        `💡 ASTUCE PRO: Combo x3+ = GROS bonus DMG 💥 | !shop = équipement surpuissant ⚒ | !evoluer = nouvelle classe! Qui sera le N°1? 🏆`
+    // ── PLAYER GUIDE (chat, every 20 min, rotating) ──
+    const playerMsgs=[
+        `⚔🔥 TWITCH RPG ⚔ Rejoins le combat! !class apprenti/paysan/chat/ecuyer/brigand/herboriste/barde — Évolue et deviens LÉGENDAIRE! 🎮💪`,
+        `📜 COMBATTEZ! !attaque !sort !skill !special | !shop pour t'équiper | !evoluer au Nv.3+ | !duel pour défier! 🔥`,
+        `💡 ASTUCE: Combo x3+ = GROS bonus DMG 💥 | !taverne = buffs temporaires 🍺 | !mine !forge !recolte = ressources ⛏`,
+        `🎨 PERSO UNIQUE! !homme/!femme = genre | !design 1-3 = look | !couleur rouge/bleu/vert... = couleur perso! 🖌`,
+        `🗡 ÉQUIPEMENT visible sur ton perso! !shop = acheter | !equip = voir ton stuff | Tier 1⭐ → Tier 5🌟 = LÉGENDE! 💎`,
+        `🏆 7 classes de départ → Évolutions Tier 2/3/4/5! Classe secrète PAYSAN → Dragon Ancien! Qui trouvera? 🐉`,
+        `🍺 TAVERNE OUVERTE! !taverne = menu complet | Bière 🍺 Hydromel 🍯 Sang de Démon 😈 — Boost tes stats! 💪`,
+        `🎣 MINI-JEUX entre les vagues! Chasse au trésor 🗺 Pêche 🎣 Course 🏃 — Gagne de l'or bonus! 💰`
     ];
-    let idx=0;
+    let pIdx=0;
+    setInterval(()=>{
+        if(_twitchClient&&CONFIG.botToken){chatSay(playerMsgs[pIdx]);pIdx=(pIdx+1)%playerMsgs.length}
+    },1200000); // 20 min
+    setTimeout(()=>{if(_twitchClient&&CONFIG.botToken)chatSay(playerMsgs[0])},120000); // first at 2min
+
+    // ── STREAMER COMMAND GUIDE (CHAT, every 5 min, rotating) ──
+    const streamerMsgs=[
+        // Message 1: Events & Roulette
+        ()=>{
+            const pc=Object.keys(game.characters).length;
+            return`👑 ═══ PANEL SEIGNEUR ═══ 👥 ${pc} héros | Vague ${game.wave} | 🎲 !event list = voir events | !event roulette = roue du destin | !event <N°> = choisir | !shelp = aide complète`;
+        },
+        // Message 2: Give commands
+        ()=>{
+            const pc=Object.keys(game.characters).length;
+            return`👑 ═══ POUVOIRS ROYAUX ═══ 👥 ${pc} héros | 💰 !sgold <joueur> [montant] | ⚡ !sxp <joueur> [montant] | 🎁 !sequip <joueur> [tier] | ❤ !sheal = soigner tous | 💪 !sbuff = buffer tous`;
+        },
+        // Message 3: Combat commands
+        ()=>{
+            const pc=Object.keys(game.characters).length;
+            return`👑 ═══ ARSENAL STREAMER ═══ 👥 ${pc} héros | 👹 !bossnow | 💎 !loot | 💰 !goldmonster | ⚔ !forceduel j1 j2 | 🏟 !arene [max] | ⚔ !teamduel N`;
+        },
+        // Message 4: Full recap
+        ()=>{
+            const pc=Object.keys(game.characters).length;
+            const bossStatus=game.boss&&game.boss.alive?`🔴 BOSS: ${game.boss.name} (${game.boss.hp}/${game.boss.maxHp} PV)`:'🟢 Pas de boss actif';
+            return`👑 ═══ ÉTAT DU ROYAUME ═══ 👥 ${pc} héros | Vague ${game.wave} | ${bossStatus} | 📜 !event list | 💰 !sgold | ⚡ !sxp | 🎁 !sequip | !shelp`;
+        }
+    ];
+    let sIdx=0;
     setInterval(()=>{
         if(_twitchClient&&CONFIG.botToken){
-            chatSay(msgs[idx]);
-            idx=(idx+1)%msgs.length;
+            const msg=streamerMsgs[sIdx]();
+            chatSay(msg);
+            // Also log to overlay
+            game.log(msg,'log-special');
+            sIdx=(sIdx+1)%streamerMsgs.length;
         }
-    },1200000);
-    // First guide after 2 min
-    setTimeout(()=>{if(_twitchClient&&CONFIG.botToken)chatSay(msgs[0])},120000);
-    // STREAMER PANEL — private command reminder every 5 min (visible only in overlay log)
-    setInterval(()=>{
-        const pc=Object.keys(game.characters).length;
-        const lines=[
-            `━━ 🎮 PANEL STREAMER ━━`,
-            `👥 ${pc} joueur${pc>1?'s':''} actifs | Vague ${game.wave}`,
-            `📋 COMMANDES STREAMER:`,
-            `!event — Lancer un événement aléatoire`,
-            `!bossnow — Invoquer un boss immédiatement`,
-            `!loot — Invoquer un monstre butin`,
-            `!goldmonster — Invoquer un monstre d'or`,
-            `!forceduel j1 j2 — Forcer un duel`,
-            `!teamduel N — Duel d'équipe NvN`,
-            `!arene [max] — Arène PvP (mise + loot)`,
-            `━━━━━━━━━━━━━━━━━━━━━━━`
-        ];
-        lines.forEach(l=>game.log(l,'log-special'));
-    },300000);
-    // First panel after 30s
+    },300000); // 5 min
+    // First streamer panel after 30s
     setTimeout(()=>{
-        game.log('━━ 🎮 PANEL STREAMER ━━','log-special');
-        game.log('!event !bossnow !loot !goldmonster !forceduel !teamduel !arene','log-special');
+        if(_twitchClient&&CONFIG.botToken){
+            chatSay(streamerMsgs[0]());
+            game.log(streamerMsgs[0](),'log-special');
+        }
     },30000);
 }
 
