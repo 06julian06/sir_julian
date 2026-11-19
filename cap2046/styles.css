@@ -211,3 +211,32 @@ footer { max-width: 1240px; margin: 0 auto; padding: 0 16px 24px; font-size: .78
 .bourse.st-ouvert { border-left: 4px solid var(--ok); }
 .b-h { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
 .mini-bourse { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+
+/* ── Accueil : résumé du jour, mot du jour ── */
+.top-d { display: flex; align-items: center; gap: 10px; }
+.aide { width: 40px; height: 40px; flex: none; border-radius: 50%; border: 2px solid var(--accent); background: var(--card); color: var(--accent); font-weight: 800; font-size: 1.1rem; cursor: pointer; }
+.resume { border-width: 2px; }
+.resume h1 { font-size: 1.3rem; margin: 2px 0 6px; }
+.resume.r-ok { border-color: var(--ok); background: linear-gradient(var(--ok-bg), var(--card) 70%); }
+.resume.r-surv { border-color: var(--moyen); background: linear-gradient(var(--moyen-bg), var(--card) 70%); }
+.resume.r-info { border-color: var(--accent); }
+.faits { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 8px; }
+.faits li { display: block; position: relative; padding-left: 28px; }
+.faits li > span:first-child { position: absolute; left: 0; top: 0; font-size: 1.05rem; }
+.jauge { display: block; height: 8px; background: var(--soft); border-radius: 4px; margin-top: 4px; overflow: hidden; }
+.jauge i { display: block; height: 100%; background: var(--accent); border-radius: 4px; }
+.mot { border-left: 4px solid var(--accent); }
+.mot h2 { font-size: 1.15rem; margin: 2px 0 4px; }
+/* ── Visite guidée ── */
+.guide-fond { position: fixed; inset: 0; z-index: 80; background: rgba(0,0,0,.45); display: flex; align-items: flex-end; justify-content: center; padding: 12px; }
+@media (min-width: 600px) { .guide-fond { align-items: center; } }
+.guide { background: var(--card); color: var(--ink); border-radius: 14px; padding: 22px 20px calc(18px + env(safe-area-inset-bottom)); max-width: 460px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,.3); }
+.guide-ic { font-size: 2rem; color: var(--accent); }
+.guide h2 { font-size: 1.2rem; margin: 6px 0 8px; }
+.guide p { margin: 0 0 12px; }
+.guide-pts { display: flex; gap: 6px; margin: 4px 0 6px; }
+.guide-pts i { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+.guide-pts i.on { background: var(--accent); width: 22px; border-radius: 4px; }
+.guide .btns { justify-content: flex-end; }
+@media (max-width: 420px) { .top-in .brand small { display: none; } }
+.faits .lien { display: inline; text-align: left; }

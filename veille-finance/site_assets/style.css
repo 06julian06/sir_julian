@@ -200,3 +200,4 @@ nav a{display:inline-flex;align-items:center;gap:6px;padding:4px 0}
 .sim-f input{font:16px Arial,sans-serif;padding:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);min-height:44px;width:100%}
 .sim-t td{font:15px/1.45 Arial,sans-serif}.sim-t .down{color:var(--down)}
 .sim[hidden]{display:none}
+.ia-off{margin:12px 0 0;padding:10px 14px;border-left:4px solid var(--a3);background:var(--accent-soft);font:14px/1.5 Arial,sans-serif}

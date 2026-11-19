@@ -102,7 +102,8 @@ def build_site(site_url: str = "") -> Path:
         m = ed.get("marches", []) if ed else []
         dates = [x["date"] for x in m if not x.get("indisponible")]
         return dict(ed=ed, marches=m, marches_date=max(dates) if dates else "", root=root, maj=maj,
-                    archives=archives, radar=radar[:25], site_url=site_url, cap_url=os.environ.get("CAP2046_URL", ""))
+                    archives=archives, radar=radar[:25], site_url=site_url, cap_url=os.environ.get("CAP2046_URL", ""),
+                    ia_active=bool(os.environ.get("ANTHROPIC_API_KEY")))
 
     (OUT / "index.html").write_text(e.get_template("index.html").render(**ctx(eds[0] if eds else None, "")))
     for ed in eds:

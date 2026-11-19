@@ -32,6 +32,19 @@ function toast(msg) {
   setTimeout(() => t.remove(), 2600);
 }
 
+function confirmer(message, oui = "Confirmer") {
+  return new Promise((resoudre) => {
+    const fond = document.createElement("div");
+    fond.className = "guide-fond";
+    fond.innerHTML = `<div class="guide" role="alertdialog" aria-modal="true"><p>${esc(message)}</p>
+      <div class="btns"><button type="button" class="btn" data-c="non">Annuler</button><button type="button" class="btn p" data-c="oui">${esc(oui)}</button></div></div>`;
+    document.body.appendChild(fond);
+    const fin = (r) => { if (fond.parentNode) fond.parentNode.removeChild(fond); resoudre(r); };
+    fond.addEventListener("click", (e) => { const b = e.target.closest("[data-c]"); if (b) fin(b.dataset.c === "oui"); else if (e.target === fond) fin(false); });
+    $("[data-c=oui]", fond).focus();
+  });
+}
+
 /* ═══ 2. Glossaire : chaque terme expliqué en une phrase ═════════════════════ */
 const GLOSSAIRE = {
   "DCA": "Investir le même montant à intervalle régulier, quel que soit le niveau du marché, pour lisser le prix d'achat et éviter de jouer le « bon moment ».",
@@ -123,6 +136,8 @@ function sauver() {
 
 /* ═══ 4. Données publiées ════════════════════════════════════════════════════ */
 let SOURCE_EV = "copie";
+// La veille IA est relayée sous /veille/ sur le site Netlify uniquement (pas en local, pas dans un aperçu).
+const VEILLE_DISPO = location.protocol.startsWith("http") && !/^(localhost|127\.|0\.0\.0\.0|\[::1\])/.test(location.hostname) && !/claude|anthropic/.test(location.hostname);
 let BOURSES = { bourses: [], lignes_fenetres: {} };
 let EVENTS = [], A_CONFIRMER = [], STATUT = {}, GENERE = null, ETF = { lignes: {}, noms_zones: {} };
 
@@ -257,7 +272,28 @@ function rendreAccueil() {
   const V = versementPour(AUJ().slice(0, 7));
   const sug = suggestionDCA(V);
   const al = alertesPortefeuille(v);
+  // Résumé du jour : lisible en 5 secondes
+  const aujEvts = prochains(0).filter(({ an }) => an.niveau !== "faible");
+  const prochainFort = prochains(45).filter(({ an }) => an.niveau === "fort").sort((x, y) => dateEvt(x.e).localeCompare(dateEvt(y.e)))[0];
+  let titre, ton, sous;
+  if (!v.complet) { titre = "Bienvenue : 2 minutes pour démarrer"; ton = "info"; sous = "Saisis le cours de tes 5 lignes : tous les calculs passeront de ton allocation cible à ton portefeuille réel."; }
+  else if (aujEvts.length) { titre = "Aujourd'hui : un événement à suivre, aucune action à prendre"; ton = "surv"; sous = `${esc(aujEvts[0].e.titre)} — ${esc(aujEvts[0].an.verdict.titre.toLowerCase())}.`; }
+  else { titre = "Aujourd'hui : rien à faire. Continue ton DCA."; ton = "ok"; sous = "Aucun événement important pour toi aujourd'hui. C'est le cas le plus fréquent, et c'est une bonne nouvelle."; }
+  const progres = v.complet ? Math.min(100, v.total / S.plan.objectif * 100) : null;
+  const motsCles = Object.keys(GLOSSAIRE), jourN = Math.floor(new Date(AUJ() + "T12:00:00Z") / 864e5);
+  const mot = motsCles[jourN % motsCles.length];
   $("#v-accueil").innerHTML = `
+    <div class="card resume r-${ton}">
+      <p class="small muted">${dateLongue(AUJ())}</p>
+      <h1>${ton === "ok" ? "✓ " : ""}${titre}</h1>
+      <p>${sous}</p>
+      <ul class="faits">
+        ${V > 0 ? `<li><span aria-hidden="true">💶</span> Versement du mois : <b>${eur(V)}</b>${sug ? ` → <b>${esc(sug.ligne.nom)}</b>` : ""}</li>` : `<li><span aria-hidden="true">⏸</span> Pas de versement prévu ce mois-ci (pause du plan).</li>`}
+        ${prochainFort ? `<li><span aria-hidden="true">📅</span> Prochain rendez-vous important pour toi : <button type="button" class="lien" data-ev="${esc(prochainFort.e.id)}">${esc(prochainFort.e.titre)}</button>, ${dateCourte(dateEvt(prochainFort.e))}</li>` : ""}
+        ${progres != null ? `<li><span aria-hidden="true">🧭</span> Cap 2046 : <b>${pct(progres, 1)}</b> de ton objectif de ${eur(S.plan.objectif)}<span class="jauge"><i style="width:${Math.max(0.5, progres)}%"></i></span></li>` : ""}
+      </ul>
+      ${!v.complet ? `<div class="btns"><button type="button" class="btn p" data-go="portefeuille">Saisir mes cours</button><button type="button" class="btn" id="revoir-guide">Visite guidée</button></div>` : ""}
+    </div>
     <div class="card semaine">
       <h2>Dans les 7 prochains jours</h2>
       ${sept.length ? `<ol>${sept.map(({ e, an }) => `
@@ -285,6 +321,9 @@ function rendreAccueil() {
         <div class="btns"><button type="button" class="btn" data-go="bourses">Toutes les bourses</button></div></div>`; })() : ""}
     ${al.length ? `<div class="card"><h2>À regarder</h2>${al.map((a) => `<div class="alerte ${a.niveau}">${a.html}</div>`).join("")}</div>` : ""}
 
+    <div class="card mot"><p class="small muted">Le mot du jour</p><h2>${esc(mot)}</h2><p>${esc(GLOSSAIRE[mot])}</p>
+      <p class="small muted">Un nouveau terme chaque jour. Pour aller plus loin : l'Académie de la ${VEILLE_DISPO ? `<a href="/veille/academie.html">veille IA</a>` : "veille IA (sur ton site Netlify)"}.</p></div>
+
     <div class="card">
       <h2>Les 30 prochains jours qui te concernent</h2>
       ${mois.length ? mois.map(({ e, an }) => ligneEvt(e, an)).join("") : `<p class="muted">Rien d'impact moyen ou fort sur 30 jours.</p>`}
@@ -292,6 +331,7 @@ function rendreAccueil() {
     </div>`;
   $$("#v-accueil [data-ev]").forEach((b) => b.addEventListener("click", () => ouvrirEvt(b.dataset.ev)));
   $$("#v-accueil [data-go]").forEach((b) => b.addEventListener("click", () => aller(b.dataset.go)));
+  const rg = $("#revoir-guide"); if (rg) rg.addEventListener("click", ouvrirGuide);
 }
 
 function ligneEvt(e, an, actif = false) {
@@ -632,7 +672,8 @@ function rendreJournal(opts = {}) {
         <p style="margin:4px 0">${esc(j.raison)}</p>
         <div class="small muted">État d'esprit : ${esc(j.ressenti || "—")} · <button type="button" class="lien" data-suppr="${esc(j.id)}">supprimer</button></div>
       </div>`).join("") : `<p class="muted">Ton journal est vide.</p>`}
-      <div class="btns"><button type="button" class="btn js-exp">Exporter (JSON)</button><label class="btn">Importer<input type="file" accept="application/json,.json" class="js-imp" hidden></label></div>
+      <div class="btns"><button type="button" class="btn js-copier">Copier mes données</button><button type="button" class="btn js-coller">Coller des données</button><button type="button" class="btn js-exp">Exporter (fichier)</button><label class="btn">Importer un fichier<input type="file" accept="application/json,.json" class="js-imp" hidden></label></div>
+      <textarea class="js-zone" hidden aria-label="Données à copier ou coller"></textarea>
     </div></div></div>`;
   $("#fj").addEventListener("submit", (e) => {
     e.preventDefault();
@@ -642,11 +683,31 @@ function rendreJournal(opts = {}) {
     sauver(); toast("Décision enregistrée"); rendreJournal();
   });
   $("#mbilan").addEventListener("change", (e) => { if (e.target.value) { moisBilan = e.target.value; rendreJournal(); } });
-  $$("[data-suppr]").forEach((b) => b.addEventListener("click", (e) => { e.stopPropagation(); if (confirm("Supprimer cette entrée ?")) { S.journal = S.journal.filter((j) => j.id !== b.dataset.suppr); sauver(); rendreJournal(); } }));
+  $$("[data-suppr]").forEach((b) => b.addEventListener("click", async (e) => { e.stopPropagation(); if (await confirmer("Supprimer cette entrée du journal ?", "Supprimer")) { S.journal = S.journal.filter((j) => j.id !== b.dataset.suppr); sauver(); rendreJournal(); } }));
   brancherExportImport($("#v-journal"));
 }
 
+async function importerTexte(texte) {
+  try {
+    const x = JSON.parse(texte);
+    if (!valider(x)) throw new Error("format");
+    if (!(await confirmer("Remplacer tes données actuelles par celles-ci ?", "Remplacer"))) return;
+    const d = DEFAUT(); S = { ...d, ...x, plan: { ...d.plan, ...(x.plan || {}) }, journal: x.journal || [] };
+    sauver(); toast("Données importées"); aller(location.hash.slice(1) || "accueil");
+  } catch (e) { toast("Données invalides : rien n'a été modifié"); }
+}
 function brancherExportImport(racine) {
+  const cp = $(".js-copier", racine), cl = $(".js-coller", racine);
+  if (cp) cp.addEventListener("click", () => {
+    const t = JSON.stringify(S);
+    const repli = () => { const z = $(".js-zone", racine); z.hidden = false; z.value = t; z.select(); toast("Sélectionné : copie-le avec ton téléphone"); };
+    try { navigator.clipboard.writeText(t).then(() => toast("Données copiées : colle-les sur ton autre appareil"), repli); } catch (e) { repli(); }
+  });
+  if (cl) cl.addEventListener("click", () => {
+    const z = $(".js-zone", racine);
+    if (z.hidden || !z.value.trim()) { z.hidden = false; z.value = ""; z.placeholder = "Colle ici les données copiées, puis appuie à nouveau sur « Coller des données »"; z.focus(); return; }
+    importerTexte(z.value);
+  });
   const ex = $(".js-exp", racine), im = $(".js-imp", racine);
   if (ex) ex.addEventListener("click", () => {
     const blob = new Blob([JSON.stringify(S, null, 1)], { type: "application/json" });
@@ -655,13 +716,8 @@ function brancherExportImport(racine) {
   });
   if (im) im.addEventListener("change", async () => {
     const f = im.files[0]; if (!f) return;
-    try {
-      const x = JSON.parse(await f.text());
-      if (!valider(x)) throw new Error("format");
-      if (!confirm("Remplacer tes données actuelles par celles du fichier ?")) return;
-      const d = DEFAUT(); S = { ...d, ...x, plan: { ...d.plan, ...(x.plan || {}) }, journal: x.journal || [] };
-      sauver(); toast("Données importées"); aller(location.hash.slice(1) || "accueil");
-    } catch (e) { toast("Fichier invalide : rien n'a été modifié"); }
+    try { await importerTexte(await f.text()); } catch (e) { toast("Fichier invalide : rien n'a été modifié"); }
+    im.value = "";
   });
 }
 
@@ -754,7 +810,8 @@ function rendrePlan() {
     <div class="card"><h2>Glossaire</h2><dl class="small">${Object.entries(GLOSSAIRE).map(([t, d]) => `<dt><b>${esc(t)}</b></dt><dd style="margin:0 0 8px">${esc(d)}</dd>`).join("")}</dl></div>
     <div class="card"><h2>Tes données</h2>
       <p class="small">Portefeuille, plan et journal sont enregistrés uniquement dans ce navigateur${stockageOK ? "" : " — <b>stockage indisponible ici : exporte avant de fermer</b>"}. Exporte régulièrement pour les garder ou les passer sur un autre appareil.</p>
-      <div class="btns"><button type="button" class="btn js-exp">Exporter (JSON)</button><label class="btn">Importer<input type="file" accept="application/json,.json" class="js-imp" hidden></label><button type="button" class="btn" id="raz">Réinitialiser</button></div>
+      <div class="btns"><button type="button" class="btn js-copier">Copier mes données</button><button type="button" class="btn js-coller">Coller des données</button><button type="button" class="btn js-exp">Exporter (fichier)</button><label class="btn">Importer un fichier<input type="file" accept="application/json,.json" class="js-imp" hidden></label><button type="button" class="btn" id="raz">Réinitialiser</button></div>
+      <textarea class="js-zone" hidden aria-label="Données à copier ou coller"></textarea>
     </div>`;
   $$("#v-plan [data-p]").forEach((inp) => inp.addEventListener("change", () => {
     const k = inp.dataset.p;
@@ -763,7 +820,7 @@ function rendrePlan() {
     sauver(); rendrePlan();
   }));
   $("#plafond").addEventListener("change", (e) => { const x = parseFloat(e.target.value.replace(",", ".")); if (isFinite(x) && x > 0 && x <= 100) { S.plafond_ligne = x; sauver(); } rendrePlan(); });
-  $("#raz").addEventListener("click", () => { if (confirm("Effacer portefeuille, plan et journal de cet appareil ? (Exporte d'abord si besoin.)")) { S = DEFAUT(); sauver(); rendrePlan(); toast("Réinitialisé"); } });
+  $("#raz").addEventListener("click", async () => { if (await confirmer("Effacer portefeuille, plan et journal de cet appareil ? Copie ou exporte tes données avant si tu veux les garder.", "Tout effacer")) { S = DEFAUT(); sauver(); rendrePlan(); toast("Réinitialisé"); } });
   brancherExportImport($("#v-plan"));
 }
 
@@ -935,13 +992,52 @@ function rendreBourses() {
   }, 1000);
 }
 
+/* ═══ 13 ter. Visite guidée (premier lancement, puis bouton « ? ») ══════════════ */
+const GUIDE = [
+  ["◎", "Bienvenue dans Cap 2046", "Ton copilote PEA. Il surveille les événements qui font bouger les marchés et te dit, pour chacun, ce que ça change pour <b>ton</b> portefeuille. Sa réponse par défaut : <b>ne rien faire, continuer ton DCA</b>."],
+  ["◔", "Étape 1 : saisis tes cours", "Onglet <b>Positions</b> : recopie le cours de tes 5 lignes depuis l'appli Fortuneo (2 minutes). Le site calcule tes poids réels, tes écarts avec tes cibles et la ligne à renforcer avec ton prochain versement."],
+  ["▦", "Étape 2 : l'agenda", "Onglet <b>Agenda</b> : Fed, BCE, inflation, résultats… Chaque événement a sa fiche : pourquoi ça bouge, tes lignes exposées, un verdict en 2 phrases et la source officielle. « ⚠ non vérifié » = à confirmer."],
+  ["◷", "Étape 3 : les bourses", "Onglet <b>Bourses</b> : qui est ouvert maintenant, à Paris, New York ou Tokyo, et le meilleur moment pour passer ton ordre (moins de frais cachés). Fonctionne aussi à l'heure de Sydney."],
+  ["✋", "Quand tu as envie de réagir", "Onglet <b>Anti-FOMO</b> : 9 questions, un verdict. C'est ton garde-fou contre les achats sur un coup de tête. Note ensuite ta décision dans le <b>Journal</b> : le bilan mensuel mesure ta discipline."],
+  ["⚑", "Pour apprendre chaque jour", "Le <b>mot du jour</b> sur l'accueil, et la <b>veille IA</b> (lien en haut) : décryptages d'actualité, un cours chaque lundi, simulateur, lexique. Ajoute Cap 2046 à l'écran d'accueil de ton téléphone : il s'ouvre comme une appli."],
+];
+function ouvrirGuide() {
+  let i = 0;
+  const fond = document.createElement("div");
+  fond.className = "guide-fond";
+  fond.innerHTML = `<div class="guide" role="dialog" aria-modal="true" aria-labelledby="guide-t"></div>`;
+  document.body.appendChild(fond);
+  const boite = $(".guide", fond);
+  const clavier = (e) => { if (e.key === "Escape") fermer(); };
+  const fermer = () => { fond.parentNode && fond.parentNode.removeChild(fond); try { localStorage.setItem("cap2046.guide", "vu"); } catch (e) {} document.removeEventListener("keydown", clavier); };
+  const dessiner = () => {
+    const [ic, t, txt] = GUIDE[i];
+    boite.innerHTML = `<div class="guide-ic" aria-hidden="true">${ic}</div><h2 id="guide-t">${t}</h2><p>${txt}</p>
+      <div class="guide-pts">${GUIDE.map((_, k) => `<i class="${k === i ? "on" : ""}"></i>`).join("")}</div>
+      <div class="btns"><button type="button" class="btn" data-g-a="passer">${i === GUIDE.length - 1 ? "Fermer" : "Passer"}</button>
+      ${i > 0 ? `<button type="button" class="btn" data-g-a="prec">Précédent</button>` : ""}
+      <button type="button" class="btn p" data-g-a="suiv">${i === GUIDE.length - 1 ? "C'est parti" : "Suivant"}</button></div>`;
+    $("[data-g-a=suiv]", boite).focus();
+  };
+  boite.addEventListener("click", (e) => {
+    const a = e.target.closest("[data-g-a]"); if (!a) return;
+    if (a.dataset.gA === "suiv") { if (i < GUIDE.length - 1) { i++; dessiner(); } else { fermer(); if (!valorisation().complet) aller("portefeuille"); } }
+    else if (a.dataset.gA === "prec") { i--; dessiner(); }
+    else fermer();
+  });
+  fond.addEventListener("click", (e) => { if (e.target === fond) fermer(); });
+  document.addEventListener("keydown", clavier);
+  dessiner();
+}
+$("#aide").addEventListener("click", ouvrirGuide);
+
 /* ═══ 14. Démarrage ══════════════════════════════════════════════════════════ */
 const RENDU = { accueil: rendreAccueil, calendrier: rendreCalendrier, bourses: rendreBourses, portefeuille: rendrePortefeuille, fomo: rendreFomo, journal: rendreJournal, plan: rendrePlan };
 
 function majEntete() {
   const vieux = GENERE && (Date.now() - new Date(GENERE)) / 864e5 > 8;
   $("#maj").innerHTML = (GENERE ? `Événements mis à jour le ${new Date(GENERE).toLocaleDateString("fr-FR", { timeZone: TZ })}${vieux ? ` <span class="badge b-nv">⚠ plus de 8 jours</span>` : ""}` : "")
-    + `<br><a href="/veille/">Veille IA, cours et simulateur →</a>`;
+    + (VEILLE_DISPO ? `<br><a href="/veille/">Veille IA, cours et simulateur →</a>` : "");
 }
 
 async function demarrer() {
@@ -950,7 +1046,7 @@ async function demarrer() {
     // Version vivante (relayée par Netlify, mise à jour chaque matin) ; à défaut, la copie livrée avec le site.
     const json = (u) => fetch(u, { cache: "no-cache" }).then((r) => { if (!r.ok) throw new Error(u + " " + r.status); return r.json(); });
     const evLive = () => json("data/events-live.json").then((d) => { if (!Array.isArray(d.events)) throw new Error("format"); SOURCE_EV = "live"; return d; });
-    const enLigne = location.protocol.startsWith("http") && !/^(localhost|127\.|0\.0\.0\.0|\[::1\])/.test(location.hostname);
+    const enLigne = VEILLE_DISPO;  // le relais du calendrier n'existe que sur le site Netlify
     const [ev, etf] = await Promise.all([
       (enLigne ? evLive() : Promise.reject(new Error("local"))).catch(() => { SOURCE_EV = "copie"; return json("data/events.json"); }),
       fetch("data/etf.json", { cache: "no-cache" }).then((r) => { if (!r.ok) throw new Error("etf " + r.status); return r.json(); }),
@@ -963,5 +1059,7 @@ async function demarrer() {
   }
   majEntete();
   aller(location.hash.slice(1) || "accueil");
+  let vu = null; try { vu = localStorage.getItem("cap2046.guide"); } catch (e) {}
+  if (!vu && !navigator.webdriver) ouvrirGuide();
 }
 demarrer();

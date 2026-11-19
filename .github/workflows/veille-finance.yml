@@ -137,9 +137,19 @@ jobs:
           cp "$GITHUB_WORKSPACE/veille-data/cap2046/events.json" _site/cap2046-data/events.json 2>/dev/null \
             || cp ../cap2046/data/events.json _site/cap2046-data/events.json
 
+      # Tant que GitHub Pages n'est pas activé (Settings → Pages → GitHub Actions), la publication échoue
+      # sans faire échouer l'exécution : les données sont déjà sauvegardées.
       - uses: actions/configure-pages@v5
+        id: pages
+        continue-on-error: true
       - uses: actions/upload-pages-artifact@v3
+        if: steps.pages.outcome == 'success'
         with:
           path: veille-finance/_site
       - id: deploy
+        if: steps.pages.outcome == 'success'
         uses: actions/deploy-pages@v4
+      - name: Rappel si GitHub Pages n'est pas activé
+        if: steps.pages.outcome != 'success'
+        run: |
+          echo "::warning::GitHub Pages n'est pas activé (Settings, Pages, Source = GitHub Actions). Le site n'a pas été publié."
