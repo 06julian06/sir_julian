@@ -1,0 +1,30 @@
+# Flux RSS surveillés en continu. Ajoute/retire librement.
+# Un flux mort n'empêche pas le reste de fonctionner (il est simplement ignoré).
+flux:
+  # Régulateurs & institutions
+  - {nom: "AMF — Actualités", url: "https://www.amf-france.org/fr/flux-rss/display/21", categorie: regulation}
+  - {nom: "ESMA — News", url: "https://www.esma.europa.eu/rss.xml", categorie: regulation}
+  - {nom: "BCE — Communiqués", url: "https://www.ecb.europa.eu/rss/press.html", categorie: macro}
+  - {nom: "Banque de France", url: "https://www.banque-france.fr/fr/rss.xml", categorie: macro}
+  - {nom: "Fed — Press releases", url: "https://www.federalreserve.gov/feeds/press_all.xml", categorie: macro}
+  # Presse économique & marchés (FR)
+  - {nom: "Les Echos — Finance & marchés", url: "https://services.lesechos.fr/rss/les-echos-finance-marches.xml", categorie: marches}
+  - {nom: "Boursorama — Actualités", url: "https://www.boursorama.com/rss/actualites/", categorie: marches}
+  - {nom: "Zonebourse — Actualités", url: "https://www.zonebourse.com/rss/", categorie: marches}
+  - {nom: "Le Monde — Économie", url: "https://www.lemonde.fr/economie/rss_full.xml", categorie: macro}
+  - {nom: "Capital — Placements", url: "https://www.capital.fr/rss/placement", categorie: epargne}
+  - {nom: "Investing.com FR — Actualités", url: "https://fr.investing.com/rss/news.rss", categorie: marches}
+
+# Indicateurs du tableau de bord (source : Stooq, gratuit, sans clé).
+# symbole = code Stooq. Vérifie un code sur https://stooq.com si tu en ajoutes.
+marches:
+  - {nom: "CAC 40", symbole: "^cac"}
+  - {nom: "S&P 500", symbole: "^spx"}
+  - {nom: "Nasdaq 100", symbole: "^ndx"}
+  - {nom: "Euro Stoxx 50", symbole: "^stx"}
+  - {nom: "EUR/USD", symbole: "eurusd"}
+  - {nom: "Or (USD/oz)", symbole: "xauusd"}
+  - {nom: "Pétrole Brent", symbole: "cb.f"}
+  - {nom: "Bitcoin (USD)", symbole: "btcusd"}
+  - {nom: "Taux 10 ans FR", symbole: "10frby.b"}
+  - {nom: "Taux 10 ans US", symbole: "10usy.b"}

@@ -1,0 +1,10 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"></head>
+<body style="font-family:Arial,sans-serif;background:#f3f1ec;padding:20px;">
+<div style="max-width:600px;margin:auto;background:#fff;border-top:4px solid #c0392b;padding:20px;">
+<p style="margin:0;font-weight:700;color:#c0392b;letter-spacing:.06em;text-transform:uppercase;font-size:12px;">Alerte veille · {{ heure }}</p>
+{% for r in items %}<h2 style="font-family:Georgia,serif;margin:12px 0 4px;">{{ r.titre }}</h2>
+<p style="margin:0 0 6px;color:#333;">{{ r.pourquoi }}</p>
+<p style="margin:0 0 12px;font-size:12px;"><a href="{{ r.url }}">{{ r.source }}</a></p>{% endfor %}
+<p style="font-size:13px;color:#555;">Rappel : une alerte n'est pas un signal d'action. Relis tes règles avant toute décision.</p>
+<p style="font-size:11px;color:#999;">Généré automatiquement. Contenu informatif, pas un conseil en investissement.</p>
+</div></body></html>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"><channel>
+<title>Veille Finance</title><link>{{ site_url }}</link><description>Veille financière automatique</description><language>fr</language>
+{% for a in archives[:30] %}<item><title>{{ a.titre | e }}</title><link>{{ site_url }}{{ a.href }}</link><guid>{{ site_url }}{{ a.href }}</guid><pubDate>{{ a.rfc822 }}</pubDate><description>{{ a.accroche | e }}</description></item>
+{% endfor %}
+</channel></rss>

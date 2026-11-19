@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Veille Finance — {{ ed.date_label if ed else "en attente" }}{% endblock %}
+{% block content %}
+<div class="grid">
+  <div>
+  {% if ed %}{% include "_edition.html" %}
+  {% else %}<p class="card">Première édition en préparation. Elle apparaîtra ici automatiquement.</p>{% endif %}
+  </div>
+  <aside>
+    <section class="card radar">
+      <h2><span class="live"></span>Fil en continu</h2>
+      <p class="note">Scanné toutes les 3 heures · trié par l'IA selon ton profil</p>
+      {% for r in radar %}
+      <div class="ri imp{{ r.importance }}">
+        <span class="rt">{{ r.heure }} · {{ r.source }}</span>
+        <a href="{{ r.url }}" target="_blank" rel="noopener">{{ r.titre }}</a>
+        <p>{{ r.pourquoi }}</p>
+      </div>
+      {% else %}<p class="muted">Rien d'important détecté pour l'instant.</p>
+      {% endfor %}
+    </section>
+    <section class="card">
+      <h2>Éditions récentes</h2>
+      <ul class="arch">{% for a in archives[:8] %}<li><a href="{{ a.href }}">{{ a.date_label }}</a> <span class="muted">{{ a.titre }}</span></li>{% endfor %}</ul>
+      <p><a href="archives.html">Toutes les archives →</a></p>
+    </section>
+  </aside>
+</div>
+{% endblock %}

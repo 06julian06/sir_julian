@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Veille Finance{% endblock %}</title>
+<meta name="description" content="Veille financière automatique, 24h/24 : marchés, régulation, investissements.">
+<link rel="alternate" type="application/rss+xml" title="Veille Finance" href="{{ root }}feed.xml">
+<link rel="stylesheet" href="{{ root }}style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="{{ root }}index.html"><span class="dot"></span>Veille Finance</a>
+    <nav><a href="{{ root }}index.html">Aujourd'hui</a><a href="{{ root }}archives.html">Archives</a><a href="{{ root }}feed.xml">RSS</a></nav>
+  </div>
+</header>
+<main class="wrap">
+{% block content %}{% endblock %}
+</main>
+<footer class="wrap foot">
+  <p>Mis à jour automatiquement le {{ maj }} (heure de Paris) · Rédigé par une IA, sans relecture humaine avant publication.</p>
+  <p>Contenu à caractère informatif et pédagogique. Ne constitue pas un conseil en investissement personnalisé au sens de l'article L.541-1 du Code monétaire et financier. Tout investissement comporte un risque de perte en capital. Vérifiez les sources citées.</p>
+</footer>
+</body>
+</html>

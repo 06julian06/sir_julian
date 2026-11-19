@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Archives — Veille Finance{% endblock %}
+{% block content %}
+<h1>Archives</h1>
+<ul class="card arch big">{% for a in archives %}<li><a href="{{ a.href }}">{{ a.date_label }} · {{ a.type_label }}</a><br><span class="muted">{{ a.titre }}</span></li>{% else %}<li>Aucune édition pour l'instant.</li>{% endfor %}</ul>
+{% endblock %}

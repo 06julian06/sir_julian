@@ -1,0 +1,98 @@
+# Veille financière autonome : collecte, rédaction IA, publication du site, newsletter.
+# Les horaires cron de GitHub sont en UTC (Paris = UTC+1 en hiver, UTC+2 en été).
+name: Veille Finance
+
+on:
+  schedule:
+    - cron: "17 */3 * * *"   # radar : toutes les 3 h
+    - cron: "43 5 * * 1-6"   # édition du jour : ~6h45 Paris (hiver), lundi→samedi
+    - cron: "13 7 * * 0"     # édition hebdo : dimanche ~8h15 Paris (hiver)
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Mode à lancer"
+        type: choice
+        options: [quotidien, radar, hebdo, build]
+        default: quotidien
+
+permissions:
+  contents: write   # pour sauvegarder les éditions dans le dépôt (historique = archives)
+  pages: write
+  id-token: write
+
+concurrency:
+  group: veille-finance
+  cancel-in-progress: false
+
+jobs:
+  veille:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    defaults:
+      run:
+        working-directory: veille-finance
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: veille-finance/requirements.txt
+
+      - run: pip install -r requirements.txt
+
+      - name: Choisir le mode
+        id: mode
+        run: |
+          case "${{ github.event.schedule }}" in
+            "17 */3 * * *") echo "mode=radar" >> "$GITHUB_OUTPUT" ;;
+            "43 5 * * 1-6") echo "mode=quotidien" >> "$GITHUB_OUTPUT" ;;
+            "13 7 * * 0")   echo "mode=hebdo" >> "$GITHUB_OUTPUT" ;;
+            *)              echo "mode=${{ inputs.mode || 'quotidien' }}" >> "$GITHUB_OUTPUT" ;;
+          esac
+
+      - name: Lancer la veille (${{ steps.mode.outputs.mode }})
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SITE_URL: ${{ vars.SITE_URL }}
+          VEILLE_MODEL: ${{ vars.VEILLE_MODEL }}
+          VEILLE_MODEL_RADAR: ${{ vars.VEILLE_MODEL_RADAR }}
+          NEWSLETTER_PROVIDER: ${{ vars.NEWSLETTER_PROVIDER || 'smtp' }}
+          NEWSLETTER_DISABLED: ${{ vars.NEWSLETTER_DISABLED }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          NEWSLETTER_FROM: ${{ secrets.NEWSLETTER_FROM }}
+          NEWSLETTER_TO: ${{ secrets.NEWSLETTER_TO }}
+          BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
+        run: python -m veille.main ${{ steps.mode.outputs.mode }}
+
+      - name: Sauvegarder les données
+        run: |
+          git config user.name "veille-finance-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then echo "Rien à sauvegarder"; exit 0; fi
+          git commit -m "veille: ${{ steps.mode.outputs.mode }} $(date -u +%Y-%m-%dT%H:%MZ)"
+          for i in 1 2 3 4; do
+            git pull --rebase && git push && exit 0
+            sleep $((i * 5))
+          done
+          exit 1
+
+      - name: Joindre le jeu existant au site (servi sous /jeu/)
+        run: |
+          mkdir -p _site/jeu
+          cp ../index.html ../tmi.min.js _site/jeu/ 2>/dev/null || true
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: veille-finance/_site
+      - id: deploy
+        uses: actions/deploy-pages@v4

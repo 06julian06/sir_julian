@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>{{ ed.titre_edition }}</title></head>
+<body style="margin:0;padding:0;background:#f3f1ec;font-family:Georgia,'Times New Roman',serif;color:#1c1b19;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f3f1ec;"><tr><td align="center" style="padding:24px 12px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px;background:#ffffff;border:1px solid #e2ded5;">
+<tr><td style="padding:28px 28px 8px;">
+  <p style="margin:0;font:600 12px/1.4 Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#8a5a00;">{{ ed.type_label }} · {{ ed.date_label }}</p>
+  <h1 style="margin:8px 0 6px;font-size:26px;line-height:1.2;">{{ ed.titre_edition }}</h1>
+  <p style="margin:0 0 16px;font-size:17px;color:#4a4740;">{{ ed.accroche }}</p>
+  <p style="margin:0 0 4px;padding:12px 14px;background:{{ alerte_bg }};font:14px/1.5 Arial,sans-serif;"><strong>Niveau d'alerte {{ ed.alerte.niveau }}/5 — {{ niveaux[ed.alerte.niveau] }}</strong><br>{{ ed.alerte.message }}</p>
+</td></tr>
+<tr><td style="padding:8px 28px;">
+  <h2 style="font:700 16px Arial,sans-serif;margin:16px 0 8px;border-bottom:2px solid #1c1b19;padding-bottom:4px;">L'essentiel en 30 secondes</h2>
+  <ol style="margin:0;padding-left:20px;font-size:16px;line-height:1.55;">{% for p in ed.essentiel %}<li style="margin-bottom:6px;">{{ p | md }}</li>{% endfor %}</ol>
+</td></tr>
+{% if marches %}
+<tr><td style="padding:8px 28px;">
+  <h2 style="font:700 16px Arial,sans-serif;margin:16px 0 8px;border-bottom:2px solid #1c1b19;padding-bottom:4px;">Tableau de bord</h2>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font:14px/1.4 Arial,sans-serif;">
+  {% for m in marches if not m.indisponible %}<tr><td style="padding:4px 0;border-bottom:1px solid #eee;">{{ m.nom }}</td><td align="right" style="padding:4px 0;border-bottom:1px solid #eee;">{{ fmt_num(m.cloture) }}{% if m.est_taux %} %{% endif %}</td><td align="right" style="padding:4px 0 4px 10px;border-bottom:1px solid #eee;color:{{ '#1a7f37' if m.var_jour_pct > 0 else ('#c0392b' if m.var_jour_pct < 0 else '#666') }};">{{ '%+.2f'|format(m.var_jour_pct) }} %</td></tr>{% endfor %}
+  </table>
+</td></tr>
+{% endif %}
+{% for r in ed.rubriques %}
+<tr><td style="padding:8px 28px;">
+  <h2 style="font:700 16px Arial,sans-serif;margin:16px 0 8px;border-bottom:2px solid #1c1b19;padding-bottom:4px;">{{ r.titre }}</h2>
+  {% for it in r['items'] %}
+  <h3 style="margin:12px 0 4px;font-size:17px;">{{ it.titre }}</h3>
+  <p style="margin:0 0 6px;font-size:16px;line-height:1.55;">{{ it.texte | md }}</p>
+  {% if it.pourquoi %}<p style="margin:0 0 6px;padding:8px 10px;background:#faf6ea;border-left:3px solid #c08a00;font:14px/1.5 Arial,sans-serif;"><strong>Pour toi :</strong> {{ it.pourquoi | md }}</p>{% endif %}
+  {% if it.source_url %}<p style="margin:0 0 10px;font:12px Arial,sans-serif;color:#777;">Source : <a href="{{ it.source_url }}" style="color:#8a5a00;">{{ it.source_nom or 'lien' }}</a></p>{% endif %}
+  {% else %}<p style="font:14px Arial,sans-serif;color:#777;">Rien de significatif aujourd'hui.</p>{% endfor %}
+</td></tr>
+{% endfor %}
+{% if ed.agenda %}
+<tr><td style="padding:8px 28px;">
+  <h2 style="font:700 16px Arial,sans-serif;margin:16px 0 8px;border-bottom:2px solid #1c1b19;padding-bottom:4px;">Agenda</h2>
+  {% for a in ed.agenda %}<p style="margin:0 0 8px;font:14px/1.5 Arial,sans-serif;"><strong>{{ a.date }}</strong> — {{ a.evenement }}<br><span style="color:#666;">{{ a.pourquoi }}</span></p>{% endfor %}
+</td></tr>
+{% endif %}
+<tr><td style="padding:8px 28px 20px;">
+  <div style="margin-top:12px;padding:16px;background:#1c1b19;color:#f3f1ec;"><p style="margin:0 0 6px;font:700 13px Arial,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#e0b040;">Le mot du mentor</p><p style="margin:0;font-size:16px;line-height:1.55;">{{ ed.mot_du_mentor | md }}</p></div>
+  {% if site_url %}<p style="margin:16px 0 0;font:14px Arial,sans-serif;"><a href="{{ site_url }}{{ ed.href }}" style="color:#8a5a00;">Lire sur le site (fil en continu, archives) →</a></p>{% endif %}
+</td></tr>
+<tr><td style="padding:16px 28px;background:#f7f5f0;font:11px/1.5 Arial,sans-serif;color:#888;">Rédigé automatiquement par une IA, sans relecture humaine. Contenu informatif, ne constitue pas un conseil en investissement personnalisé (art. L.541-1 CMF). Tout investissement comporte un risque de perte en capital.</td></tr>
+</table></td></tr></table>
+</body></html>
