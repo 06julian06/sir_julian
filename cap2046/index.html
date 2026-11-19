@@ -19,6 +19,7 @@
 <nav class="tabs" aria-label="Sections">
   <button type="button" data-vue="accueil" aria-current="page"><span class="ic" aria-hidden="true">◎</span>Accueil</button>
   <button type="button" data-vue="calendrier"><span class="ic" aria-hidden="true">▦</span>Agenda</button>
+  <button type="button" data-vue="bourses"><span class="ic" aria-hidden="true">◷</span>Bourses</button>
   <button type="button" data-vue="portefeuille"><span class="ic" aria-hidden="true">◔</span>Positions</button>
   <button type="button" data-vue="fomo"><span class="ic" aria-hidden="true">✋</span>Anti-FOMO</button>
   <button type="button" data-vue="journal"><span class="ic" aria-hidden="true">✎</span>Journal</button>
@@ -51,6 +52,7 @@
     <div class="card" id="a-confirmer"></div>
   </section>
 
+  <section class="view" id="v-bourses" aria-label="Bourses" hidden></section>
   <section class="view" id="v-portefeuille" aria-label="Portefeuille" hidden></section>
   <section class="view" id="v-fomo" aria-label="Anti-FOMO" hidden></section>
   <section class="view" id="v-journal" aria-label="Journal" hidden></section>

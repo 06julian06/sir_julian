@@ -16,6 +16,22 @@ TotalEnergies. Le résultat est publié sur GitHub Pages et lu par le site via `
 (relais Netlify). Si une source échoue, les anciennes dates sont conservées et une *issue* GitHub est ouverte.
 Si le relais est indisponible, le site utilise la copie `data/events.json` livrée avec lui.
 
+## Onglet Bourses : horloges et meilleur moment pour passer un ordre
+
+- Horloges en direct (à la seconde) de 11 places : Paris (ETF et actions), Londres, Francfort, New York, Tokyo,
+  Hong Kong, Shanghai, Taïwan, Inde, Sydney. Statut ouvert / pause déjeuner / pré-ouverture / fermé / férié,
+  compte à rebours, ligne du temps sur 24 heures. Changements d'heure gérés automatiquement (y compris les semaines
+  où l'Amérique et l'Europe ne changent pas d'heure le même jour).
+- Affichage à l'heure de Paris, de **Sydney** (Working Holiday) ou de l'appareil.
+- **Quand passer ton ordre** : fenêtre calculée par ligne. ETF à dominante américaine (WPEA, Nasdaq) : quand New York
+  est ouvert (meilleure fourchette) ; Europe et Saint-Gobain : après le premier quart d'heure ; Émergents : le matin,
+  tant que l'Inde est ouverte. Jamais pendant le fixing d'ouverture ni dans les dernières minutes, toujours à cours
+  limité. C'est de la qualité d'exécution, pas du market timing.
+- Horaires dans `data/bourses.json`. **Vérifiés** sur source officielle le 19/11/2026 : Paris (annexe Euronext du
+  Trading Manual 4-01, en vigueur au 23/11/2026 : ETF 09:04–17:30, actions 09:00–17:30, fixing de clôture 17:35,
+  pré-ouverture 07:30), New York, Tokyo, Hong Kong, Shanghai, Taïwan, Sydney. **Non vérifiés** : Londres, Francfort,
+  Inde. Jours fériés connus pour Paris et New York seulement.
+
 ## Ce qui reste manuel : 10 minutes par semaine (le dimanche)
 
 Fichier : `data/events_manuels.json` (modifiable directement sur github.com, bouton ✏️).

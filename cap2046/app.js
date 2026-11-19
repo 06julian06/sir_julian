@@ -56,6 +56,10 @@ const GLOSSAIRE = {
   "FOMO": "« Fear of missing out » : la peur de rater une occasion, qui pousse à acheter dans l'urgence ce qui vient de monter.",
   "effet de levier": "Produit qui multiplie les gains et les pertes (turbo, CFD, ETF ×2) ; une baisse de 50 % peut effacer toute la mise.",
   "market timing": "Essayer d'acheter au plus bas et de vendre au plus haut en anticipant les marchés ; statistiquement perdant pour un particulier.",
+  "fourchette": "Écart entre le meilleur prix d'achat et le meilleur prix de vente affichés. Tu le paies à chaque ordre : plus il est étroit, mieux c'est.",
+  "ordre à cours limité": "Ordre où tu fixes le prix maximum que tu acceptes de payer : tu ne paieras jamais plus, même si le marché bouge brutalement.",
+  "fixing": "Enchère où tous les ordres accumulés s'exécutent à un prix unique (à l'ouverture et à la clôture). Prix parfois éloigné de la valeur réelle à l'ouverture.",
+  "teneur de marché": "Intermédiaire qui affiche en permanence un prix d'achat et un prix de vente sur un ETF. Il resserre sa fourchette quand les actions sous-jacentes sont cotées.",
   "rééquilibrer": "Ramener les poids vers les cibles. Dans ton plan, cela se fait en orientant les versements, pas en vendant.",
 };
 const g = (terme, libelle) => `<button type="button" class="g" data-g="${esc(terme)}">${esc(libelle || terme)}</button>`;
@@ -119,6 +123,7 @@ function sauver() {
 
 /* ═══ 4. Données publiées ════════════════════════════════════════════════════ */
 let SOURCE_EV = "copie";
+let BOURSES = { bourses: [], lignes_fenetres: {} };
 let EVENTS = [], A_CONFIRMER = [], STATUT = {}, GENERE = null, ETF = { lignes: {}, noms_zones: {} };
 
 /* ═══ 5. Portefeuille ════════════════════════════════════════════════════════ */
@@ -227,7 +232,7 @@ function badgeVerif(ev) {
 }
 
 /* ═══ 7. Navigation ══════════════════════════════════════════════════════════ */
-const VUES = ["accueil", "calendrier", "portefeuille", "fomo", "journal", "plan"];
+const VUES = ["accueil", "calendrier", "bourses", "portefeuille", "fomo", "journal", "plan"];
 function aller(vue, opts = {}) {
   if (!VUES.includes(vue)) vue = "accueil";
   $$("nav.tabs button").forEach((b) => b.setAttribute("aria-current", b.dataset.vue === vue ? "page" : "false"));
@@ -271,6 +276,13 @@ function rendreAccueil() {
         : `<p><b>${eur(V)}</b> prévus ce mois-ci. Saisis tes cours dans l'onglet Portefeuille pour savoir sur quelle ligne les placer.</p>`}
     </div>
 
+    ${BOURSES.bourses.length ? (() => { const t = new Date(), pe = BOURSES.bourses.find((b) => b.id === "paris-etf"), ny = BOURSES.bourses.find((b) => b.id === "newyork");
+      const sp = statutBourse(pe, t), sn = statutBourse(ny, t), f = sug ? fenetre(sug.ligne.id, isoParis(t)) : null;
+      return `<div class="card"><h2>Bourses maintenant</h2><div class="mini-bourse">
+        <span>Paris (ETF) : <b>${esc(sp.libelle)}</b>${sp.change ? ` · ${esc(sp.verbe)} ${duree(sp.change - t)}` : ""}</span>
+        <span>New York : <b>${esc(sn.libelle)}</b>${sn.change ? ` · ${esc(sn.verbe)} ${duree(sn.change - t)}` : ""}</span></div>
+        ${f && !f.ferme ? `<p class="small">Meilleure fenêtre aujourd'hui pour ${esc(sug.ligne.nom)} : <b>${hm(f.debut, TZ)}–${hm(f.fin, TZ)}</b> (Paris).</p>` : ""}
+        <div class="btns"><button type="button" class="btn" data-go="bourses">Toutes les bourses</button></div></div>`; })() : ""}
     ${al.length ? `<div class="card"><h2>À regarder</h2>${al.map((a) => `<div class="alerte ${a.niveau}">${a.html}</div>`).join("")}</div>` : ""}
 
     <div class="card">
@@ -755,8 +767,176 @@ function rendrePlan() {
   brancherExportImport($("#v-plan"));
 }
 
+/* ═══ 13 bis. Bourses : horloges, statuts, meilleure fenêtre ═════════════════ */
+function heureLocale(date, tz) {
+  const p = Object.fromEntries(new Intl.DateTimeFormat("en-GB", { timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23", weekday: "short" })
+    .formatToParts(date).filter((x) => x.type !== "literal").map((x) => [x.type, x.value]));
+  return { iso: `${p.year}-${p.month}-${p.day}`, h: +p.hour, mi: +p.minute, s: +p.second, wd: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(p.weekday) };
+}
+// Heure locale « AAAA-MM-JJ HH:MM » d'un fuseau → instant UTC (changements d'heure gérés).
+function versUTC(iso, hhmm, tz) {
+  const [y, m, d] = iso.split("-").map(Number), [h, mi] = hhmm.split(":").map(Number);
+  let t = Date.UTC(y, m - 1, d, h, mi);
+  for (let k = 0; k < 2; k++) {
+    const l = heureLocale(new Date(t), tz), [ly, lm, ld] = l.iso.split("-").map(Number);
+    t -= Date.UTC(ly, lm - 1, ld, l.h, l.mi) - Date.UTC(y, m - 1, d, h, mi);
+  }
+  return new Date(t);
+}
+const hm = (d, tz) => new Intl.DateTimeFormat("fr-FR", { timeZone: tz, hour: "2-digit", minute: "2-digit" }).format(d);
+const duree = (ms) => { const m = Math.max(0, Math.round(ms / 60000)); return m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, "0")}`; };
+
+function particularite(b, iso) {
+  // Jours fériés et séances réduites connus (Paris et New York, sources officielles du calendrier).
+  if (b.id.startsWith("paris")) {
+    const e = EVENTS.find((x) => x.id === "euronext-" + iso);
+    if (e) return /demi/.test(e.titre) ? { fin: "14:05", note: "demi-séance (clôture 14:05)" } : { ferme: true, note: e.titre.replace("Euronext Paris fermé", "férié").trim() };
+  }
+  if (b.id === "newyork") {
+    if (EVENTS.find((x) => x.id === "nyse-" + iso)) return { ferme: true, note: "férié aux États-Unis" };
+    if (EVENTS.find((x) => x.id === "nyse-early-" + iso)) return { fin: "13:00", note: "clôture anticipée à 13:00" };
+  }
+  return null;
+}
+function seancesDuJour(b, iso) {
+  const wd = new Date(iso + "T12:00:00Z").getUTCDay();
+  if (wd === 0 || wd === 6) return { ferme: true, note: "week-end", seances: [] };
+  const p = particularite(b, iso);
+  if (p && p.ferme) return { ferme: true, note: p.note, seances: [] };
+  const seances = b.sessions.map(([a, z], i) => [a, i === b.sessions.length - 1 && p && p.fin ? p.fin : z])
+    .filter(([a, z]) => a < z).map(([a, z]) => ({ debut: versUTC(iso, a, b.tz), fin: versUTC(iso, z, b.tz) }));
+  return { ferme: false, note: p ? p.note : "", seances };
+}
+function statutBourse(b, now) {
+  const loc = heureLocale(now, b.tz), j = seancesDuJour(b, loc.iso);
+  for (const s of j.seances) if (now >= s.debut && now < s.fin) return { etat: "ouvert", libelle: "Ouvert", change: s.fin, verbe: "ferme dans", jour: j };
+  const ensuite = j.seances.find((s) => now < s.debut);
+  if (ensuite) {
+    const pause = j.seances.some((s) => now >= s.fin);
+    return { etat: pause ? "pause" : "attente", libelle: pause ? "Pause déjeuner" : (b.pre && hm(now, b.tz) >= b.pre ? "Pré-ouverture" : "Fermé"), change: ensuite.debut, verbe: "ouvre dans", jour: j };
+  }
+  for (let k = 1; k <= 10; k++) {  // prochaine ouverture
+    const iso = ajoutJours(loc.iso, k), jj = seancesDuJour(b, iso);
+    if (jj.seances.length) return { etat: j.ferme && j.note !== "week-end" ? "ferie" : "ferme", libelle: j.ferme ? (j.note === "week-end" ? "Fermé (week-end)" : "Fermé (" + j.note + ")") : "Fermé", change: jj.seances[0].debut, verbe: "ouvre dans", jour: j };
+  }
+  return { etat: "ferme", libelle: "Fermé", change: null, verbe: "", jour: j };
+}
+
+function fenetre(idLigne, isoParis) {
+  const cfg = BOURSES.lignes_fenetres[idLigne] || { type: "europe", explication: "" };
+  const paris = BOURSES.bourses.find((b) => b.id === (cfg.type === "action" ? "paris-actions" : "paris-etf"));
+  if (!paris) return null;
+  const j = seancesDuJour(paris, isoParis);
+  if (!j.seances.length) return { ferme: true, note: j.note, cfg };
+  const s = j.seances[0];
+  let debut = new Date(+s.debut + 15 * 60000), fin = new Date(+s.fin - 5 * 60000), note = j.note ? `Paris : ${j.note}. ` : "", ok = true;
+  const croiser = (id, marge) => {
+    const b = BOURSES.bourses.find((x) => x.id === id); if (!b) return false;
+    const jj = seancesDuJour(b, heureLocale(s.debut, b.tz).iso);
+    const sb = jj.seances.find((x) => x.fin > debut && x.debut < fin);
+    if (!sb) { note += `${b.nom} fermé ce jour-là (${jj.note || "hors séance"}) : fourchettes plus larges. `; return false; }
+    debut = new Date(Math.max(+debut, +sb.debut + marge * 60000)); fin = new Date(Math.min(+fin, +sb.fin));
+    if (!b.verifie) note += `Horaires de ${b.nom} non vérifiés. `;
+    return true;
+  };
+  if (cfg.type === "us") ok = croiser("newyork", 10);
+  if (cfg.type === "em") ok = croiser("mumbai", 15);
+  if (debut >= fin) { debut = new Date(+s.debut + 15 * 60000); fin = new Date(+s.fin - 5 * 60000); ok = false; }
+  return { debut, fin, note, cfg, ideal: ok };
+}
+
+const TZ_VUE = () => { try { return localStorage.getItem("cap2046.tz") || TZ; } catch (e) { return TZ; } };
+let minuteurBourses = null;
+function rendreBourses() {
+  const tzv = TZ_VUE(), now = new Date(), isoP = isoParis(now), v = valorisation();
+  const sug = suggestionDCA(versementPour(isoP.slice(0, 7)));
+  const ligneDef = (() => { try { return localStorage.getItem("cap2046.ligneOrdre"); } catch (e) { return null; } })() || (sug ? sug.ligne.id : "WPEA");
+  const tri = [...BOURSES.bourses].sort((a, b) => a.ordre - b.ordre);
+  const nomTz = { "Europe/Paris": "Paris", "Australia/Sydney": "Sydney" }[tzv] || "ton appareil";
+  // Ligne du temps : la journée affichée dans le fuseau choisi
+  const jourV = heureLocale(now, tzv).iso, d0 = versUTC(jourV, "00:00", tzv), d1 = versUTC(ajoutJours(jourV, 1), "00:00", tzv), L = d1 - d0;
+  const pctT = (t) => Math.max(0, Math.min(100, ((t - d0) / L) * 100));
+  const barres = (b) => {
+    const out = [];
+    for (const k of [-1, 0, 1]) {
+      const isoB = ajoutJours(heureLocale(now, b.tz).iso, k);
+      for (const s of seancesDuJour(b, isoB).seances) if (s.fin > d0 && s.debut < d1) out.push(`<span class="tl-s" style="left:${pctT(s.debut)}%;width:${pctT(s.fin) - pctT(s.debut)}%" title="${esc(hm(s.debut, tzv))}–${esc(hm(s.fin, tzv))}"></span>`);
+    }
+    return out.join("");
+  };
+  const fen = fenetre(ligneDef, isoP);
+  const lignes = S.positions.filter((p) => BOURSES.lignes_fenetres[p.id]);
+  $("#v-bourses").innerHTML = `
+    <div class="card horloge">
+      <div><span class="small muted">Heure de Paris</span><span class="h-gros num" data-horloge="${TZ}">${hm(now, TZ)}</span></div>
+      <div><label class="small muted">Afficher les horaires en heure de
+        <select id="tz-vue"><option value="Europe/Paris">Paris</option><option value="Australia/Sydney">Sydney (Australie)</option><option value="${esc(Intl.DateTimeFormat().resolvedOptions().timeZone)}">mon appareil (${esc(Intl.DateTimeFormat().resolvedOptions().timeZone)})</option></select></label>
+        ${tzv !== TZ ? `<span class="h-moyen num" data-horloge="${esc(tzv)}">${hm(now, tzv)}</span>` : ""}</div>
+    </div>
+
+    <div class="card dca" id="ordre"></div>
+
+    <div class="card"><h2>Les bourses sur 24 heures <span class="small muted">(heure de ${esc(nomTz)})</span></h2>
+      <div class="tl">${tri.map((b) => `<div class="tl-r"><span class="tl-n">${esc(b.nom)}</span><span class="tl-b">${barres(b)}<i class="tl-now" style="left:${pctT(now)}%"></i></span></div>`).join("")}
+        <div class="tl-r"><span class="tl-n"></span><span class="tl-ax">${[0, 6, 12, 18, 24].map((h) => `<span style="left:${h / 24 * 100}%">${String(h % 24).padStart(2, "0")}h</span>`).join("")}</span></div>
+      </div>
+      <p class="small muted">Barres = séances de cotation continue. Trait vertical = maintenant. Les jours fériés sont connus pour Paris et New York (sources officielles), pas pour les autres places.</p>
+    </div>
+
+    <div class="bourses">${tri.map((b) => `<div class="card bourse" data-b="${esc(b.id)}"></div>`).join("")}</div>
+
+    <div class="card"><h2>Prochaines fermetures (Paris et New York)</h2>
+      ${(() => { const f = EVENTS.filter((e) => /^(euronext|nyse)/.test(e.id) && e.date >= isoP).slice(0, 8);
+        return f.length ? `<ul class="small">${f.map((e) => `<li>${dateCourte(e.date)} · ${esc(e.titre)}</li>`).join("")}</ul>` : `<p class="muted">Aucune connue.</p>`; })()}
+    </div>`;
+  $("#tz-vue").value = tzv;
+  $("#tz-vue").addEventListener("change", (e) => { try { localStorage.setItem("cap2046.tz", e.target.value); } catch (x) {} rendreBourses(); });
+  const majOrdre = () => {
+    const t = new Date(), f = fenetre(ligneDef, isoParis(t)), l = S.positions.find((p) => p.id === ligneDef);
+    let etat;
+    if (!f || f.ferme) {
+      const dem = [1, 2, 3, 4, 5, 6, 7].map((k) => fenetre(ligneDef, ajoutJours(isoParis(t), k))).find((x) => x && !x.ferme);
+      etat = `<div class="verdict v-surv"><strong>Bourse de Paris fermée aujourd'hui${f && f.note ? " (" + esc(f.note) + ")" : ""}.</strong>${dem ? `Prochaine fenêtre : ${dateCourte(isoParis(dem.debut))}, ${hm(dem.debut, tzv)}–${hm(dem.fin, tzv)} (heure de ${esc(nomTz)}).` : ""}</div>`;
+    } else if (t < f.debut) etat = `<div class="verdict v-surv"><strong>Attends ${hm(f.debut, tzv)} (dans ${duree(f.debut - t)}).</strong>Fenêtre conseillée aujourd'hui : ${hm(f.debut, tzv)}–${hm(f.fin, tzv)} (heure de ${esc(nomTz)}).</div>`;
+    else if (t < f.fin) etat = `<div class="verdict v-rien"><strong>✓ Bon moment pour passer ton ordre${f.ideal ? "" : " (fenêtre de repli)"}.</strong>Fenêtre ouverte jusqu'à ${hm(f.fin, tzv)} (encore ${duree(f.fin - t)}).</div>`;
+    else { const dem = [1, 2, 3, 4, 5, 6, 7].map((k) => fenetre(ligneDef, ajoutJours(isoParis(t), k))).find((x) => x && !x.ferme);
+      etat = `<div class="verdict v-surv"><strong>Fenêtre passée pour aujourd'hui.</strong>${dem ? `Prochaine : ${dateCourte(isoParis(dem.debut))}, ${hm(dem.debut, tzv)}–${hm(dem.fin, tzv)}.` : ""}</div>`; }
+    $("#ordre").innerHTML = `<h2>Quand passer ton ordre ?</h2>
+      <label class="champ">Ligne<select id="ligne-ordre">${lignes.map((p) => `<option value="${esc(p.id)}" ${p.id === ligneDef ? "selected" : ""}>${esc(p.nom)}${sug && sug.ligne.id === p.id ? " — prochain versement" : ""}</option>`).join("")}</select></label>
+      ${etat}
+      ${f && f.cfg ? `<p class="small">${esc(f.cfg.explication)}</p>` : ""}${f && f.note ? `<p class="small muted">${esc(f.note)}</p>` : ""}
+      <p class="small"><b>La règle :</b> pas pendant le ${g("fixing")} d'ouverture ni dans le premier quart d'heure, pas dans les dernières minutes. Toujours un ${g("ordre à cours limité")}, légèrement au-dessus du prix de vente affiché. Tu réduis la ${g("fourchette")} payée ; tu ne cherches pas à deviner la direction du marché.</p>
+      <p class="small muted">C'est de la qualité d'exécution, pas du market timing : sur un versement de 726 €, l'écart en jeu est de quelques euros. Le jour du versement compte infiniment moins que la régularité.</p>`;
+    $("#ligne-ordre").addEventListener("change", (e) => { try { localStorage.setItem("cap2046.ligneOrdre", e.target.value); } catch (x) {} rendreBourses(); });
+  };
+  const majCartes = () => {
+    const t = new Date();
+    for (const b of tri) {
+      const c = $(`.bourse[data-b="${b.id}"]`), st = statutBourse(b, t);
+      if (!c) continue;
+      const j = seancesDuJour(b, heureLocale(t, b.tz).iso);
+      c.className = "card bourse st-" + st.etat;
+      c.innerHTML = `<div class="b-h"><b>${esc(b.nom)}</b><span class="badge b-${st.etat === "ouvert" ? "v" : st.etat === "pause" || st.etat === "attente" ? "cat" : "faible"}">${st.etat === "ouvert" ? "● " : ""}${esc(st.libelle)}</span></div>
+        <div class="num"><span class="h-moyen">${hm(t, b.tz)}</span> <span class="small muted">heure locale</span></div>
+        ${st.change ? `<div class="small"><b>${esc(st.verbe)} ${duree(st.change - t)}</b> (${hm(st.change, tzv)} heure de ${esc(nomTz)})</div>` : ""}
+        <div class="small muted">Séance : ${b.sessions.map(([a, z]) => `${a}–${z}`).join(" · ")} locale${j.seances.length ? ` = ${j.seances.map((s) => `${hm(s.debut, tzv)}–${hm(s.fin, tzv)}`).join(" · ")} (${esc(nomTz)})` : ""}${j.note && j.note !== "week-end" ? ` · <b>${esc(j.note)}</b>` : ""}</div>
+        <div class="small">${esc(b.note)}</div>
+        <div class="small">${b.verifie ? `<span class="badge b-v">✓ vérifié le ${dateCourte(b.verifie_le)}</span>` : `<span class="badge b-nv">⚠ non vérifié</span> <span class="muted">${esc(b.note_verification || "")}</span>`} <a href="${esc(b.source_url)}" target="_blank" rel="noopener">source</a></div>`;
+    }
+    $$("[data-horloge]").forEach((el) => { el.textContent = new Intl.DateTimeFormat("fr-FR", { timeZone: el.dataset.horloge, hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(t); });
+  };
+  majOrdre(); majCartes();
+  clearInterval(minuteurBourses);
+  let n = 0;
+  minuteurBourses = setInterval(() => {
+    if ($("#v-bourses").hidden) { clearInterval(minuteurBourses); return; }
+    $$("[data-horloge]").forEach((el) => { el.textContent = new Intl.DateTimeFormat("fr-FR", { timeZone: el.dataset.horloge, hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(new Date()); });
+    if (++n % 30 === 0) { majCartes(); majOrdre(); }
+  }, 1000);
+}
+
 /* ═══ 14. Démarrage ══════════════════════════════════════════════════════════ */
-const RENDU = { accueil: rendreAccueil, calendrier: rendreCalendrier, portefeuille: rendrePortefeuille, fomo: rendreFomo, journal: rendreJournal, plan: rendrePlan };
+const RENDU = { accueil: rendreAccueil, calendrier: rendreCalendrier, bourses: rendreBourses, portefeuille: rendrePortefeuille, fomo: rendreFomo, journal: rendreJournal, plan: rendrePlan };
 
 function majEntete() {
   const vieux = GENERE && (Date.now() - new Date(GENERE)) / 864e5 > 8;
@@ -777,6 +957,7 @@ async function demarrer() {
     ]);
     EVENTS = (ev.events || []).filter((e) => e && e.id && /^\d{4}-\d{2}-\d{2}$/.test(e.date));
     A_CONFIRMER = ev.a_confirmer || []; STATUT = ev.sources_statut || {}; GENERE = ev.genere_le || null; ETF = etf;
+    try { BOURSES = await json("data/bourses.json"); } catch (e) { /* onglet Bourses indisponible, le reste fonctionne */ }
   } catch (e) {
     $("main").insertAdjacentHTML("afterbegin", `<div class="alerte fort">Impossible de charger les données (${esc(e.message)}). Si tu as ouvert le fichier directement depuis ton ordinateur, passe par Netlify ou un petit serveur local : les navigateurs bloquent la lecture des fichiers JSON en « file:// ».</div>`);
   }
