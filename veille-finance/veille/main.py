@@ -40,7 +40,40 @@ def _json_save(p: Path, obj) -> None:
     p.write_text(json.dumps(obj, ensure_ascii=False, indent=1))
 
 
-def _contexte(items: list[dict], marches: list[dict], radar: list[dict], mode: str) -> str:
+def _portefeuille_conf() -> dict:
+    """Le secret PORTEFEUILLE_YAML (privé) est prioritaire sur le fichier versionné."""
+    raw = os.environ.get("PORTEFEUILLE_YAML")
+    if raw:
+        return yaml.safe_load(raw) or {}
+    p = CONFIG / "portefeuille.yml"
+    return (yaml.safe_load(p.read_text()) or {}) if p.exists() else {}
+
+
+MONTANTS = ("valeur_eur", "pv_eur", "total_eur", "liquidites_eur", "var_jour_eur", "cours")
+
+
+def _pf_public(pf: dict | None) -> dict | None:
+    """Version publiable : sans montants en euros (les données du dossier data/ sont versionnées
+    dans le dépôt et publiées sur le site), sauf si le profil l'autorise explicitement."""
+    if not pf or pf.get("afficher_montants_sur_site"):
+        return pf
+    out = {k: v for k, v in pf.items() if k not in MONTANTS}
+    out["lignes"] = [{k: v for k, v in l.items() if k not in MONTANTS} for l in pf["lignes"]]
+    out["alertes_regles"] = pf["alertes_regles"]
+    return out
+
+
+def _deja_traites(n: int = 30) -> dict[str, list[str]]:
+    out: dict[str, list[str]] = {"deep_dive": [], "notion": []}
+    for e in render.load_editions()[:n]:
+        for r in e.get("rubriques", []):
+            if r["id"] in out:
+                out[r["id"]] += [it["titre"] for it in r["items"]]
+    return out
+
+
+def _contexte(items: list[dict], marches: list[dict], radar: list[dict], mode: str,
+              pf: dict | None = None, questions: list[dict] | None = None) -> str:
     today = datetime.now(PARIS)
     lignes_m = "\n".join(
         f"- {m['nom']} : {m['cloture']} ({m['var_jour_pct']:+.2f} % sur la séance, {m['var_1an_pct']:+.1f} % sur 1 an) au {m['date']}"
@@ -52,7 +85,31 @@ def _contexte(items: list[dict], marches: list[dict], radar: list[dict], mode: s
         eds = render.load_editions()[:7]
         hist = "\n\nÉDITIONS DE LA SEMAINE (titres + essentiel) :\n" + "\n".join(
             f"- {e['date']} : {e['titre_edition']} | " + " / ".join(e.get("essentiel", [])) for e in eds)
+    if pf:
+        lignes_pf = "\n".join(
+            f"- {l['nom']} ({l.get('type')}, {l.get('enveloppe')}) : indisponible" if l.get("indisponible") else
+            f"- {l['nom']} ({l.get('type')}, {l.get('enveloppe')}) : {l['valeur_eur']} € · poids {l['poids_pct']} % · "
+            f"perf {l['perf_pct']:+.2f} % depuis PRU · jour {l['var_jour_pct']:+.2f} %" for l in pf["lignes"])
+        bloc_pf = (f"Total {pf['total_eur']} € (dont liquidités {pf['liquidites_eur']} €) · plus-value latente "
+                   f"{pf['pv_eur']:+} € ({pf['perf_pct']:+.2f} %) · variation du jour {pf['var_jour_eur']:+} € "
+                   f"({pf['var_jour_pct']:+.2f} %)\n{lignes_pf}\nRÈGLES VIOLÉES : "
+                   + ("; ".join(pf["alertes_regles"]) or "aucune"))
+    else:
+        bloc_pf = "(aucun portefeuille configuré — explique comment le configurer dans config/portefeuille.yml ou le secret PORTEFEUILLE_YAML)"
+    bloc_q = "\n".join(f"- [#{q['numero']}] {q['titre']}\n  {q['texte']}" for q in (questions or [])) or "(aucune question reçue)"
+    deja = _deja_traites()
     return f"""DATE : {today.strftime('%A %d %B %Y, %Hh%M')} (heure de Paris)
+
+PORTEFEUILLE (données réelles calculées, ne pas modifier les chiffres ; dans tes textes,
+exprime-toi en %, poids et performances — jamais en montants en euros, car le site est public) :
+{bloc_pf}
+
+QUESTIONS REÇUES :
+{bloc_q}
+
+DÉJÀ TRAITÉS RÉCEMMENT (ne pas répéter) :
+- Deep Dives : {", ".join(deja["deep_dive"]) or "aucun"}
+- Notions : {", ".join(deja["notion"]) or "aucune"}
 
 COTATIONS (données réelles, ne pas modifier les chiffres) :
 {lignes_m}
@@ -97,6 +154,9 @@ def run_edition(mode: str, demo: bool = False) -> None:
     items = collect.fetch_feeds(sources["flux"], max_age_hours=36 if mode == "quotidien" else 168)
     marches = collect.fetch_markets(sources["marches"])
     radar = _json_load(DATA / "radar.json", [])
+    pf = collect.fetch_portfolio(_portefeuille_conf())
+    from . import github_questions
+    questions = [] if demo else github_questions.fetch_open()
 
     if demo:
         ed = _demo_edition()
@@ -104,7 +164,7 @@ def run_edition(mode: str, demo: bool = False) -> None:
     else:
         from . import brain
         system = brain.system_prompt(_yaml("profil.yml"), _yaml("structure.yml"))
-        contexte = _contexte(items, marches, radar, mode)
+        contexte = _contexte(items, marches, radar, mode, pf, questions)
         notes, urls = brain.research(system, contexte, mode)
         urls |= {i["url"] for i in items} | {r["url"] for r in radar}
         ed = brain.write_edition(system, contexte, notes, mode)
@@ -112,12 +172,24 @@ def run_edition(mode: str, demo: bool = False) -> None:
         log.info("Édition rédigée (%d lien(s) non vérifié(s) retiré(s))", n)
 
     now = datetime.now(PARIS)
-    ed.update(date=now.date().isoformat(), mode=mode, genere_le=now.isoformat(), marches=marches)
+    ed.update(date=now.date().isoformat(), mode=mode, genere_le=now.isoformat(), marches=marches,
+              portefeuille=_pf_public(pf))
     slug = f"{ed['date']}-{mode}"
     _json_save(DATA / "editions" / f"{slug}.json", ed)
 
     render.build_site(SITE_URL)
     ed_full = next(e for e in render.load_editions() if e["slug"] == slug)
+    ed_full["portefeuille"] = pf  # la newsletter (privée) reçoit les montants complets
+
+    # Réponses aux questions : commentaire sur l'issue puis fermeture.
+    nums = {q["numero"] for q in questions}
+    for r in ed["rubriques"]:
+        for it in r["items"]:
+            ref = (it.get("ref") or "").lstrip("#")
+            if ref in nums:
+                github_questions.answer_and_close(ref, f"**{it['titre']}**\n\n{it['texte']}",
+                                                  f"{SITE_URL}{ed_full['href']}" if SITE_URL else "")
+                nums.discard(ref)
     prefixe = "[Hebdo] " if mode == "hebdo" else ""
     if os.environ.get("NEWSLETTER_DISABLED") != "1":
         from . import newsletter
@@ -181,7 +253,7 @@ def _demo_edition() -> dict:
             "titre": f"Exemple — {r['titre'].split('—')[0].strip()}",
             "texte": "Texte d'exemple. " + r["consigne"][:220] + "…",
             "pourquoi": "Ici l'IA explique l'impact concret pour ton profil.",
-            "source_nom": "", "source_url": "", "importance": 3}]} for r in structure],
+            "source_nom": "", "source_url": "", "importance": 3, "ref": ""}]} for r in structure],
         "agenda": [{"date": datetime.now(PARIS).date().isoformat(), "evenement": "Exemple d'événement",
                     "pourquoi": "Pourquoi le surveiller."}],
         "mot_du_mentor": "Un système qui tourne sans toi ne vaut que par la qualité de ce que tu lui as appris sur toi. Remplis ton profil.",

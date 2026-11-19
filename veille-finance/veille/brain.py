@@ -92,7 +92,10 @@ def research(system: str, contexte: str, mode: str) -> tuple[str, set[str]]:
 pour : (a) vérifier/compléter les 4-6 sujets les plus importants, (b) trouver les
 publications réglementaires récentes (AMF, ACPR, ESMA, EBA, BCE, Commission
 européenne), (c) l'agenda économique des 7 prochains jours (BCE, Fed, inflation,
-emploi, résultats majeurs), (d) les nouveautés produits/fiscalité épargne en France.
+emploi, résultats majeurs), (d) les nouveautés produits/fiscalité épargne en France,
+(e) l'actualité des lignes du portefeuille s'il y en a, (f) pour le Deep Dive :
+choisis l'entreprise et collecte ses chiffres récents (derniers résultats, free cash
+flow, dette, valorisation) depuis des sources fiables.
 
 Rends des NOTES DE TRAVAIL structurées par rubrique, chaque fait suivi de son URL
 source exacte. Pas de rédaction finale à ce stade.""",
@@ -136,8 +139,9 @@ ITEM = {
         "source_nom": {"type": "string"},
         "source_url": {"type": "string", "description": "URL exacte issue de la collecte ou des notes. Chaîne vide si aucune."},
         "importance": {"type": "integer", "description": "1 (anecdotique) à 5 (majeur)"},
+        "ref": {"type": "string", "description": "Numéro de la question traitée (rubrique questions), sinon chaîne vide."},
     },
-    "required": ["titre", "texte", "pourquoi", "source_nom", "source_url", "importance"],
+    "required": ["titre", "texte", "pourquoi", "source_nom", "source_url", "importance", "ref"],
     "additionalProperties": False,
 }
 
@@ -204,6 +208,8 @@ Rédige maintenant l'édition {'hebdomadaire' if mode == 'hebdo' else 'du jour'}
 - Une entrée dans "rubriques" par rubrique de la structure, dans le même ordre,
   avec le même id et le même titre, en respectant max_items.
 - source_url : uniquement une URL présente dans la collecte ou dans les notes.
+- Rubrique "portefeuille" : commente les chiffres fournis sans les recalculer ni en inventer.
+- Deep Dive et notion du jour : jamais un sujet de la liste "déjà traités".
 - N'invente aucune date d'agenda : seulement celles trouvées dans les notes.""",
         }],
         thinking={"type": "adaptive"},

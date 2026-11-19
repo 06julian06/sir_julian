@@ -17,6 +17,7 @@ on:
 
 permissions:
   contents: write   # pour sauvegarder les éditions dans le dépôt (historique = archives)
+  issues: write     # pour répondre aux questions posées en Issues (label « question »)
   pages: write
   id-token: write
 
@@ -58,6 +59,8 @@ jobs:
       - name: Lancer la veille (${{ steps.mode.outputs.mode }})
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PORTEFEUILLE_YAML: ${{ secrets.PORTEFEUILLE_YAML }}
           SITE_URL: ${{ vars.SITE_URL }}
           VEILLE_MODEL: ${{ vars.VEILLE_MODEL }}
           VEILLE_MODEL_RADAR: ${{ vars.VEILLE_MODEL_RADAR }}

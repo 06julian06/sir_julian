@@ -13,22 +13,31 @@ t'envoie une newsletter. Zéro serveur à gérer.
 
 ## Ce que contient chaque édition
 
-Définie dans `config/structure.yml` (modifiable sans toucher au code) :
+Structure calquée sur l'émission de Fuze (« Bon... Je suis ruiné à cause de la Bourse », 18/11/2026 :
+*Intro → Point sur le portefeuille → Deep Dive → Questions des abonnés → Notion du jour → Portefeuille des abonnés*),
+adaptée à toi et complétée de trois rubriques orientées carrière. Tout est dans `config/structure.yml`.
 
-| Bloc | Contenu |
-|---|---|
-| Niveau d'alerte | 1 calme → 5 crise, avec justification |
-| L'essentiel en 30 s | 3 points |
-| Tableau de bord | CAC 40, S&P 500, Nasdaq, Euro Stoxx, EUR/USD, or, Brent, BTC, taux 10 ans FR/US — **chiffres réels**, jamais générés par l'IA |
-| Comprendre | Un mécanisme de marché expliqué avec un exemple chiffré |
-| Actualités | 3-6 faits sourcés + « pourquoi ça compte » |
-| Investissements | Conséquences pour ton profil (souvent : « rien à faire ») |
-| Nouveautés | ETF, frais, fiscalité, plateformes |
-| Régulation & conformité | AMF, ACPR, ESMA, BCE, MiCA, DORA… — angle professionnel |
-| Le piège du jour | Une erreur qui fait « tout perdre », son mécanisme, la règle pour s'en protéger |
-| Coup d'avance | Concept ou question d'entretien en finance réglementée + réponse modèle |
-| Agenda | Événements des 7 prochains jours |
-| Le mot du mentor | Un défi direct |
+| Bloc | Équivalent vidéo | Contenu |
+|---|---|---|
+| Niveau d'alerte + L'essentiel + Tableau de bord | Intro | Climat de marché, 3 points, cotations réelles |
+| **Point sur ton portefeuille** | Point sur le portefeuille | Valorisation réelle de tes lignes, poids, perf depuis PRU, règles violées, commentaire de gérant |
+| Les marchés | (contexte) | 3-6 faits sourcés + « pourquoi ça compte » |
+| **Le Deep Dive** | Deep Dive : Amazon | Une entreprise : modèle, avantage, chiffres (FCF, dette, valorisation), verdict analytique — sans répétition |
+| **Tes questions** | Questions des abonnés | Tes questions posées en Issues GitHub, répondues puis fermées automatiquement |
+| **La notion du jour** | Notion : le free cash flow | Un concept, calcul pas à pas, piège d'interprétation — sans répétition |
+| **Portefeuilles passés au crible** | Portefeuille des abonnés | Un portefeuille type disséqué : comment il mène à la ruine, comment le corriger |
+| Nouveautés · Régulation & conformité · Coup d'avance | *(ajouts pour ta trajectoire)* | Produits/fiscalité, AMF/ESMA/MiCA/DORA, question d'entretien + réponse modèle |
+| Agenda · Le mot du mentor | | 7 jours à venir, un défi direct |
+
+### Ton portefeuille
+`config/portefeuille.yml` — ou mieux, le **secret `PORTEFEUILLE_YAML`** (même contenu) si le dépôt est public.
+Les calculs (valeur, poids, plus-values, conversion USD→EUR, règle des 5 %) sont faits en Python, jamais par l'IA.
+Le site public n'affiche que des pourcentages ; les montants en euros ne vont que dans la newsletter.
+
+### Poser une question
+*Issues → New issue → « Question pour la veille »*. Elle est traitée dans l'édition suivante, puis l'IA répond en
+commentaire et ferme l'issue. Seules les questions du propriétaire et des collaborateurs du dépôt sont prises en compte
+(un inconnu ne peut pas injecter de contenu dans ta newsletter).
 
 ## Garde-fous (rien n'est relu par un humain avant publication)
 
@@ -53,7 +62,7 @@ Définie dans `config/structure.yml` (modifiable sans toucher au code) :
 4. **GitHub Pages** : *Settings → Pages → Source : GitHub Actions*.
    ⚠️ Le site de veille devient la racine du Pages du dépôt ; le jeu existant est republié sous `/jeu/`.
 5. **Variable** `SITE_URL` = l'URL Pages (ex. `https://<compte>.github.io/sir_julian/`) — utilisée pour les liens de la newsletter et le flux RSS.
-6. **Remplir `config/profil.yml`.** C'est ce qui rend la veille personnelle. Tant que les champs `A_COMPLETER` restent vides, l'IA travaille sur des hypothèses.
+6. **Remplir `config/profil.yml`** et ton portefeuille (fichier ou secret `PORTEFEUILLE_YAML`). C'est ce qui rend la veille personnelle. Tant que les champs `A_COMPLETER` restent vides, l'IA travaille sur des hypothèses.
 7. *Actions → Veille Finance → Run workflow* (mode `quotidien`) pour la première édition.
 
 ## Coûts (ordre de grandeur, tarifs Claude Opus 5.5 : 4 $ / 20 $ par million de tokens)

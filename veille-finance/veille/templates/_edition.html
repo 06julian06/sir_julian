@@ -36,6 +36,20 @@
   {% for r in ed.rubriques %}
   <section class="card rub" id="{{ r.id }}">
     <h2>{{ r.titre }}</h2>
+    {% if r.id == 'portefeuille' and ed.portefeuille %}{% set pf = ed.portefeuille %}
+    <div class="pfsum">
+      {% if pf.total_eur is defined %}<div><span class="tn">Valeur</span><span class="tv">{{ fmt_num(pf.total_eur) }} €</span></div>{% endif %}
+      <div><span class="tn">Performance latente</span><span class="tv {{ 'up' if pf.perf_pct > 0 else 'down' }}">{{ '%+.2f'|format(pf.perf_pct) }} %</span></div>
+      <div><span class="tn">Séance</span><span class="tv {{ 'up' if pf.var_jour_pct > 0 else ('down' if pf.var_jour_pct < 0 else '') }}">{{ '%+.2f'|format(pf.var_jour_pct) }} %</span></div>
+    </div>
+    <div class="tscroll"><table class="pf">
+      <tr><th>Ligne</th><th>Env.</th><th>Poids</th><th>Depuis PRU</th><th>Jour</th></tr>
+      {% for l in pf.lignes %}<tr><td>{{ l.nom }}</td><td>{{ l.enveloppe or '' }}</td>
+      {% if l.indisponible %}<td colspan="3" class="muted">cours indisponible</td>{% else %}
+      <td>{{ l.poids_pct }} %</td><td class="{{ 'up' if l.perf_pct > 0 else 'down' }}">{{ '%+.1f'|format(l.perf_pct) }} %</td><td class="{{ 'up' if l.var_jour_pct > 0 else ('down' if l.var_jour_pct < 0 else '') }}">{{ '%+.2f'|format(l.var_jour_pct) }} %</td>{% endif %}</tr>{% endfor %}
+    </table></div>
+    {% for a in pf.alertes_regles %}<p class="why rule">⚠ {{ a }}</p>{% endfor %}
+    {% endif %}
     {% for it in r['items'] %}
     <div class="item imp{{ it.importance }}">
       <h3>{{ it.titre }}</h3>

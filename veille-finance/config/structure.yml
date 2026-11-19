@@ -1,70 +1,90 @@
 # ─────────────────────────────────────────────────────────────────────────────
-# STRUCTURE ÉDITORIALE de chaque édition (site + newsletter).
-# Logique "J'ai tout perdu en bourse" : on part de ce qui fait perdre de l'argent
-# pour construire ce qui protège et fait progresser. Réordonne, renomme, ajoute
-# ou supprime des rubriques librement : l'IA suit ce fichier à la lettre.
-# Champs : id (unique, sans espace), titre, consigne (ce que l'IA doit produire),
-# max_items (nombre maximum d'éléments).
+# STRUCTURE ÉDITORIALE — calquée sur le format de l'émission de Fuze
+# (« Bon... Je suis ruiné à cause de la Bourse », 18/11/2026) :
+#   Intro → Point sur le portefeuille → Deep Dive → Questions des abonnés
+#   → Notion du jour → Portefeuille des abonnés
+# + trois rubriques ajoutées pour TA trajectoire (actualités, régulation, carrière).
+# Réordonne, renomme, ajoute ou supprime librement : l'IA suit ce fichier.
+# Champs : id (unique), titre, consigne, max_items.
+# Les ids "portefeuille" et "questions" ont un traitement spécial (données réelles).
 # ─────────────────────────────────────────────────────────────────────────────
 
 rubriques:
-  - id: comprendre
-    titre: "Comprendre — le mécanisme du jour"
+  - id: portefeuille
+    titre: "Point sur ton portefeuille"
     consigne: >
-      Choisis UN mécanisme de marché lié à l'actualité du jour (ex : pourquoi une
-      hausse des taux fait baisser les obligations, comment un appel de marge
-      liquide un compte, ce qu'est réellement un ETF synthétique). Explique-le
-      pas à pas, avec un exemple chiffré simple. Niveau : quelqu'un d'intelligent
-      qui veut comprendre, pas un débutant qu'on infantilise.
-    max_items: 1
+      À partir des DONNÉES RÉELLES du portefeuille fournies (valeur, plus/moins-values,
+      poids, variation du jour), fais le point comme un gérant exigeant : ce qui a bougé
+      et pourquoi (relie à l'actualité), ce qui pèse trop, les règles du profil qui sont
+      violées (ex : ligne > 5 %), la cohérence avec l'horizon. Distingue le bruit du jour
+      d'un vrai problème. Ne recalcule pas les chiffres : commente-les. Si aucun
+      portefeuille n'est configuré, un seul élément qui l'explique.
+    max_items: 4
 
   - id: actualites
-    titre: "Actualités — ce qui compte vraiment"
+    titre: "Les marchés — ce qui compte vraiment"
     consigne: >
-      Les 3 à 6 informations macro, marchés, banques centrales ou entreprises qui
-      ont un impact réel. Pour chacune : le fait (sourcé), puis "pourquoi ça compte"
-      en une ou deux phrases. Ignore le bruit et le sensationnel.
+      Les 3 à 6 informations macro, marchés, banques centrales ou entreprises qui ont un
+      impact réel. Pour chacune : le fait (sourcé), puis "pourquoi ça compte".
     max_items: 6
 
-  - id: investissements
-    titre: "Investissements — ce que ça change pour toi"
+  - id: deep_dive
+    titre: "Le Deep Dive"
     consigne: >
-      Traduis l'actualité en conséquences concrètes pour MON profil (enveloppes,
-      stratégie, règles). Dis clairement : "rien à faire" quand c'est le cas (c'est
-      souvent la bonne réponse). Signale toute tentation à laquelle ne pas céder.
-      Analyse, pas recommandation personnalisée d'achat/vente de titres précis.
+      UNE entreprise cotée analysée en profondeur, idéalement liée à l'actualité ou au
+      portefeuille, jamais une déjà traitée récemment (liste fournie). En 4 éléments :
+      1) modèle économique (comment elle gagne de l'argent, segments, marges),
+      2) avantage concurrentiel et risques, 3) chiffres clés récents sourcés
+      (croissance, free cash flow, dette, valorisation : PER, EV/EBITDA, FCF yield),
+      4) verdict analytique : ce qu'il faudrait croire pour que le titre soit attractif
+      au prix actuel. Pas d'ordre d'achat.
     max_items: 4
+
+  - id: questions
+    titre: "Tes questions"
+    consigne: >
+      Réponds aux questions reçues (fournies avec leur numéro : mets ce numéro dans
+      "ref"). Réponse directe, argumentée, qui corrige la question si elle est mal posée.
+      S'il n'y a aucune question, choisis LA question qu'une personne de ce profil
+      devrait se poser cette semaine (ref vide).
+    max_items: 3
+
+  - id: notion
+    titre: "La notion du jour"
+    consigne: >
+      UN concept financier expliqué à fond (ex : free cash flow, duration, tracking error,
+      ETF synthétique vs physique, appel de marge, PER vs EV/EBITDA, ratio CET1).
+      Définition, calcul pas à pas avec exemple chiffré, piège d'interprétation,
+      à quoi ça sert concrètement. Jamais une notion déjà traitée récemment (liste fournie).
+    max_items: 1
+
+  - id: crible
+    titre: "Portefeuilles passés au crible — comment on finit ruiné"
+    consigne: >
+      Analyse UN portefeuille type réaliste (ex : 100 % tech US, 40 % crypto, 15 lignes
+      de small caps, tout sur l'action de son employeur, levier via CFD, ETF empilés qui
+      se recoupent). Diagnostic sans complaisance : concentration, corrélations, frais,
+      fiscalité, scénario de perte chiffré, et comment le corriger.
+    max_items: 1
 
   - id: nouveautes
     titre: "Nouveautés — produits, fiscalité, plateformes"
     consigne: >
-      Nouveaux ETF, évolutions de frais, changements fiscaux (PEA, assurance-vie,
-      flat tax), nouvelles offres de courtiers, réformes de l'épargne. Seulement
-      ce qui est nouveau et vérifiable.
-    max_items: 4
+      Nouveaux ETF, évolutions de frais, changements fiscaux (PEA, assurance-vie, flat
+      tax), offres de courtiers, réformes de l'épargne. Seulement le nouveau et vérifiable.
+    max_items: 3
 
   - id: regulation
     titre: "Régulation & conformité — l'angle pro"
     consigne: >
-      Publications AMF, ACPR, ESMA, EBA, BCE, Commission européenne (MiCA, DORA,
-      MiFID, AI Act appliqué à la finance, LCB-FT, finfluenceurs...). Pour chaque
-      point : ce qui change, qui est concerné, et ce qu'un professionnel de la
-      conformité doit en retenir. C'est ma rubrique carrière : niveau exigeant.
-    max_items: 4
-
-  - id: piege
-    titre: "Le piège du jour — comment on perd tout"
-    consigne: >
-      UNE erreur qui fait perdre de l'argent, reliée à l'actualité si possible :
-      levier, concentration, FOMO, arnaque/faux conseiller (cite les listes noires
-      AMF si pertinent), absence de plan de sortie, biais de confirmation, sur-trading.
-      Mécanisme psychologique + exemple chiffré + règle concrète pour s'en protéger.
-    max_items: 1
+      Publications AMF, ACPR, ESMA, EBA, BCE, Commission européenne (MiCA, DORA, MiFID,
+      AI Act appliqué à la finance, LCB-FT, encadrement des influenceurs financiers...).
+      Ce qui change, qui est concerné, ce qu'un professionnel de la conformité en retient.
+    max_items: 3
 
   - id: carriere
     titre: "Coup d'avance — finance réglementée"
     consigne: >
-      Un concept, un texte réglementaire ou une question d'entretien type
-      (conformité, risques, régulation, stratégie) expliqué de façon à pouvoir le
-      ressortir en entretien. Inclure une "réponse modèle" en 3 phrases.
+      Une question d'entretien type (conformité, risques, régulation, stratégie) avec une
+      réponse modèle en 3 phrases, liée si possible à l'actualité du jour.
     max_items: 1

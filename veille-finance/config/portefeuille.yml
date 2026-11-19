@@ -1,0 +1,24 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# TON PORTEFEUILLE — alimente "Point sur ton portefeuille".
+#
+# CONFIDENTIALITÉ : si le dépôt est public, NE REMPLIS PAS ce fichier.
+# Mets plutôt le même contenu YAML dans un secret GitHub nommé PORTEFEUILLE_YAML
+# (Settings → Secrets → Actions) : il est prioritaire sur ce fichier.
+# Le site public n'affiche jamais les montants (seulement poids et performances en %),
+# sauf si tu passes afficher_montants_sur_site à true. La newsletter, elle, les affiche.
+#
+# symbole = code Stooq (https://stooq.com) : actions FR en ".fr" (ex : mc.fr = LVMH),
+# US en ".us" (ex : amzn.us), ETF Paris en ".fr" (ex : cw8.fr). Vérifie chaque code.
+# type = etf | action | crypto | obligation | autre  (la règle des 5 % ne vise que les actions)
+# ─────────────────────────────────────────────────────────────────────────────
+
+afficher_montants_sur_site: false
+devise: EUR
+
+liquidites: 0          # cash disponible sur les enveloppes, en euros
+
+positions: []
+# Exemple (décommente et adapte) :
+#  - {nom: "Amundi MSCI World (CW8)", symbole: "cw8.fr", type: etf,    enveloppe: PEA, quantite: 3,  pru: 520.00}
+#  - {nom: "TotalEnergies",          symbole: "tte.fr", type: action, enveloppe: PEA, quantite: 10, pru: 58.20}
+#  - {nom: "Amazon",                 symbole: "amzn.us", type: action, enveloppe: CTO, quantite: 2, pru: 180.00, devise: USD}
