@@ -12,12 +12,13 @@
 <header class="top">
   <div class="wrap top-in">
     <a class="brand" href="{{ root }}index.html"><span class="dot"></span>Veille Finance</a>
-    <nav><a href="{{ root }}index.html">Aujourd'hui</a><a href="{{ root }}portefeuille.html">Portefeuille</a><a href="{{ root }}archives.html">Archives</a><a href="{{ root }}feed.xml">RSS</a></nav>
+    <nav><a href="{{ root }}direct.html"><span class="live"></span>Direct</a><a href="{{ root }}index.html">Édition</a><a href="{{ root }}portefeuille.html">Portefeuille</a><a href="{{ root }}moi.html" class="nav-moi">Mon espace</a><a href="{{ root }}archives.html">Archives</a></nav>
   </div>
 </header>
 <main class="wrap">
 {% block content %}{% endblock %}
 </main>
+{% block scripts %}{% endblock %}
 <footer class="wrap foot">
   <p>Mis à jour automatiquement le {{ maj }} (heure de Paris) · Rédigé par une IA, sans relecture humaine avant publication.</p>
   <p>Contenu à caractère informatif et pédagogique. Ne constitue pas un conseil en investissement personnalisé au sens de l'article L.541-1 du Code monétaire et financier. Tout investissement comporte un risque de perte en capital. Vérifiez les sources citées.</p>

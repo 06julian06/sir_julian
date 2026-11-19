@@ -91,8 +91,11 @@ def research(system: str, contexte: str, mode: str) -> tuple[str, set[str]]:
 Étape RECHERCHE uniquement. Lis la collecte ci-dessus, puis utilise la recherche web
 pour : (a) vérifier/compléter les 4-6 sujets les plus importants, (b) trouver les
 publications réglementaires récentes (AMF, ACPR, ESMA, EBA, BCE, Commission
-européenne), (c) l'agenda économique des 7 prochains jours (BCE, Fed, inflation,
-emploi, résultats majeurs), (d) les nouveautés produits/fiscalité épargne en France,
+européenne), (c) l'agenda des 30 prochains jours partout dans le monde : élections (présidentielles,
+législatives, référendums — avec ce qu'attendent les sondages), réunions de banques
+centrales (BCE, Fed, BoE, BoJ — avec l'attendu du marché sur les taux), statistiques
+majeures (inflation, emploi, PIB — avec le consensus), résultats d'entreprises clés,
+sommets et échéances géopolitiques, (d) les nouveautés produits/fiscalité épargne en France,
 (e) l'actualité des lignes du portefeuille s'il y en a, (f) pour le Deep Dive :
 choisis l'entreprise et collecte ses chiffres récents (derniers résultats, free cash
 flow, dette, valorisation) depuis des sources fiables.
@@ -179,10 +182,15 @@ EDITION_SCHEMA = {
                 "type": "object",
                 "properties": {
                     "date": {"type": "string", "description": "AAAA-MM-JJ"},
+                    "zone": {"type": "string", "description": "Pays ou zone (France, États-Unis, Zone euro, Monde...)"},
+                    "categorie": {"type": "string", "enum": ["election", "banque_centrale", "macro", "resultats", "geopolitique", "regulation", "autre"]},
                     "evenement": {"type": "string"},
-                    "pourquoi": {"type": "string"},
+                    "attendu": {"type": "string", "description": "Ce que le consensus / les sondages / le marché attendent, chiffré si possible et sourcé. Vide si inconnu."},
+                    "scenarios": {"type": "string", "description": "Scénarios et réaction de marché probable (surprise à la hausse / à la baisse, victoire de X ou Y)."},
+                    "pourquoi": {"type": "string", "description": "Pourquoi ça compte pour ce profil"},
+                    "source_url": {"type": "string"},
                 },
-                "required": ["date", "evenement", "pourquoi"],
+                "required": ["date", "zone", "categorie", "evenement", "attendu", "scenarios", "pourquoi", "source_url"],
                 "additionalProperties": False,
             },
         },
@@ -237,7 +245,8 @@ Rédige maintenant l'édition {'hebdomadaire' if mode == 'hebdo' else 'du jour'}
 - source_url : uniquement une URL présente dans la collecte ou dans les notes.
 - Rubrique "portefeuille" : commente les chiffres fournis sans les recalculer ni en inventer.
 - Deep Dive et notion du jour : jamais un sujet de la liste "déjà traités".
-- N'invente aucune date d'agenda : seulement celles trouvées dans les notes.""",
+- Agenda : 6 à 15 rendez-vous sur 30 jours, du plus proche au plus lointain. N'invente
+  aucune date ni aucun « attendu » : seulement ce qui figure dans les notes, sourcé.""",
         }],
         thinking={"type": "adaptive"},
         output_config={"effort": "high", "format": {"type": "json_schema", "schema": EDITION_SCHEMA}},
@@ -295,3 +304,53 @@ majeur sur l'épargne). Sois avare du 5.
     by_id = {i["id"]: i for i in items}
     return [{**by_id[s["id"]], "importance": max(1, min(5, s["importance"])), "pourquoi": s["pourquoi"]}
             for s in sel if s["id"] in by_id]
+
+
+# ─── 4. Coach personnel (sortie chiffrée, jamais publiée en clair) ────────────
+
+COACH_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "diagnostic": {"type": "string", "description": "3-5 phrases : lecture de la situation comme un analyste lirait les comptes d'une entreprise."},
+        "point_fort": {"type": "string"},
+        "point_faible": {"type": "string", "description": "Le maillon faible, sans complaisance."},
+        "missions": {
+            "type": "array",
+            "description": "3 missions concrètes, mesurables, pour les 30 prochains jours.",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "titre": {"type": "string"},
+                    "action": {"type": "string"},
+                    "indicateur": {"type": "string", "description": "Le ratio ou montant qui prouvera que c'est fait."},
+                    "xp": {"type": "integer", "description": "Points d'expérience : 10 (facile) à 50 (difficile)"},
+                },
+                "required": ["titre", "action", "indicateur", "xp"],
+                "additionalProperties": False,
+            },
+        },
+        "lien_actualite": {"type": "string", "description": "Ce que l'actualité du jour change concrètement pour CETTE situation (1-2 phrases), ou vide."},
+    },
+    "required": ["diagnostic", "point_fort", "point_faible", "missions", "lien_actualite"],
+    "additionalProperties": False,
+}
+
+
+def coach_perso(system: str, synthese: str, essentiel: list[str]) -> dict:
+    msg = _stream(
+        max_tokens=16000,
+        system=system,
+        messages=[{"role": "user", "content": f"""Voici les états financiers personnels calculés (chiffres exacts, ne
+les recalcule pas) :
+
+{synthese}
+
+L'essentiel de l'actualité du jour : {" / ".join(essentiel)}
+
+Agis comme un analyste financier qui lit les comptes d'une entreprise : compte de
+résultat, flux de trésorerie, bilan, ratios. Utilise les termes financiers exacts.
+Sois direct et exigeant. Pas de conseil d'achat de titre précis."""}],
+        thinking={"type": "adaptive"},
+        output_config={"effort": "medium", "format": {"type": "json_schema", "schema": COACH_SCHEMA}},
+    )
+    return json.loads(_text(msg))

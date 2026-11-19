@@ -1,6 +1,7 @@
-"""Orchestrateur. Trois modes, déclenchés par GitHub Actions :
+"""Orchestrateur. Modes déclenchés par GitHub Actions :
 
-  python -m veille.main radar      toutes les 3 h : scan des flux, tri IA, alerte si événement majeur
+  python -m veille.main direct     toutes les 15 min : fil d'actualité mondial, cours, calendrier (sans IA)
+  python -m veille.main radar      toutes les heures : direct + tri IA, alerte si événement majeur
   python -m veille.main quotidien  chaque matin  : édition complète + newsletter
   python -m veille.main hebdo      le dimanche   : bilan de la semaine + newsletter
   python -m veille.main build      reconstruit le site seul (aucun appel IA)
@@ -197,32 +198,60 @@ def run_edition(mode: str, demo: bool = False) -> None:
                 github_questions.answer_and_close(ref, f"**{it['titre']}**\n\n{it['texte']}",
                                                   f"{SITE_URL}{ed_full['href']}" if SITE_URL else "")
                 nums.discard(ref)
+    run_perso(pf, ed, demo)
+    render.build_site(SITE_URL)
+
     prefixe = "[Hebdo] " if mode == "hebdo" else ""
     if os.environ.get("NEWSLETTER_DISABLED") != "1":
         from . import newsletter
         newsletter.send(f"{prefixe}{ed['titre_edition']}", render.render_email(ed_full, SITE_URL), _texte_brut(ed))
 
 
+def run_direct(build: bool = True) -> list[dict]:
+    """Collecte sans IA : fil mondial, cours en différé, calendrier économique. Retourne les nouveautés."""
+    sources = _yaml("sources.yml")
+    now = datetime.now(timezone.utc)
+    items = collect.fetch_feeds(sources["flux"], max_age_hours=72, per_feed=40)
+    live = {i["id"]: i for i in _json_load(DATA / "live.json", [])}
+    nouveaux = []
+    for i in items:
+        if i["id"] in live:
+            continue
+        i["rubrique"] = collect.categoriser(i)
+        i["vu_le"] = now.isoformat()
+        live[i["id"]] = i
+        nouveaux.append(i)
+    limite = (now - timedelta(hours=72)).isoformat()
+    fil = sorted((i for i in live.values() if i["date"] >= limite), key=lambda i: i["date"], reverse=True)[:600]
+    _json_save(DATA / "live.json", fil)
+    _json_save(DATA / "direct.json", {
+        "maj": now.isoformat(),
+        "cours": collect.fetch_quotes(sources["marches"]),
+        "calendrier": collect.fetch_calendar(sources["calendrier"]) if sources.get("calendrier") else [],
+    })
+    log.info("Direct : %d nouveaux articles, %d dans le fil", len(nouveaux), len(fil))
+    if build:
+        render.build_site(SITE_URL)
+    return nouveaux
+
+
 def run_radar() -> None:
     from . import brain
-    sources = _yaml("sources.yml")
-    seen_p = DATA / "seen.json"
-    seen: dict[str, str] = _json_load(seen_p, {})
-    items = collect.fetch_feeds(sources["flux"], max_age_hours=12)
-    nouveaux = [i for i in items if i["id"] not in seen][:60]
-    log.info("%d nouveaux articles à trier", len(nouveaux))
-
+    nouveaux = run_direct(build=False)[:80]
     retenus = []
     if nouveaux:
         system = brain.system_prompt(_yaml("profil.yml"), _yaml("structure.yml"))
         retenus = brain.triage(system, nouveaux)
     now = datetime.now(timezone.utc)
-    for i in nouveaux:
-        seen[i["id"]] = now.isoformat()
-    # On oublie les identifiants de plus de 7 jours pour garder le fichier léger.
-    limite = (now - timedelta(days=7)).isoformat()
-    seen = {k: v for k, v in seen.items() if v >= limite}
-    _json_save(seen_p, seen)
+
+    # L'analyse de l'IA enrichit le fil en direct (importance + « pourquoi ça compte »).
+    if retenus:
+        live = _json_load(DATA / "live.json", [])
+        par_id = {r["id"]: r for r in retenus}
+        for i in live:
+            if i["id"] in par_id:
+                i["importance"], i["pourquoi"] = par_id[i["id"]]["importance"], par_id[i["id"]]["pourquoi"]
+        _json_save(DATA / "live.json", live)
 
     radar = _json_load(DATA / "radar.json", [])
     for r in retenus:
@@ -247,6 +276,64 @@ def run_radar() -> None:
     render.build_site(SITE_URL)
 
 
+def _finances_conf() -> dict:
+    raw = os.environ.get("FINANCES_YAML")
+    if raw:
+        return yaml.safe_load(raw) or {}
+    p = CONFIG / "finances.yml"
+    return (yaml.safe_load(p.read_text()) or {}) if p.exists() else {}
+
+
+def run_perso(pf: dict | None, ed: dict, demo: bool = False) -> None:
+    """Calcule l'espace personnel et le publie CHIFFRÉ. Sans phrase secrète, rien n'est publié."""
+    from . import perso
+    phrase = os.environ.get("ESPACE_PASSPHRASE")
+    fin = _finances_conf()
+    if not phrase:
+        log.warning("ESPACE_PASSPHRASE absent : espace personnel non publié.")
+        return
+    if not fin:
+        log.warning("Aucune donnée financière (FINANCES_YAML / config/finances.yml) : espace personnel non publié.")
+        return
+    ef = perso.etats_financiers(fin, pf)
+    jeu = perso.gamification(ef, pf, fin)
+    epargne = max(0.0, ef["compte_resultat"]["resultat_net"])
+    coach = None
+    if not demo:
+        try:
+            from . import brain
+            cr, fl, bi = ef["compte_resultat"], ef["flux"], ef["bilan"]
+            synthese = json.dumps({"compte_de_resultat_mensuel": {k: v for k, v in cr.items() if not k.startswith("detail")},
+                                   "flux_de_tresorerie_mensuels": {k: v for k, v in fl.items() if not k.startswith("detail")},
+                                   "bilan": {"actifs_par_categorie": bi["actifs_par_categorie"], "actif_total": bi["actif_total"],
+                                             "passif_total": bi["passif_total"], "patrimoine_net": bi["patrimoine_net"]},
+                                   "ratios": {r["nom"]: f"{r['valeur']} {r['unite']} ({r['statut']})" for r in ef["ratios"]},
+                                   "score_sante": jeu["score"], "regles_violees": (pf or {}).get("alertes_regles", [])},
+                                  ensure_ascii=False, indent=1)
+            coach = brain.coach_perso(brain.system_prompt(_yaml("profil.yml"), _yaml("structure.yml")),
+                                      synthese, ed.get("essentiel", []))
+        except Exception as e:
+            log.warning("Coach IA indisponible : %s", e)
+
+    # Historique automatique (patrimoine net, score), conservé chiffré d'une exécution à l'autre.
+    p = DATA / "moi.enc.json"
+    hist = []
+    if p.exists():
+        try:
+            hist = perso.dechiffrer(json.loads(p.read_text()), phrase).get("historique_auto", [])
+        except Exception:
+            log.warning("Ancien espace illisible (phrase secrète changée ?) : historique repart de zéro.")
+    jour = datetime.now(PARIS).date().isoformat()
+    hist = [h for h in hist if h["date"] != jour] + [{"date": jour, "patrimoine_net": ef["bilan"]["patrimoine_net"], "score": jeu["score"]}]
+    payload = {
+        "genere_le": datetime.now(PARIS).isoformat(), "etats": ef, "jeu": jeu, "coach": coach,
+        "projection": perso.projection(ef["bilan"]["patrimoine_net"], epargne),
+        "portefeuille": pf, "historique_manuel": fin.get("historique_patrimoine") or [], "historique_auto": hist[-730:],
+    }
+    _json_save(p, perso.chiffrer(payload, phrase))
+    log.info("Espace personnel chiffré publié (score %d/100, niveau %d)", jeu["score"], jeu["niveau"])
+
+
 def _demo_edition() -> dict:
     structure = _yaml("structure.yml")["rubriques"]
     return {
@@ -261,8 +348,10 @@ def _demo_edition() -> dict:
             "texte": "Texte d'exemple. " + r["consigne"][:220] + "…",
             "pourquoi": "Ici l'IA explique l'impact concret pour ton profil.",
             "source_nom": "", "source_url": "", "importance": 3, "ref": ""}]} for r in structure],
-        "agenda": [{"date": datetime.now(PARIS).date().isoformat(), "evenement": "Exemple d'événement",
-                    "pourquoi": "Pourquoi le surveiller."}],
+        "agenda": [{"date": datetime.now(PARIS).date().isoformat(), "zone": "Zone euro", "categorie": "banque_centrale",
+                    "evenement": "Exemple : réunion de politique monétaire", "attendu": "Statu quo attendu sur les taux",
+                    "scenarios": "Baisse surprise : obligations en hausse, euro en baisse.", "pourquoi": "Pourquoi le surveiller.",
+                    "source_url": ""}],
         "graph_deep_dive": {"entreprise": "Exemple SA", "symbole_stooq": "", "unite": "Md€", "source_nom": "démo", "source_url": "",
                             "annees": [{"annee": str(2021 + i), "chiffre_affaires": 100 + 12 * i, "free_cash_flow": 8 + 3 * i - (6 if i == 1 else 0)} for i in range(5)]},
         "mot_du_mentor": "Un système qui tourne sans toi ne vaut que par la qualité de ce que tu lui as appris sur toi. Remplis ton profil.",
@@ -272,11 +361,13 @@ def _demo_edition() -> dict:
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
     p = argparse.ArgumentParser()
-    p.add_argument("mode", choices=["radar", "quotidien", "hebdo", "build"])
+    p.add_argument("mode", choices=["direct", "radar", "quotidien", "hebdo", "build"])
     p.add_argument("--demo", action="store_true")
     a = p.parse_args()
     if a.mode == "build":
         render.build_site(SITE_URL)
+    elif a.mode == "direct":
+        run_direct()
     elif a.mode == "radar":
         run_radar()
     else:

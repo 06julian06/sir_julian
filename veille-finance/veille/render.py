@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import shutil
 from datetime import datetime
@@ -14,7 +15,8 @@ from markupsafe import Markup, escape
 
 PARIS = ZoneInfo("Europe/Paris")
 ROOT = Path(__file__).resolve().parent.parent
-DATA = ROOT / "data"
+# Les données vivent sur la branche « veille-data » en production (voir le workflow).
+DATA = Path(os.environ.get("VEILLE_DATA_DIR") or ROOT / "data")
 OUT = ROOT / "_site"
 
 NIVEAUX = {1: "calme", 2: "normal", 3: "vigilance", 4: "tension", 5: "crise"}
@@ -81,8 +83,13 @@ def build_site(site_url: str = "") -> Path:
     if OUT.exists():
         shutil.rmtree(OUT)
     (OUT / "editions").mkdir(parents=True)
-    for f in ("style.css", "charts.js"):
+    for f in ("style.css", "charts.js", "live.js", "moi.js"):
         shutil.copy(ROOT / "site_assets" / f, OUT / f)
+    # Données lues par le navigateur (le fil se rafraîchit sans recharger la page).
+    (OUT / "data").mkdir()
+    for f in ("live.json", "direct.json", "moi.enc.json"):
+        if (DATA / f).exists():
+            shutil.copy(DATA / f, OUT / "data" / f)
 
     eds = load_editions()
     archives = [_archive_entry(x) for x in eds]
@@ -101,6 +108,11 @@ def build_site(site_url: str = "") -> Path:
     for ed in eds:
         (OUT / ed["href"]).write_text(e.get_template("edition_page.html").render(**ctx(ed, "../")))
     (OUT / "portefeuille.html").write_text(e.get_template("portefeuille_page.html").render(**ctx(eds[0] if eds else None, "")))
+    direct = json.loads((DATA / "direct.json").read_text()) if (DATA / "direct.json").exists() else {}
+    (OUT / "direct.html").write_text(e.get_template("direct.html").render(
+        **ctx(eds[0] if eds else None, ""), direct=direct))
+    (OUT / "moi.html").write_text(e.get_template("moi.html").render(
+        **ctx(None, ""), espace_dispo=(DATA / "moi.enc.json").exists()))
     (OUT / "archives.html").write_text(e.get_template("archives.html").render(**ctx(None, "")))
     (OUT / "feed.xml").write_text(e.get_template("feed.xml").render(archives=archives, site_url=site_url))
     (OUT / ".nojekyll").write_text("")

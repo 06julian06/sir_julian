@@ -4,6 +4,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import io
+import json
 import logging
 import re
 import urllib.request
@@ -235,3 +236,60 @@ def _historique(positions: list[dict], indice: dict, jours: int = 365) -> dict |
     except Exception as e:
         log.warning("Historique du portefeuille impossible : %s", e)
         return None
+
+
+# ─── Direct : cotations intrajournalières, calendrier économique, catégorisation ──────────
+
+def fetch_quotes(marches: list[dict]) -> list[dict]:
+    """Dernier cours disponible (différé ~15 min) via Stooq, pour le bandeau « en direct »."""
+    out = []
+    for m in marches:
+        try:
+            raw = _http_get(f"https://stooq.com/q/l/?s={m['symbole']}&f=sd2t2ohlc&h&e=csv").decode()
+            r = list(csv.DictReader(io.StringIO(raw)))[0]
+            close, open_ = float(r["Close"]), float(r["Open"])
+            out.append({"nom": m["nom"], "symbole": m["symbole"], "date": r["Date"], "heure": r["Time"],
+                        "cours": close, "var_seance_pct": round((close / open_ - 1) * 100, 2) if open_ else 0,
+                        "est_taux": m["symbole"].endswith(".b")})
+        except Exception as e:
+            log.warning("Cours direct indisponible (%s) : %s", m["nom"], e)
+    return out
+
+
+IMPACT = {"High": 3, "Medium": 2, "Low": 1, "Holiday": 0}
+
+
+def fetch_calendar(url: str) -> list[dict]:
+    """Calendrier économique de la semaine avec les prévisions du consensus (« attendu ») et la
+    valeur précédente. Source : flux JSON public de ForexFactory (faireconomy.media)."""
+    try:
+        data = json.loads(_http_get(url))
+    except Exception as e:
+        log.warning("Calendrier économique indisponible : %s", e)
+        return []
+    out = []
+    for ev in data:
+        out.append({"date": ev.get("date"), "pays": ev.get("country"), "evenement": ev.get("title"),
+                    "impact": IMPACT.get(ev.get("impact"), 0), "attendu": ev.get("forecast") or "",
+                    "precedent": ev.get("previous") or "", "reel": ev.get("actual") or ""})
+    return sorted(out, key=lambda e: e["date"] or "")
+
+
+# Mots-clés → rubrique du fil en direct (la catégorie du flux sert de valeur par défaut).
+REGLES_CATEGORIES = [
+    ("elections", r"élection|electoral|présidentielle|législatives|scrutin|sondage|primaire|referendum|référendum|candidat|election|vote "),
+    ("banques_centrales", r"\bBCE\b|\bFed\b|banque centrale|taux directeur|Lagarde|Powell|\bECB\b|FOMC|Bank of Japan|BoE|politique monétaire"),
+    ("geopolitique", r"guerre|sanction|OTAN|NATO|conflit|Ukraine|Russie|Chine|Taïwan|Israël|Iran|tarif douanier|droits de douane|sommet|G7|G20|diplomat"),
+    ("crypto", r"bitcoin|crypto|ethereum|stablecoin|blockchain"),
+    ("regulation", r"\bAMF\b|\bACPR\b|ESMA|MiCA|DORA|régulat|regulat|amende|sanctionné|conformité|supervision|Autorité"),
+    ("entreprises", r"résultats|chiffre d'affaires|bénéfice|earnings|rachat|fusion|acquisition|OPA|introduction en bourse|IPO|dividende"),
+    ("macro", r"inflation|PIB|GDP|chômage|emploi|croissance|récession|CPI|déficit|dette publique|budget"),
+]
+
+
+def categoriser(item: dict) -> str:
+    texte = f"{item['titre']} {item.get('resume', '')}"
+    for cat, motif in REGLES_CATEGORIES:
+        if re.search(motif, texte, re.I):
+            return cat
+    return item.get("categorie") or "marches"

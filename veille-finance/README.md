@@ -5,11 +5,42 @@ la fait analyser par Claude selon **ton profil**, publie un site (GitHub Pages) 
 t'envoie une newsletter. Zéro serveur à gérer.
 
 ```
- toutes les 3 h ─► RADAR      flux RSS ─► tri IA (importance 1-5) ─► fil continu du site
-                              importance 5 ─► e-mail d'alerte immédiat (max 1 / 6 h)
+ toutes les 15 min ─► DIRECT  21 flux mondiaux (Google Actualités, BBC, Le Monde, régulateurs…)
+                              + cours en différé + calendrier économique (attendus) ─► page « Direct »
+ toutes les heures ─► RADAR   direct + tri IA (importance, « pour toi ») ─► alerte e-mail si majeur
  chaque matin  ─► QUOTIDIEN  RSS + cotations + recherche web IA ─► édition structurée ─► site + newsletter
  le dimanche   ─► HEBDO      bilan des 7 éditions + recherche ─► édition de fond ─► site + newsletter
 ```
+
+## Les pages du site
+
+| Page | Mise à jour | Contenu |
+|---|---|---|
+| **Direct** | 15 min (+ rafraîchissement auto du navigateur toutes les 2 min) | Fil mondial filtrable (Monde, Élections, Banques centrales, Macro, Marchés, Entreprises, Régulation, Crypto), recherche, bandeau de cours, **calendrier économique avec attendu / précédent / réel**, **grands rendez-vous** (élections, BCE, Fed…) avec ce qu'attend le marché et les scénarios |
+| **Édition** | chaque matin + dimanche | L'émission du jour (structure ci-dessous) |
+| **Portefeuille** | chaque matin | Tableau de bord visuel (pourcentages seulement : la page est publique) |
+| **Mon espace** | chaque matin | **Privé et chiffré** — voir ci-dessous |
+
+## Mon espace (privé)
+
+Le dépôt et le site sont **publics** : ton espace est donc chiffré (AES-256-GCM, clé dérivée de ta phrase secrète
+par PBKDF2-SHA256, 600 000 itérations). Le fichier publié est illisible sans la phrase ; le déchiffrement se fait
+dans ton navigateur, rien n'est envoyé nulle part. Tes chiffres viennent du secret `FINANCES_YAML`
+(modèle : `config/finances.exemple.yml`), jamais d'un fichier versionné.
+
+- **Gamification** : niveau (1 à 7, d'« Apprenti » à « Indépendant », selon ta progression vers l'indépendance
+  financière), barre d'XP, **score de santé /100** sur 5 piliers (épargne, sécurité, dette, investissement,
+  discipline), 9 badges, série de mois en hausse, missions à cocher (calculées + proposées par le coach IA).
+- **Compte de résultat** : revenus d'activité / passifs, charges fixes / variables, excédent brut (EBE),
+  charges financières, résultat net (= capacité d'épargne).
+- **Tableau des flux de trésorerie** : flux opérationnels, de financement, free cash flow, flux d'investissement,
+  variation de trésorerie — en cascade.
+- **Bilan** : actif par catégorie (portefeuille valorisé au marché automatiquement), dettes, capitaux propres
+  (patrimoine net), équation du bilan.
+- **Ratios** avec seuils et statut : taux d'épargne, réserve de liquidité, taux d'effort (seuil HCSF 35 %),
+  dettes ÷ actifs, couverture par revenus passifs, part investie, progression vers le nombre FIRE.
+- **Trajectoire** : projection à 15 ans (2 / 4 / 6 % réels) + historique réel relevé chaque matin.
+- Chaque terme financier a sa définition au survol.
 
 ## Ce que contient chaque édition
 
@@ -76,20 +107,26 @@ commentaire et ferme l'issue. Seules les questions du propriétaire et des colla
    ⚠️ Le site de veille devient la racine du Pages du dépôt ; le jeu existant est republié sous `/jeu/`.
 5. **Variable** `SITE_URL` = l'URL Pages (ex. `https://<compte>.github.io/sir_julian/`) — utilisée pour les liens de la newsletter et le flux RSS.
 6. **Remplir `config/profil.yml`** et ton portefeuille (fichier ou secret `PORTEFEUILLE_YAML`). C'est ce qui rend la veille personnelle. Tant que les champs `A_COMPLETER` restent vides, l'IA travaille sur des hypothèses.
-7. *Actions → Veille Finance → Run workflow* (mode `quotidien`) pour la première édition.
+7. **Mon espace** : secrets `FINANCES_YAML` (contenu de ton `finances.exemple.yml` rempli) et `ESPACE_PASSPHRASE`
+   (une phrase longue et unique : si tu la perds, l'historique chiffré est perdu ; si tu la changes, il repart de zéro).
+8. *Actions → Veille Finance → Run workflow* (mode `quotidien`) pour la première édition.
+
+Les données (éditions, fil, espace chiffré) sont stockées sur la branche **`veille-data`**, réécrite à chaque
+passage : l'historique du code reste propre malgré les 96 mises à jour quotidiennes.
 
 ## Coûts (ordre de grandeur, tarifs Claude Opus 5.5 : 4 $ / 20 $ par million de tokens)
 
 | Tâche | Fréquence | Estimation |
 |---|---|---|
-| Édition du jour (recherche web + rédaction) | 6 / semaine | ~0,60 à 1,20 $ |
+| Direct (collecte, sans IA) | 72 / jour | 0 $ |
+| Radar (tri IA du fil) | 24 / jour | ~0,03 à 0,08 $ chacun |
+| Édition du jour + coach personnel | 6 / semaine | ~0,70 à 1,30 $ |
 | Édition hebdo | 1 / semaine | ~1 à 2 $ |
-| Radar (tri) | 8 / jour | ~0,03 à 0,08 $ |
-| **Total** | | **≈ 30 à 50 $ / mois** |
+| **Total** | | **≈ 50 à 80 $ / mois** |
 
-Leviers si c'est trop : variable `VEILLE_MODEL_RADAR` (modèle moins cher pour le tri seul, ex. `claude-haiku-5-5`), `VEILLE_MODEL` pour tout le reste, ou espacer le cron du radar. Fixe une limite de dépense mensuelle dans la console Anthropic.
-
-GitHub Actions est gratuit sur un dépôt public (2 000 min/mois en privé — ce système en consomme ≈ 300 à 500).
+Le levier principal est le radar horaire : la variable `VEILLE_MODEL_RADAR=claude-haiku-5-5` le ramène à quelques
+dollars par mois (tri moins fin). Fixe une limite de dépense mensuelle dans la console Anthropic.
+GitHub Actions et Pages sont gratuits sur un dépôt public.
 
 ## Personnaliser
 

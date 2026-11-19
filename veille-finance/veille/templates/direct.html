@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}En direct — Veille Finance{% endblock %}
+{% block content %}
+<div class="direct-head">
+  <div><p class="kicker"><span class="live"></span> En direct · monde entier</p><h1>Tout ce qui bouge, maintenant</h1></div>
+  <p class="note" id="maj">Mise à jour…</p>
+</div>
+<div class="ticker" id="ticker" aria-label="Cours en différé"></div>
+
+<div class="grid">
+  <section class="card">
+    <h2>Le fil</h2>
+    <div class="filtres" id="filtres" role="toolbar" aria-label="Filtrer le fil"></div>
+    <input class="recherche" id="recherche" type="search" placeholder="Rechercher (ex : Fed, élection, Nvidia…)" aria-label="Rechercher dans le fil">
+    <div id="fil" aria-live="polite"></div>
+    <button class="plus" id="plus" type="button">Afficher plus</button>
+  </section>
+  <aside>
+    <section class="card">
+      <h2>Grands rendez-vous — ce qu'attend le marché</h2>
+      {% for a in (ed.agenda if ed else []) %}
+      <div class="rdv cat-{{ a.categorie or 'autre' }}">
+        <div class="rdv-h"><span class="rdv-d">{{ a.date }}</span><span class="rdv-c">{{ {'election':'Élection','banque_centrale':'Banque centrale','macro':'Macro','resultats':'Résultats','geopolitique':'Géopolitique','regulation':'Régulation'}.get(a.categorie, 'Événement') }}{% if a.zone %} · {{ a.zone }}{% endif %}</span></div>
+        <strong>{{ a.evenement }}</strong>
+        {% if a.attendu %}<p><b>Attendu :</b> {{ a.attendu }}</p>{% endif %}
+        {% if a.scenarios %}<p><b>Scénarios :</b> {{ a.scenarios }}</p>{% endif %}
+        {% if a.pourquoi %}<p class="muted">{{ a.pourquoi }}</p>{% endif %}
+        {% if a.source_url %}<p class="src"><a href="{{ a.source_url }}" target="_blank" rel="noopener">Source</a></p>{% endif %}
+      </div>
+      {% else %}<p class="muted">Publiés avec l'édition du matin.</p>{% endfor %}
+      <p class="note">Mis à jour chaque matin par l'IA (recherche web : sondages, consensus, marchés à terme).</p>
+    </section>
+    <section class="card">
+      <h2>Calendrier économique de la semaine</h2>
+      <label class="note"><input type="checkbox" id="cal-fort" checked> Impact fort et moyen seulement</label>
+      <div class="tscroll"><table class="cal" id="cal"><thead><tr><th>Heure (Paris)</th><th>Zone</th><th>Indicateur</th><th>Attendu</th><th>Précédent</th><th>Réel</th></tr></thead><tbody></tbody></table></div>
+      <p class="note">« Attendu » = prévision du consensus des économistes. L'écart entre le réel et l'attendu fait bouger les marchés, pas le chiffre lui-même.</p>
+    </section>
+  </aside>
+</div>
+{% endblock %}
+{% block scripts %}<script src="live.js" defer></script>{% endblock %}

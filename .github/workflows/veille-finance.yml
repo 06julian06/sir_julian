@@ -4,7 +4,8 @@ name: Veille Finance
 
 on:
   schedule:
-    - cron: "17 */3 * * *"   # radar : toutes les 3 h
+    - cron: "4,19,34 * * * *"  # direct : fil mondial, cours, calendrier (sans IA)
+    - cron: "49 * * * *"       # radar : direct + tri IA + alerte (toutes les heures)
     - cron: "43 5 * * 1-6"   # édition du jour : ~6h45 Paris (hiver), lundi→samedi
     - cron: "13 7 * * 0"     # édition hebdo : dimanche ~8h15 Paris (hiver)
   workflow_dispatch:
@@ -12,15 +13,16 @@ on:
       mode:
         description: "Mode à lancer"
         type: choice
-        options: [quotidien, radar, hebdo, build]
+        options: [quotidien, direct, radar, hebdo, build]
         default: quotidien
 
 permissions:
-  contents: write   # pour sauvegarder les éditions dans le dépôt (historique = archives)
+  contents: write   # pour sauvegarder les données sur la branche « veille-data »
   issues: write     # pour répondre aux questions posées en Issues (label « question »)
   pages: write
   id-token: write
 
+# Une seule exécution à la fois : toutes écrivent sur la même branche de données.
 concurrency:
   group: veille-finance
   cancel-in-progress: false
@@ -46,11 +48,27 @@ jobs:
 
       - run: pip install -r requirements.txt
 
+      # Les données (éditions, fil, espace chiffré) vivent sur la branche « veille-data » :
+      # mise à jour toutes les 15 min sans polluer l'historique du code. Un seul commit, réécrit à
+      # chaque passage (les données elles-mêmes contiennent l'historique utile).
+      - name: Récupérer les données
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          URL="https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          if git ls-remote --exit-code --heads "$URL" veille-data >/dev/null 2>&1; then
+            git clone -q --depth 1 --branch veille-data "$URL" "$GITHUB_WORKSPACE/veille-data"
+          else
+            mkdir -p "$GITHUB_WORKSPACE/veille-data"
+            cp -r data/. "$GITHUB_WORKSPACE/veille-data/" 2>/dev/null || true
+          fi
+
       - name: Choisir le mode
         id: mode
         run: |
           case "${{ github.event.schedule }}" in
-            "17 */3 * * *") echo "mode=radar" >> "$GITHUB_OUTPUT" ;;
+            "4,19,34 * * * *") echo "mode=direct" >> "$GITHUB_OUTPUT" ;;
+            "49 * * * *")   echo "mode=radar" >> "$GITHUB_OUTPUT" ;;
             "43 5 * * 1-6") echo "mode=quotidien" >> "$GITHUB_OUTPUT" ;;
             "13 7 * * 0")   echo "mode=hebdo" >> "$GITHUB_OUTPUT" ;;
             *)              echo "mode=${{ inputs.mode || 'quotidien' }}" >> "$GITHUB_OUTPUT" ;;
@@ -61,6 +79,9 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PORTEFEUILLE_YAML: ${{ secrets.PORTEFEUILLE_YAML }}
+          FINANCES_YAML: ${{ secrets.FINANCES_YAML }}
+          ESPACE_PASSPHRASE: ${{ secrets.ESPACE_PASSPHRASE }}
+          VEILLE_DATA_DIR: ${{ github.workspace }}/veille-data
           SITE_URL: ${{ vars.SITE_URL }}
           VEILLE_MODEL: ${{ vars.VEILLE_MODEL }}
           VEILLE_MODEL_RADAR: ${{ vars.VEILLE_MODEL_RADAR }}
@@ -76,17 +97,17 @@ jobs:
         run: python -m veille.main ${{ steps.mode.outputs.mode }}
 
       - name: Sauvegarder les données
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        working-directory: veille-data
         run: |
+          rm -rf .git
+          git init -q -b veille-data
           git config user.name "veille-finance-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data
-          if git diff --cached --quiet; then echo "Rien à sauvegarder"; exit 0; fi
-          git commit -m "veille: ${{ steps.mode.outputs.mode }} $(date -u +%Y-%m-%dT%H:%MZ)"
-          for i in 1 2 3 4; do
-            git pull --rebase && git push && exit 0
-            sleep $((i * 5))
-          done
-          exit 1
+          git add -A
+          git commit -q -m "données : ${{ steps.mode.outputs.mode }} $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push -q -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" veille-data
 
       - name: Joindre le jeu existant au site (servi sous /jeu/)
         run: |

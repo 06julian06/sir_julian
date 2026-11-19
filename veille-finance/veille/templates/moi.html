@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Mon espace — Veille Finance{% endblock %}
+{% block content %}
+<div id="verrou" class="verrou card">
+  <p class="kicker">Espace privé · chiffré</p>
+  <h1>Mon espace</h1>
+  {% if espace_dispo %}
+  <p>Tes données sont chiffrées (AES-256). Seule ta phrase secrète les ouvre, directement dans ton navigateur : rien n'est envoyé nulle part.</p>
+  <form id="ouvrir" autocomplete="off">
+    <input type="password" id="phrase" placeholder="Phrase secrète" aria-label="Phrase secrète" required autocomplete="current-password">
+    <label class="note"><input type="checkbox" id="retenir"> Se souvenir sur cet appareil</label>
+    <button type="submit">Ouvrir</button>
+    <p class="note" id="msg" role="alert"></p>
+  </form>
+  {% else %}
+  <p>Ton espace n'est pas encore configuré. Il faut deux secrets GitHub : <code>FINANCES_YAML</code> (tes chiffres, modèle dans <code>config/finances.exemple.yml</code>) et <code>ESPACE_PASSPHRASE</code> (ta phrase secrète). Il apparaîtra après la prochaine édition du matin.</p>
+  {% endif %}
+</div>
+<div id="espace" hidden></div>
+{% endblock %}
+{% block scripts %}<script src="moi.js" defer></script>{% endblock %}

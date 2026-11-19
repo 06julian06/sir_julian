@@ -15,6 +15,21 @@ flux:
   - {nom: "Capital — Placements", url: "https://www.capital.fr/rss/placement", categorie: epargne}
   - {nom: "Investing.com FR — Actualités", url: "https://fr.investing.com/rss/news.rss", categorie: marches}
 
+  # Monde, géopolitique, élections — couverture mondiale
+  - {nom: "Google Actualités — Monde", url: "https://news.google.com/rss/headlines/section/topic/WORLD?hl=fr&gl=FR&ceid=FR:fr", categorie: geopolitique}
+  - {nom: "Google Actualités — Économie", url: "https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=fr&gl=FR&ceid=FR:fr", categorie: macro}
+  - {nom: "Google Actualités — Élections", url: "https://news.google.com/rss/search?q=%C3%A9lection+pr%C3%A9sidentielle+OR+l%C3%A9gislatives+when:2d&hl=fr&gl=FR&ceid=FR:fr", categorie: elections}
+  - {nom: "Google Actualités — Banques centrales", url: "https://news.google.com/rss/search?q=BCE+OR+Fed+taux+directeurs+when:2d&hl=fr&gl=FR&ceid=FR:fr", categorie: banques_centrales}
+  - {nom: "Google News — Markets (EN)", url: "https://news.google.com/rss/search?q=stock+market+OR+bond+yields+when:1d&hl=en-US&gl=US&ceid=US:en", categorie: marches}
+  - {nom: "Le Monde — International", url: "https://www.lemonde.fr/international/rss_full.xml", categorie: geopolitique}
+  - {nom: "France 24 — Monde", url: "https://www.france24.com/fr/rss", categorie: geopolitique}
+  - {nom: "BBC — World", url: "https://feeds.bbci.co.uk/news/world/rss.xml", categorie: geopolitique}
+  - {nom: "BBC — Business", url: "https://feeds.bbci.co.uk/news/business/rss.xml", categorie: macro}
+  - {nom: "CoinDesk", url: "https://www.coindesk.com/arc/outboundfeeds/rss/", categorie: crypto}
+
+# Calendrier économique de la semaine (prévisions du consensus = « attendus »).
+calendrier: "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+
 # Indicateurs du tableau de bord (source : Stooq, gratuit, sans clé).
 # symbole = code Stooq. Vérifie un code sur https://stooq.com si tu en ajoutes.
 marches:

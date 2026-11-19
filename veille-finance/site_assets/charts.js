@@ -142,8 +142,9 @@
       track.appendChild(fill);
       if (it.limite) { const lim = h("span", "viz-m-l"); lim.style.left = (it.limite / max) * 100 + "%"; track.appendChild(lim); }
       row.appendChild(track);
-      row.appendChild(h("span", "viz-m-v", fr(it.v) + " %" + (it.alerte ? " ⚠" : "")));
-      row.addEventListener("pointermove", (ev) => showTip(`<b>${it.nom}</b><br>${cfg.libelle || "Poids"} : <b>${fr(it.v)} %</b>${it.limite ? `<br>Limite : ${fr(it.limite, 0)} %${it.alerte ? " — <b>dépassée</b>" : ""}` : ""}${it.detail ? "<br>" + it.detail : ""}`, ev.clientX, ev.clientY));
+      const u = cfg.unite ?? " %";
+      row.appendChild(h("span", "viz-m-v", fr(it.v) + u + (it.alerte ? " ⚠" : "")));
+      row.addEventListener("pointermove", (ev) => showTip(`<b>${it.nom}</b><br>${cfg.libelle || "Poids"} : <b>${fr(it.v)}${u}</b>${it.limite ? `<br>Limite : ${fr(it.limite, 0)} %${it.alerte ? " — <b>dépassée</b>" : ""}` : ""}${it.detail ? "<br>" + it.detail : ""}`, ev.clientX, ev.clientY));
       row.addEventListener("pointerleave", hideTip);
       list.appendChild(row);
     });
@@ -234,11 +235,54 @@
     el("path", { d, class: "viz-spark-l " + (v[v.length - 1] >= v[0] ? "pos" : "neg") }, svg);
   }
 
-  const KINDS = { line, bars, seg, diverge, groupbars, spark };
-  document.querySelectorAll("[data-chart]").forEach((root) => {
-    const s = root.querySelector('script[type="application/json"]');
-    if (!s) return;
-    try { KINDS[root.dataset.chart](root, JSON.parse(s.textContent)); }
-    catch (e) { root.insertAdjacentHTML("beforeend", '<p class="note">Graphique indisponible.</p>'); console.error(e); }
-  });
+  /* ── Cascade (flux de trésorerie : du revenu à la variation de trésorerie) ─ */
+  function waterfall(root, cfg) {
+    const box = h("div", "viz-box"); root.appendChild(box);
+    function draw() {
+      const W = Math.max(280, box.clientWidth), H = 260, m = { l: 52, r: 8, t: 18, b: 44 };
+      let cum = 0;
+      const steps = cfg.items.map((it) => {
+        if (it.total) { const s = { ...it, a: 0, b: cum }; return s; }
+        const s = { ...it, a: cum, b: cum + it.v }; cum += it.v; return s;
+      });
+      const vals = steps.flatMap((s) => [s.a, s.b]);
+      const lo = Math.min(0, ...vals), hi = Math.max(0, ...vals) * 1.1 || 1;
+      const Y = (v) => m.t + (1 - (v - lo) / (hi - lo)) * (H - m.t - m.b);
+      const n = steps.length, gw = (W - m.l - m.r) / n, bw = Math.min(46, gw * 0.62);
+      box.innerHTML = "";
+      const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: "img", "aria-label": cfg.titre || "cascade" }, box);
+      for (let k = 0; k <= 4; k++) {
+        const v = lo + ((hi - lo) * k) / 4, y = Y(v);
+        el("line", { x1: m.l, x2: W - m.r, y1: y, y2: y, class: "viz-grid" }, svg);
+        el("text", { x: m.l - 6, y: y + 4, "text-anchor": "end", class: "viz-ax" }, svg).textContent = fr(v, 0);
+      }
+      el("line", { x1: m.l, x2: W - m.r, y1: Y(0), y2: Y(0), class: "viz-ref" }, svg);
+      steps.forEach((s, i) => {
+        const x = m.l + gw * i + (gw - bw) / 2, y1 = Y(Math.max(s.a, s.b)), y2 = Y(Math.min(s.a, s.b));
+        const cls = s.total ? "tot" : s.v >= 0 ? "pos" : "neg";
+        const r = el("rect", { x, y: y1, width: bw, height: Math.max(1.5, y2 - y1), rx: 3, class: "viz-wf " + cls }, svg);
+        if (i < n - 1 && !steps[i + 1].total) el("line", { x1: x + bw, x2: x + gw, y1: Y(s.b), y2: Y(s.b), class: "viz-wf-link" }, svg);
+        el("text", { x: x + bw / 2, y: y1 - 5, "text-anchor": "middle", class: "viz-lab" }, svg).textContent = (s.total ? "" : s.v > 0 ? "+" : "") + fr(s.total ? s.b : s.v, 0);
+        const lab = el("text", { x: x + bw / 2, y: H - m.b + 16, "text-anchor": "middle", class: "viz-ax" }, svg);
+        s.nom.split("\n").forEach((part, k) => { el("tspan", { x: x + bw / 2, dy: k ? 12 : 0 }, lab).textContent = part; });
+        r.addEventListener("pointermove", (ev) => showTip(`<b>${s.nom.replace("\n", " ")}</b><br>${s.total ? "Solde" : "Flux"} : <b>${sgn(s.total ? s.b : s.v, 0)} €</b>${s.def ? "<br>" + s.def : ""}`, ev.clientX, ev.clientY));
+        r.addEventListener("pointerleave", hideTip);
+      });
+    }
+    draw();
+    let t; new ResizeObserver(() => { clearTimeout(t); t = setTimeout(draw, 80); }).observe(box);
+  }
+
+  const KINDS = { line, bars, seg, diverge, groupbars, spark, waterfall };
+  function render(scope) {
+    scope.querySelectorAll("[data-chart]:not([data-ok])").forEach((root) => {
+      root.setAttribute("data-ok", "");
+      const s = root.querySelector('script[type="application/json"]');
+      if (!s) return;
+      try { KINDS[root.dataset.chart](root, JSON.parse(s.textContent)); }
+      catch (e) { root.insertAdjacentHTML("beforeend", '<p class="note">Graphique indisponible.</p>'); console.error(e); }
+    });
+  }
+  window.VeilleCharts = { render, showTip, hideTip };
+  render(document);
 })();
