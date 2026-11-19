@@ -34,6 +34,19 @@ adaptée à toi et complétée de trois rubriques orientées carrière. Tout est
 Les calculs (valeur, poids, plus-values, conversion USD→EUR, règle des 5 %) sont faits en Python, jamais par l'IA.
 Le site public n'affiche que des pourcentages ; les montants en euros ne vont que dans la newsletter.
 
+### Le tableau de bord visuel (page « Portefeuille » du site)
+- **Indicateurs clés** : performance depuis tes achats, dernière séance, écart sur 1 an face à ton indice de référence.
+- **Courbe « ton portefeuille vs le marché »** (base 100, périodes 1M/3M/6M/1A, infobulle au survol). À composition
+  actuelle constante : ce qu'aurait fait ton portefeuille d'aujourd'hui, pas l'historique réel de tes opérations.
+- **Poids de chaque ligne** avec la limite des 5 % matérialisée ; dépassements en rouge.
+- **Répartitions** par enveloppe, type, zone et secteur (renseigne `zone` / `secteur` dans tes positions).
+- **Contributions** : quelles lignes ont fait bouger le portefeuille à la dernière séance.
+- **Deep Dive** : chiffre d'affaires et free cash flow sur 4-5 ans (masqués si l'IA ne peut pas citer une source vérifiée)
+  + cours sur 1 an. **Marchés** : mini-courbe 60 séances sous chaque indicateur.
+
+Graphiques en SVG natif, sans bibliothèque externe, lisibles en mode clair et sombre, sur mobile. Palette contrôlée
+pour les daltonismes. La newsletter contient une version simplifiée (barres de poids) et un lien vers le tableau de bord.
+
 ### Poser une question
 *Issues → New issue → « Question pour la veille »*. Elle est traitée dans l'édition suivante, puis l'IA répond en
 commentaire et ferme l'issue. Seules les questions du propriétaire et des collaborateurs du dépôt sont prises en compte

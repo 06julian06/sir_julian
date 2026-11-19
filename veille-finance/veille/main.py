@@ -169,9 +169,16 @@ def run_edition(mode: str, demo: bool = False) -> None:
         urls |= {i["url"] for i in items} | {r["url"] for r in radar}
         ed = brain.write_edition(system, contexte, notes, mode)
         n = _valider_sources(ed, urls)
+        g = ed.get("graph_deep_dive") or {}
+        if g.get("annees") and g.get("source_url") not in urls:
+            log.warning("Chiffres du Deep Dive non sourcés : graphique retiré")
+            g["annees"] = []
         log.info("Édition rédigée (%d lien(s) non vérifié(s) retiré(s))", n)
 
     now = datetime.now(PARIS)
+    g = ed.get("graph_deep_dive") or {}
+    if g.get("symbole_stooq"):
+        g["cours"] = collect.price_series(g["symbole_stooq"])
     ed.update(date=now.date().isoformat(), mode=mode, genere_le=now.isoformat(), marches=marches,
               portefeuille=_pf_public(pf))
     slug = f"{ed['date']}-{mode}"
@@ -256,6 +263,8 @@ def _demo_edition() -> dict:
             "source_nom": "", "source_url": "", "importance": 3, "ref": ""}]} for r in structure],
         "agenda": [{"date": datetime.now(PARIS).date().isoformat(), "evenement": "Exemple d'événement",
                     "pourquoi": "Pourquoi le surveiller."}],
+        "graph_deep_dive": {"entreprise": "Exemple SA", "symbole_stooq": "", "unite": "Md€", "source_nom": "démo", "source_url": "",
+                            "annees": [{"annee": str(2021 + i), "chiffre_affaires": 100 + 12 * i, "free_cash_flow": 8 + 3 * i - (6 if i == 1 else 0)} for i in range(5)]},
         "mot_du_mentor": "Un système qui tourne sans toi ne vaut que par la qualité de ce que tu lui as appris sur toi. Remplis ton profil.",
     }
 

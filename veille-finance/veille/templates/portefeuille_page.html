@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Portefeuille — Veille Finance{% endblock %}
+{% block content %}
+<p class="kicker">Tableau de bord · données au {{ ed.date_label if ed else '' }}</p>
+<h1>Ton portefeuille</h1>
+{% if ed and ed.portefeuille %}{% set pf = ed.portefeuille %}
+<section class="card">{% include "_pf_dashboard.html" %}</section>
+{% set r = (ed.rubriques | selectattr("id", "equalto", "portefeuille") | list) %}
+{% if r %}<section class="card rub"><h2>Le commentaire du jour</h2>
+{% for it in r[0]['items'] %}<div class="item"><h3>{{ it.titre }}</h3><div class="txt">{{ it.texte | md }}</div></div>{% endfor %}
+</section>{% endif %}
+{% else %}
+<section class="card"><p>Aucun portefeuille configuré. Renseigne tes lignes dans <code>config/portefeuille.yml</code> ou dans le secret <code>PORTEFEUILLE_YAML</code> : ce tableau de bord se remplira à la prochaine édition.</p></section>
+{% endif %}
+{% endblock %}

@@ -63,12 +63,30 @@ def fetch_feeds(flux: list[dict], max_age_hours: int = 48, per_feed: int = 25) -
     return out
 
 
+_CACHE: dict[str, list[dict]] = {}
+
+
 def _stooq_history(sym: str) -> list[dict]:
+    if sym in _CACHE:
+        return _CACHE[sym]
     raw = _http_get(f"https://stooq.com/q/d/l/?s={sym}&i=d").decode()
     data = list(csv.DictReader(io.StringIO(raw)))
     if len(data) < 2 or "Close" not in data[-1]:
         raise ValueError(f"pas de données pour {sym}")
+    _CACHE[sym] = data
     return data
+
+
+def price_series(sym: str, jours: int = 365) -> dict | None:
+    """Série de clôtures sur ~1 an (pour les graphiques)."""
+    try:
+        data = _stooq_history(sym)
+    except Exception as e:
+        log.warning("Historique indisponible (%s) : %s", sym, e)
+        return None
+    debut = (datetime.now(timezone.utc) - timedelta(days=jours)).date().isoformat()
+    pts = [(r["Date"], float(r["Close"])) for r in data if r["Date"] >= debut]
+    return {"dates": [d for d, _ in pts], "valeurs": [round(v, 4) for _, v in pts]}
 
 
 def fetch_markets(marches: list[dict]) -> list[dict]:
@@ -92,6 +110,8 @@ def fetch_markets(marches: list[dict]) -> list[dict]:
                 "est_taux": sym.endswith(".b"),
                 # Pour un taux, la variation utile est en points de base, pas en %.
                 "var_jour_pb": round((close - pclose) * 100, 1),
+                # 60 dernières clôtures pour la mini-courbe du tableau de bord.
+                "spark": [round(float(r["Close"]), 4) for r in data[-60:]],
             })
         except Exception as e:
             log.warning("Cotation indisponible (%s) : %s", m["nom"], e)
@@ -107,7 +127,7 @@ def fetch_portfolio(conf: dict) -> dict | None:
     eurusd = None
     lignes, total = [], float(conf.get("liquidites") or 0)
     for p in positions:
-        l = {k: p.get(k) for k in ("nom", "symbole", "type", "enveloppe")}
+        l = {k: p.get(k) for k in ("nom", "symbole", "type", "enveloppe", "zone", "secteur")}
         l["devise"] = p.get("devise", "EUR")
         try:
             data = _stooq_history(p["symbole"])
@@ -134,6 +154,11 @@ def fetch_portfolio(conf: dict) -> dict | None:
     alertes = [f"{l['nom']} pèse {l['poids_pct']} % (règle : 5 % max par action)"
                for l in ok if l.get("type") == "action" and l["poids_pct"] > 5]
     return {
+        "historique": _historique(positions, conf.get("indice_reference") or {}),
+        "repartition": _repartition(ok, float(conf.get("liquidites") or 0), total),
+        "contrib_jour": sorted(
+            [{"nom": l["nom"], "pts": round(l["poids_pct"] * l["var_jour_pct"] / 100, 3)} for l in ok],
+            key=lambda c: c["pts"], reverse=True),
         "lignes": sorted(lignes, key=lambda l: l.get("valeur_eur", 0), reverse=True),
         "total_eur": round(total, 2),
         "liquidites_eur": float(conf.get("liquidites") or 0),
@@ -145,3 +170,68 @@ def fetch_portfolio(conf: dict) -> dict | None:
         "afficher_montants_sur_site": bool(conf.get("afficher_montants_sur_site")),
         "note": "Performances en devise de cotation ; valeurs converties en EUR au dernier cours EUR/USD.",
     }
+
+
+def _repartition(ok: list[dict], liquidites: float, total: float) -> dict:
+    """Poids agrégés par enveloppe, type, zone et secteur (en % du total, liquidités incluses)."""
+    out = {}
+    for axe in ("enveloppe", "type", "zone", "secteur"):
+        agg: dict[str, float] = {}
+        for l in ok:
+            k = l.get(axe) or "Non renseigné"
+            agg[k] = agg.get(k, 0) + l["valeur_eur"]
+        if liquidites and axe in ("enveloppe", "type"):
+            agg["Liquidités"] = agg.get("Liquidités", 0) + liquidites
+        if set(agg) <= {"Non renseigné", "Liquidités"}:
+            continue  # axe non renseigné dans la config : pas de graphique
+        out[axe] = sorted(({"nom": k, "pct": round(v / total * 100, 1)} for k, v in agg.items() if total),
+                          key=lambda x: x["pct"], reverse=True)
+    return out
+
+
+def _historique(positions: list[dict], indice: dict, jours: int = 365) -> dict | None:
+    """Performance base 100 sur 1 an À COMPOSITION ACTUELLE CONSTANTE, comparée à un indice.
+    Ce n'est pas ta performance réelle passée (tes achats/ventes ne sont pas connus) : c'est
+    « ce qu'aurait fait ton portefeuille actuel », la façon standard de juger une allocation."""
+    try:
+        fx = {r["Date"]: float(r["Close"]) for r in _stooq_history("eurusd")} \
+            if any(p.get("devise") == "USD" for p in positions) else {}
+        series = []
+        for p in positions:
+            try:
+                h = {r["Date"]: float(r["Close"]) for r in _stooq_history(p["symbole"])}
+            except Exception:
+                continue
+            series.append((float(p["quantite"]), p.get("devise", "EUR"), h))
+        if not series:
+            return None
+        debut = (datetime.now(timezone.utc) - timedelta(days=jours)).date().isoformat()
+        dates = sorted(set.intersection(*(set(h) for _, _, h in series)))
+        dates = [d for d in dates if d >= debut]
+        valeurs, last_fx = [], None
+        for d in dates:
+            if fx:
+                last_fx = fx.get(d, last_fx)
+                if last_fx is None:
+                    continue
+            valeurs.append((d, sum(q * h[d] / (last_fx if dev == "USD" else 1) for q, dev, h in series)))
+        if len(valeurs) < 10:
+            return None
+        base = valeurs[0][1]
+        out = {"dates": [d for d, _ in valeurs], "portefeuille": [round(v / base * 100, 2) for _, v in valeurs]}
+        if indice.get("symbole"):
+            try:
+                ih = {r["Date"]: float(r["Close"]) for r in _stooq_history(indice["symbole"])}
+                pts, lastv = [], None
+                for d in out["dates"]:
+                    lastv = ih.get(d, lastv)
+                    pts.append(lastv)
+                ib = next(v for v in pts if v is not None)
+                out["indice"] = [round(v / ib * 100, 2) if v is not None else None for v in pts]
+                out["indice_nom"] = indice.get("nom", indice["symbole"])
+            except Exception as e:
+                log.warning("Indice de référence indisponible : %s", e)
+        return out
+    except Exception as e:
+        log.warning("Historique du portefeuille impossible : %s", e)
+        return None

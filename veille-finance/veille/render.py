@@ -47,6 +47,13 @@ def env() -> Environment:
     e = Environment(loader=FileSystemLoader(Path(__file__).parent / "templates"),
                     autoescape=select_autoescape(["html", "xml"]))
     e.filters["md"] = md
+    # Adaptateurs données → format attendu par charts.js
+    e.filters["pf_bar"] = lambda l: {"nom": l["nom"], "v": l["poids_pct"],
+                                     "limite": 5 if l.get("type") == "action" else None,
+                                     "alerte": l.get("type") == "action" and l["poids_pct"] > 5,
+                                     "detail": f"Depuis ton prix de revient : {l['perf_pct']:+.1f} %"}
+    e.filters["pf_seg"] = lambda i: {"nom": i["nom"][:1].upper() + i["nom"][1:], "v": i["pct"]}
+    e.filters["pf_contrib"] = lambda c: {"nom": c["nom"], "v": c["pts"]}
     e.globals.update(fmt_num=fmt_num, niveaux=NIVEAUX)
     return e
 
@@ -74,7 +81,8 @@ def build_site(site_url: str = "") -> Path:
     if OUT.exists():
         shutil.rmtree(OUT)
     (OUT / "editions").mkdir(parents=True)
-    shutil.copy(ROOT / "site_assets" / "style.css", OUT / "style.css")
+    for f in ("style.css", "charts.js"):
+        shutil.copy(ROOT / "site_assets" / f, OUT / f)
 
     eds = load_editions()
     archives = [_archive_entry(x) for x in eds]
@@ -92,6 +100,7 @@ def build_site(site_url: str = "") -> Path:
     (OUT / "index.html").write_text(e.get_template("index.html").render(**ctx(eds[0] if eds else None, "")))
     for ed in eds:
         (OUT / ed["href"]).write_text(e.get_template("edition_page.html").render(**ctx(ed, "../")))
+    (OUT / "portefeuille.html").write_text(e.get_template("portefeuille_page.html").render(**ctx(eds[0] if eds else None, "")))
     (OUT / "archives.html").write_text(e.get_template("archives.html").render(**ctx(None, "")))
     (OUT / "feed.xml").write_text(e.get_template("feed.xml").render(archives=archives, site_url=site_url))
     (OUT / ".nojekyll").write_text("")

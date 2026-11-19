@@ -27,10 +27,12 @@
   {% if r.id == 'portefeuille' and ed.portefeuille %}{% set pf = ed.portefeuille %}
   <p style="margin:0 0 8px;font:15px/1.5 Arial,sans-serif;">{% if pf.total_eur is defined %}<strong>{{ fmt_num(pf.total_eur) }} €</strong> · plus-value latente {{ fmt_num(pf.pv_eur) }} € · {% endif %}<span style="color:{{ '#1a7f37' if pf.perf_pct > 0 else '#c0392b' }};">{{ '%+.2f'|format(pf.perf_pct) }} %</span> · séance {{ '%+.2f'|format(pf.var_jour_pct) }} %</p>
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font:13px/1.4 Arial,sans-serif;margin-bottom:8px;">
-  <tr style="color:#777;"><td>Ligne</td><td align="right">Poids</td><td align="right">PRU</td><td align="right">Jour</td></tr>
-  {% for l in pf.lignes if not l.indisponible %}<tr><td style="padding:3px 0;border-bottom:1px solid #eee;">{{ l.nom }} <span style="color:#999;">{{ l.enveloppe or '' }}</span></td><td align="right" style="border-bottom:1px solid #eee;">{{ l.poids_pct }} %</td><td align="right" style="border-bottom:1px solid #eee;color:{{ '#1a7f37' if l.perf_pct > 0 else '#c0392b' }};">{{ '%+.1f'|format(l.perf_pct) }} %</td><td align="right" style="border-bottom:1px solid #eee;">{{ '%+.2f'|format(l.var_jour_pct) }} %</td></tr>{% endfor %}
+  <tr style="color:#777;"><td>Ligne</td><td>Poids</td><td align="right">PRU</td><td align="right">Jour</td></tr>
+  {% set maxp = (pf.lignes | rejectattr("indisponible") | map(attribute="poids_pct") | max) or 1 %}
+  {% for l in pf.lignes if not l.indisponible %}<tr><td style="padding:3px 0;border-bottom:1px solid #eee;">{{ l.nom }} <span style="color:#999;">{{ l.enveloppe or '' }}</span></td><td style="border-bottom:1px solid #eee;width:40%;"><table role="presentation" cellpadding="0" cellspacing="0" width="100%"><tr><td width="{{ (l.poids_pct / maxp * 75) | round(0) | int }}%" style="background:{{ '#c0392b' if (l.type == 'action' and l.poids_pct > 5) else '#2a78d6' }};height:8px;font-size:0;line-height:0;">&nbsp;</td><td style="padding-left:6px;font:12px Arial,sans-serif;white-space:nowrap;">{{ l.poids_pct }} %</td></tr></table></td><td align="right" style="border-bottom:1px solid #eee;color:{{ '#1a7f37' if l.perf_pct > 0 else '#c0392b' }};">{{ '%+.1f'|format(l.perf_pct) }} %</td><td align="right" style="border-bottom:1px solid #eee;">{{ '%+.2f'|format(l.var_jour_pct) }} %</td></tr>{% endfor %}
   </table>
   {% for a in pf.alertes_regles %}<p style="margin:0 0 6px;padding:8px 10px;background:#ffebee;border-left:3px solid #c0392b;font:14px Arial,sans-serif;">⚠ {{ a }}</p>{% endfor %}
+  {% if site_url %}<p style="margin:6px 0 10px;font:14px Arial,sans-serif;"><a href="{{ site_url }}portefeuille.html" style="color:#8a5a00;font-weight:700;">Ouvrir le tableau de bord interactif (courbe vs indice, répartition, contributions) →</a></p>{% endif %}
   {% endif %}
   {% for it in r['items'] %}
   <h3 style="margin:12px 0 4px;font-size:17px;">{{ it.titre }}</h3>

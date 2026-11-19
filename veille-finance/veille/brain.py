@@ -187,8 +187,35 @@ EDITION_SCHEMA = {
             },
         },
         "mot_du_mentor": {"type": "string", "description": "Message direct du mentor : un défi, une question dérangeante ou une action concrète pour la semaine. 2-4 phrases."},
+        "graph_deep_dive": {
+            "type": "object",
+            "description": "Données chiffrées de l'entreprise du Deep Dive pour les graphiques.",
+            "properties": {
+                "entreprise": {"type": "string"},
+                "symbole_stooq": {"type": "string", "description": "Code Stooq de l'action (ex : amzn.us, mc.fr), vide si inconnu"},
+                "unite": {"type": "string", "description": "Unité des montants, ex : Md$ ou Md€"},
+                "annees": {
+                    "type": "array",
+                    "description": "3 à 5 derniers exercices, du plus ancien au plus récent. UNIQUEMENT des chiffres trouvés dans les notes de recherche ; tableau vide sinon.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "annee": {"type": "string"},
+                            "chiffre_affaires": {"type": "number"},
+                            "free_cash_flow": {"type": "number"},
+                        },
+                        "required": ["annee", "chiffre_affaires", "free_cash_flow"],
+                        "additionalProperties": False,
+                    },
+                },
+                "source_nom": {"type": "string"},
+                "source_url": {"type": "string"},
+            },
+            "required": ["entreprise", "symbole_stooq", "unite", "annees", "source_nom", "source_url"],
+            "additionalProperties": False,
+        },
     },
-    "required": ["titre_edition", "accroche", "alerte", "essentiel", "rubriques", "agenda", "mot_du_mentor"],
+    "required": ["titre_edition", "accroche", "alerte", "essentiel", "rubriques", "agenda", "mot_du_mentor", "graph_deep_dive"],
     "additionalProperties": False,
 }
 

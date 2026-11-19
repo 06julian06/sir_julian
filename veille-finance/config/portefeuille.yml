@@ -10,6 +10,7 @@
 # symbole = code Stooq (https://stooq.com) : actions FR en ".fr" (ex : mc.fr = LVMH),
 # US en ".us" (ex : amzn.us), ETF Paris en ".fr" (ex : cw8.fr). Vérifie chaque code.
 # type = etf | action | crypto | obligation | autre  (la règle des 5 % ne vise que les actions)
+# zone et secteur sont facultatifs : renseigne-les pour obtenir les graphiques de répartition.
 # ─────────────────────────────────────────────────────────────────────────────
 
 afficher_montants_sur_site: false
@@ -17,8 +18,11 @@ devise: EUR
 
 liquidites: 0          # cash disponible sur les enveloppes, en euros
 
+# Indice auquel comparer ta performance (graphique base 100). Vérifie le code sur stooq.com.
+indice_reference: {nom: "MSCI World (ETF CW8)", symbole: "cw8.fr"}
+
 positions: []
 # Exemple (décommente et adapte) :
-#  - {nom: "Amundi MSCI World (CW8)", symbole: "cw8.fr", type: etf,    enveloppe: PEA, quantite: 3,  pru: 520.00}
-#  - {nom: "TotalEnergies",          symbole: "tte.fr", type: action, enveloppe: PEA, quantite: 10, pru: 58.20}
-#  - {nom: "Amazon",                 symbole: "amzn.us", type: action, enveloppe: CTO, quantite: 2, pru: 180.00, devise: USD}
+#  - {nom: "Amundi MSCI World (CW8)", symbole: "cw8.fr",  type: etf,    enveloppe: PEA, zone: Monde,      secteur: Diversifié, quantite: 3,  pru: 520.00}
+#  - {nom: "TotalEnergies",          symbole: "tte.fr",  type: action, enveloppe: PEA, zone: Europe,     secteur: Énergie,    quantite: 10, pru: 58.20}
+#  - {nom: "Amazon",                 symbole: "amzn.us", type: action, enveloppe: CTO, zone: États-Unis, secteur: Technologie, quantite: 2, pru: 180.00, devise: USD}
