@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import html
 import json
+import os
 import re
 import sys
 import urllib.request
@@ -27,7 +28,9 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 RACINE = Path(__file__).resolve().parent.parent
-SORTIE = RACINE / "data" / "events.json"
+# En production, le fichier vit sur la branche de données (variable CAP2046_EVENTS) : aucun commit sur main,
+# donc aucun redéploiement Netlify (chaque déploiement consomme des crédits).
+SORTIE = Path(os.environ.get("CAP2046_EVENTS") or RACINE / "data" / "events.json")
 MANUELS = RACINE / "data" / "events_manuels.json"
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
 AUJ = date.today()
@@ -382,13 +385,14 @@ def main() -> int:
     for e in manuels["events"]:
         tous.setdefault(e["id"], {**e, "auto": False})
     liste = sorted(tous.values(), key=lambda e: (e["date"], e.get("datetime_utc") or "", e["id"]))
+    SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(json.dumps({
         "genere_le": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "sources_statut": statut,
         "events": liste,
         "a_confirmer": manuels.get("a_confirmer", []),
     }, ensure_ascii=False, indent=1))
-    print(f"{len(liste)} événements écrits dans {SORTIE.relative_to(RACINE)}")
+    print(f"{len(liste)} événements écrits dans {SORTIE}")
     return 0
 
 

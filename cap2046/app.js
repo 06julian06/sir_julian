@@ -72,6 +72,7 @@ document.addEventListener("click", (e) => {
   pop.style.left = Math.max(8, Math.min(window.innerWidth - pr.width - 8, r.left)) + "px";
   pop.style.top = (r.bottom + pr.height + 12 > window.innerHeight ? r.top - pr.height - 8 : r.bottom + 6) + "px";
   popActif = pop;
+  setTimeout(() => { if (popActif === pop) { pop.remove(); popActif = null; } }, 8000);  // se ferme seule
   e.stopPropagation();
 });
 
@@ -117,6 +118,7 @@ function sauver() {
 }
 
 /* ═══ 4. Données publiées ════════════════════════════════════════════════════ */
+let SOURCE_EV = "copie";
 let EVENTS = [], A_CONFIRMER = [], STATUT = {}, GENERE = null, ETF = { lignes: {}, noms_zones: {} };
 
 /* ═══ 5. Portefeuille ════════════════════════════════════════════════════════ */
@@ -758,14 +760,19 @@ const RENDU = { accueil: rendreAccueil, calendrier: rendreCalendrier, portefeuil
 
 function majEntete() {
   const vieux = GENERE && (Date.now() - new Date(GENERE)) / 864e5 > 8;
-  $("#maj").innerHTML = GENERE ? `Événements mis à jour le ${new Date(GENERE).toLocaleDateString("fr-FR", { timeZone: TZ })}${vieux ? ` <span class="badge b-nv">⚠ plus de 8 jours</span>` : ""}` : "";
+  $("#maj").innerHTML = (GENERE ? `Événements mis à jour le ${new Date(GENERE).toLocaleDateString("fr-FR", { timeZone: TZ })}${vieux ? ` <span class="badge b-nv">⚠ plus de 8 jours</span>` : ""}` : "")
+    + `<br><a href="/veille/">Veille IA, cours et simulateur →</a>`;
 }
 
 async function demarrer() {
   S = charger();
   try {
+    // Version vivante (relayée par Netlify, mise à jour chaque matin) ; à défaut, la copie livrée avec le site.
+    const json = (u) => fetch(u, { cache: "no-cache" }).then((r) => { if (!r.ok) throw new Error(u + " " + r.status); return r.json(); });
+    const evLive = () => json("data/events-live.json").then((d) => { if (!Array.isArray(d.events)) throw new Error("format"); SOURCE_EV = "live"; return d; });
+    const enLigne = location.protocol.startsWith("http") && !/^(localhost|127\.|0\.0\.0\.0|\[::1\])/.test(location.hostname);
     const [ev, etf] = await Promise.all([
-      fetch("data/events.json", { cache: "no-cache" }).then((r) => { if (!r.ok) throw new Error("events " + r.status); return r.json(); }),
+      (enLigne ? evLive() : Promise.reject(new Error("local"))).catch(() => { SOURCE_EV = "copie"; return json("data/events.json"); }),
       fetch("data/etf.json", { cache: "no-cache" }).then((r) => { if (!r.ok) throw new Error("etf " + r.status); return r.json(); }),
     ]);
     EVENTS = (ev.events || []).filter((e) => e && e.id && /^\d{4}-\d{2}-\d{2}$/.test(e.date));

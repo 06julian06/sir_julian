@@ -84,6 +84,7 @@ jobs:
           FINANCES_YAML: ${{ secrets.FINANCES_YAML }}
           ESPACE_PASSPHRASE: ${{ secrets.ESPACE_PASSPHRASE }}
           VEILLE_DATA_DIR: ${{ github.workspace }}/veille-data
+          CAP2046_URL: ${{ vars.CAP2046_URL }}
           SITE_URL: ${{ vars.SITE_URL }}
           VEILLE_MODEL: ${{ vars.VEILLE_MODEL }}
           VEILLE_MODEL_RADAR: ${{ vars.VEILLE_MODEL_RADAR }}
@@ -98,6 +99,24 @@ jobs:
           BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
         run: python -m veille.main ${{ steps.mode.outputs.mode }}
 
+      # Cap 2046 : relit les calendriers officiels une fois par jour (édition du matin ou lancement manuel).
+      - name: Cap 2046 — événements officiels
+        if: steps.mode.outputs.mode == 'quotidien' || steps.mode.outputs.mode == 'hebdo'
+        continue-on-error: true
+        working-directory: cap2046
+        env:
+          CAP2046_EVENTS: ${{ github.workspace }}/veille-data/cap2046/events.json
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          [ -f "$CAP2046_EVENTS" ] || { mkdir -p "$(dirname "$CAP2046_EVENTS")"; cp data/events.json "$CAP2046_EVENTS"; }
+          python scripts/maj_evenements.py | tee -a "$GITHUB_STEP_SUMMARY"
+          ECHECS=$(python3 -c "import json,os;d=json.load(open(os.environ['CAP2046_EVENTS']));print(', '.join(k for k,v in d['sources_statut'].items() if not v['ok']))")
+          [ -z "$ECHECS" ] && exit 0
+          TITRE="Cap 2046 : source(s) officielle(s) illisible(s)"
+          if gh issue list --state open --search "$TITRE in:title" --json number --jq 'length' | grep -q '^0$'; then
+            gh issue create --title "$TITRE" --body "Échec de lecture : $ECHECS. Les anciennes dates sont conservées. Journal : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          fi
+
       - name: Sauvegarder les données
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -111,10 +130,12 @@ jobs:
           git commit -q -m "données : ${{ steps.mode.outputs.mode }} $(date -u +%Y-%m-%dT%H:%MZ)"
           git push -q -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" veille-data
 
-      - name: Joindre le jeu existant au site (servi sous /jeu/)
+      - name: Joindre le jeu (/jeu/) et les données de Cap 2046 (/cap2046-data/)
         run: |
-          mkdir -p _site/jeu
+          mkdir -p _site/jeu _site/cap2046-data
           cp ../index.html ../tmi.min.js _site/jeu/ 2>/dev/null || true
+          cp "$GITHUB_WORKSPACE/veille-data/cap2046/events.json" _site/cap2046-data/events.json 2>/dev/null \
+            || cp ../cap2046/data/events.json _site/cap2046-data/events.json
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

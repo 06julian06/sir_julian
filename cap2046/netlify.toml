@@ -1,8 +1,40 @@
-# Netlify : « Base directory » = cap2046 (réglage du site), aucune commande de build.
+# ─────────────────────────────────────────────────────────────────────────────
+# Netlify — un seul site, une seule adresse :
+#   /            Cap 2046 (ce dossier)
+#   /veille/     site de veille IA (servi via GitHub Pages, à travers le proxy Netlify)
+#
+# Pourquoi ce montage : chaque déploiement Netlify consomme des crédits (offre gratuite :
+# 300 crédits/mois, 15 par déploiement). Les données changent toutes les 15 minutes : elles sont
+# donc publiées par GitHub Actions sur GitHub Pages (gratuit, illimité) et Netlify les relaie
+# sans jamais redéployer. Netlify ne redéploie que quand le code de ce dossier change.
+#
+# Réglages du site Netlify : Base directory = cap2046 · Build command = (vide) · Publish = cap2046
+# ─────────────────────────────────────────────────────────────────────────────
 [build]
   publish = "."
+  # Ne rien redéployer si ce dossier n'a pas changé (les commits de la veille ne touchent pas main).
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- ."
 
-# Les données changent chaque jour : jamais de cache navigateur prolongé.
+# Calendrier Cap 2046 toujours à jour (relu chaque matin sur les sources officielles).
+[[redirects]]
+  from = "/data/events-live.json"
+  to = "https://06julian06.github.io/sir_julian/cap2046-data/events.json"
+  status = 200
+  force = true
+
+# Site de veille IA (direct, éditions, décryptages, Académie, simulateur, lexique…).
+[[redirects]]
+  from = "/veille"
+  to = "/veille/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/veille/*"
+  to = "https://06julian06.github.io/sir_julian/:splat"
+  status = 200
+  force = true
+
 [[headers]]
   for = "/data/*"
   [headers.values]
@@ -14,4 +46,4 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
-    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'none'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'"

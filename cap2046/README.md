@@ -3,33 +3,18 @@
 Site personnel : les événements qui peuvent bouger les marchés, rapportés à ton PEA, avec un verdict
 dont la valeur par défaut est **« Ne rien faire, continue ton DCA »**. HTML/CSS/JS pur, aucun build, aucune dépendance.
 
-## Mettre en ligne sur Netlify (5 minutes, une fois)
+## Mettre en ligne
 
-1. Netlify → *Add new site* → *Import an existing project* → GitHub → dépôt `sir_julian`.
-2. **Base directory : `cap2046`** · Build command : *(vide)* · Publish directory : `cap2046` (ou `.` relatif à la base).
-3. *Deploy*. Chaque commit sur la branche par défaut redéploie le site automatiquement.
-4. Sur ton téléphone : ouvre l'adresse Netlify → menu du navigateur → « Ajouter à l'écran d'accueil ».
-5. Premier lancement : onglet **Positions** → saisis le cours de chaque ligne (affiché dans l'appli Fortuneo).
-   Sans cours, tous les calculs utilisent ton allocation *cible*, et le site le signale.
+Voir **`MISE_EN_LIGNE.md`** à la racine du dépôt : Netlify sert Cap 2046 à la racine et relaie la veille IA
+sous `/veille/`, sans jamais redéployer pour une mise à jour de données (chaque déploiement Netlify coûte des crédits).
 
 ## Ce qui se met à jour tout seul
 
-`.github/workflows/cap2046-evenements.yml` lance `scripts/maj_evenements.py` **chaque jour** (≈ 6 h-7 h, Paris) :
-
-| Source officielle | Ce qui est lu | Méthode |
-|---|---|---|
-| Fed — calendrier FOMC | dates des réunions (+ projections) | page HTML officielle |
-| BCE — calendrier du Conseil des gouverneurs | réunions de politique monétaire | page HTML officielle |
-| Banque d'Angleterre | dates du MPC | page HTML officielle |
-| Banque du Japon | dates des réunions | tableau officiel |
-| BEA (États-Unis) | PIB et inflation PCE, **date et heure** | flux ICS officiel |
-| Euronext | jours fermés et demi-séances de Paris | tableau officiel |
-| NYSE | jours fermés et clôtures anticipées | tableau officiel |
-| TotalEnergies | publication des résultats | calendrier financier officiel |
-
-Si une page change de format ou bloque la lecture : les anciennes dates sont **conservées** (jamais effacées,
-jamais inventées), le site affiche la date de dernière lecture réussie, et une *issue* GitHub est ouverte
-(tu reçois un e-mail de GitHub).
+Chaque matin, le workflow **Veille Finance** lance `scripts/maj_evenements.py` sur les sources officielles :
+Fed, BCE, Banque d'Angleterre, Banque du Japon, BEA (PIB et PCE, date et heure via flux ICS), Euronext, NYSE,
+TotalEnergies. Le résultat est publié sur GitHub Pages et lu par le site via `/data/events-live.json`
+(relais Netlify). Si une source échoue, les anciennes dates sont conservées et une *issue* GitHub est ouverte.
+Si le relais est indisponible, le site utilise la copie `data/events.json` livrée avec lui.
 
 ## Ce qui reste manuel : 10 minutes par semaine (le dimanche)
 
