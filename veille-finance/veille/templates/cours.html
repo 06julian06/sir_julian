@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% from "_termes.html" import termes, sources %}
+{% block title %}Cours {{ c.numero }} : {{ c.titre }} — Académie{% endblock %}
+{% block content %}
+<article class="cours">
+<p class="kicker">Académie · cours {{ c.numero }}/{{ total }} · {{ c.module }} · {{ date_c }}</p>
+<h1>{{ c.titre }}</h1>
+<p class="lede">{{ c.accroche }}</p>
+{% if c.rappel %}<div class="card rappel"><b>Ce que tu sais déjà :</b> {{ c.rappel | md }}</div>{% endif %}
+<section class="card"><h2>À la fin de ce cours, tu sauras</h2><ul>{% for o in c.objectifs %}<li>{{ o }}</li>{% endfor %}</ul></section>
+{% for sec in c.sections %}<section class="card"><h2>{{ sec.titre }}</h2><div class="txt">{{ sec.contenu | md }}</div></section>{% endfor %}
+<section class="card"><h2>Exemple chiffré</h2><p>{{ c.exemple.enonce | md }}</p><ol>{% for e in c.exemple.etapes %}<li>{{ e | md }}</li>{% endfor %}</ol><p><b>Résultat :</b> {{ c.exemple.resultat | md }}</p></section>
+<section class="card"><h2>Cas réel : {{ c.cas_reel.titre }}</h2><div class="txt">{{ c.cas_reel.explication | md }}</div>
+  {% if c.cas_reel.source_url %}<p class="src">Source : <a href="{{ c.cas_reel.source_url }}" target="_blank" rel="noopener">{{ c.cas_reel.source_nom }}</a></p>{% elif c.cas_reel.non_verifie %}<p class="src">⚠ Source non vérifiée : chiffres à confirmer.</p>{% endif %}</section>
+<section class="card"><h2>Exercice pratique</h2><p>{{ c.exercice.enonce | md }}</p><ol>{% for q in c.exercice.questions %}<li>{{ q | md }}</li>{% endfor %}</ol>
+  <details class="det"><summary>Voir le corrigé</summary><div class="txt">{{ c.exercice.corrige | md }}</div></details></section>
+<section class="card"><h2>Quiz</h2>
+{% for q in c.quiz %}<div class="quiz" data-bonne="{{ q.bonne_reponse }}"><p><b>{{ loop.index }}. {{ q.question }}</b></p>
+  <div class="quiz-choix">{% for ch in q.choix %}<button type="button" data-i="{{ loop.index0 }}">{{ ch }}</button>{% endfor %}</div>
+  <p class="quiz-expl" hidden>{{ q.explication | md }}</p></div>{% endfor %}
+<p class="note" id="quiz-score"></p></section>
+<section class="card mentor"><h2>À retenir</h2><ul>{% for a in c.a_retenir %}<li>{{ a | md }}</li>{% endfor %}</ul></section>
+<section class="card"><h2>L'angle pro</h2><p>{{ c.angle_pro | md }}</p></section>
+{{ termes(c.termes, root) }}
+{% if c.pour_aller_plus_loin %}<section class="card"><h2>Pour aller plus loin</h2>{{ sources(c.pour_aller_plus_loin) }}</section>{% endif %}
+<nav class="pager">{% if prev %}<a href="{{ '%02d' % prev.numero }}.html">← Cours {{ prev.numero }}</a>{% else %}<span></span>{% endif %}
+  <a href="../academie.html">Programme</a>
+  {% if nxt %}<a href="{{ '%02d' % nxt.numero }}.html">Cours {{ nxt.numero }} →</a>{% else %}<span class="muted">Prochain cours lundi</span>{% endif %}</nav>
+</article>
+{% endblock %}
+{% block scripts %}<script src="../apprendre.js" defer></script>{% endblock %}

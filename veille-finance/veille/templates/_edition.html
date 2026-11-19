@@ -1,0 +1,84 @@
+{% from "_charts.html" import chart %}
+<article class="edition">
+  <p class="kicker">{{ ed.type_label }} · {{ ed.date_label }}</p>
+  <h1>{{ ed.titre_edition }}</h1>
+  <p class="lede">{{ ed.accroche }}</p>
+
+  <div class="alerte n{{ ed.alerte.niveau }}">
+    <div class="meter">{% for i in range(1,6) %}<span class="{{ 'on' if i <= ed.alerte.niveau }}"></span>{% endfor %}</div>
+    <div><strong>Niveau {{ ed.alerte.niveau }}/5 — {{ niveaux[ed.alerte.niveau] }}</strong><br>{{ ed.alerte.message }}</div>
+  </div>
+
+  <section class="card essentiel">
+    <h2>L'essentiel en 30 secondes</h2>
+    <ol>{% for p in ed.essentiel %}<li>{{ p | md }}</li>{% endfor %}</ol>
+  </section>
+
+  {% if marches %}
+  <section class="card">
+    <h2>Tableau de bord</h2>
+    <div class="board">
+    {% for m in marches %}
+      <div class="tick{% if m.indisponible %} na{% endif %}">
+        <span class="tn">{{ m.nom }}</span>
+        {% if m.indisponible %}<span class="tv">—</span>
+        {% else %}
+        <span class="tv">{% if m.est_taux %}{{ ('%.2f'|format(m.cloture)).replace('.', ',') }} %{% else %}{{ fmt_num(m.cloture) }}{% endif %}</span>
+        <span class="tc {{ 'up' if m.var_jour_pct > 0 else ('down' if m.var_jour_pct < 0 else '') }}">{{ '▲' if m.var_jour_pct > 0 else ('▼' if m.var_jour_pct < 0 else '■') }} {% if m.est_taux and m.var_jour_pb is defined %}{{ '%+.1f'|format(m.var_jour_pb) }} pb{% else %}{{ '%+.2f'|format(m.var_jour_pct) }} %{% endif %}</span>
+        <span class="ty">1 an : {{ '%+.1f'|format(m.var_1an_pct) }} %</span>
+        {% if m.spark %}{{ chart("spark", {"valeurs": m.spark}, "sp") }}{% endif %}
+        {% endif %}
+      </div>
+    {% endfor %}
+    </div>
+    <p class="note">Clôtures au {{ marches_date }} · source Stooq{% if marches|selectattr('est_taux')|list %} · taux : variation en points de base (pb){% endif %}</p>
+  </section>
+  {% endif %}
+
+  {% for r in ed.rubriques %}
+  <section class="card rub" id="{{ r.id }}">
+    <h2>{{ r.titre }}</h2>
+    {% if r.id == 'portefeuille' and ed.portefeuille %}{% set pf = ed.portefeuille %}{% include "_pf_dashboard.html" %}{% endif %}
+    {% if r.id == 'deep_dive' and ed.graph_deep_dive and (ed.graph_deep_dive.annees or ed.graph_deep_dive.cours) %}{% set g = ed.graph_deep_dive %}
+    <div class="viz-cols">
+      {% if g.annees %}<div>
+        <h3 class="vh">{{ g.entreprise }} — chiffre d'affaires et free cash flow ({{ g.unite }})</h3>
+        {{ chart("groupbars", {"categories": g.annees | map(attribute="annee") | list, "unite": g.unite, "titre": "Chiffre d'affaires et free cash flow",
+            "series": [{"nom": "Chiffre d'affaires", "slot": 1, "valeurs": g.annees | map(attribute="chiffre_affaires") | list},
+                       {"nom": "Free cash flow", "slot": 2, "valeurs": g.annees | map(attribute="free_cash_flow") | list}]}) }}
+        {% if g.source_url %}<p class="note">Source : <a href="{{ g.source_url }}" target="_blank" rel="noopener">{{ g.source_nom or g.source_url }}</a></p>{% endif %}
+      </div>{% endif %}
+      {% if g.cours and g.cours.dates %}<div>
+        <h3 class="vh">{{ g.entreprise }} — cours sur 1 an</h3>
+        {{ chart("line", {"dates": g.cours.dates, "series": [{"nom": g.entreprise, "valeurs": g.cours.valeurs, "slot": 1}], "titre": "Cours sur 1 an"}) }}
+        <p class="note">Clôtures quotidiennes · source Stooq</p>
+      </div>{% endif %}
+    </div>
+    {% endif %}
+    {% for it in r['items'] %}
+    <div class="item imp{{ it.importance }}">
+      <h3>{{ it.titre }}</h3>
+      <div class="txt">{{ it.texte | md }}</div>
+      {% if it.pourquoi %}<p class="why"><strong>Pour toi :</strong> {{ it.pourquoi | md }}</p>{% endif %}
+      {% if it.source_url %}<p class="src">Source : <a href="{{ it.source_url }}" rel="noopener" target="_blank">{{ it.source_nom or it.source_url }}</a></p>
+      {% elif it.source_nom %}<p class="src">Source : {{ it.source_nom }}</p>{% endif %}
+    </div>
+    {% else %}<p class="muted">Rien de significatif aujourd'hui sur ce front.</p>
+    {% endfor %}
+  </section>
+  {% endfor %}
+
+  {% if ed.agenda %}
+  <section class="card">
+    <h2>Agenda — à surveiller</h2>
+    <table class="agenda">
+    {% for a in ed.agenda %}<tr><td class="ad">{{ a.date }}</td><td><strong>{{ a.evenement }}</strong><br><span class="muted">{{ a.pourquoi }}</span></td></tr>{% endfor %}
+    </table>
+  </section>
+  {% endif %}
+
+  <section class="card mentor">
+    <h2>Le mot du mentor</h2>
+    <p>{{ ed.mot_du_mentor | md }}</p>
+  </section>
+</article>

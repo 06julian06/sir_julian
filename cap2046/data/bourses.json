@@ -1,0 +1,89 @@
+{
+ "_lisez_moi": "Horaires des bourses, en heure LOCALE de chaque place. verifie=true : lu sur la source officielle à la date indiquée. Les changements d'heure (été/hiver) sont gérés automatiquement par le navigateur via le fuseau (tz).",
+ "bourses": [
+  {
+   "id": "paris-etf", "nom": "Paris — ETF", "ville": "Paris", "region": "Europe", "tz": "Europe/Paris", "ordre": 1,
+   "pre": "07:30", "sessions": [["09:04", "17:30"]], "cloture_enchere": "17:35", "tal": ["17:35", "17:40"],
+   "note": "Tes 4 ETF (WPEA, ETZ, Émergents, Nasdaq-100). Fixing d'ouverture aléatoire entre 09:04:00 et 09:04:30.",
+   "source_nom": "Euronext — annexe du Trading Manual 4-01 (en vigueur au 23/11/2026)", "source_url": "https://www.euronext.com/en/media/1927/download",
+   "verifie": true, "verifie_le": "2026-11-19"
+  },
+  {
+   "id": "paris-actions", "nom": "Paris — actions", "ville": "Paris", "region": "Europe", "tz": "Europe/Paris", "ordre": 2,
+   "pre": "07:30", "sessions": [["09:00", "17:30"]], "cloture_enchere": "17:35", "tal": ["17:35", "17:40"],
+   "note": "Saint-Gobain et les actions du CAC 40. Fixing d'ouverture aléatoire entre 09:00:00 et 09:00:30.",
+   "source_nom": "Euronext — annexe du Trading Manual 4-01 (en vigueur au 23/11/2026)", "source_url": "https://www.euronext.com/en/media/1927/download",
+   "verifie": true, "verifie_le": "2026-11-19"
+  },
+  {
+   "id": "londres", "nom": "Londres", "ville": "Londres", "region": "Europe", "tz": "Europe/London", "ordre": 3,
+   "pre": null, "sessions": [["08:00", "16:30"]], "cloture_enchere": null, "tal": null,
+   "note": "Royaume-Uni ≈ un cinquième de ton ETF Europe.",
+   "source_nom": "London Stock Exchange", "source_url": "https://www.londonstockexchange.com/",
+   "verifie": false, "verifie_le": null, "note_verification": "Page des horaires introuvable automatiquement (404). Horaires usuels, à confirmer."
+  },
+  {
+   "id": "francfort", "nom": "Francfort (Xetra)", "ville": "Francfort", "region": "Europe", "tz": "Europe/Berlin", "ordre": 4,
+   "pre": null, "sessions": [["09:00", "17:30"]], "cloture_enchere": null, "tal": null,
+   "note": "Allemagne : SAP et les grandes valeurs allemandes de ton ETF Europe.",
+   "source_nom": "Deutsche Börse — Xetra", "source_url": "https://www.xetra.com/",
+   "verifie": false, "verifie_le": null, "note_verification": "Site non lisible automatiquement. Horaires usuels, à confirmer."
+  },
+  {
+   "id": "newyork", "nom": "New York (NYSE)", "ville": "New York", "region": "Amériques", "tz": "America/New_York", "ordre": 5,
+   "pre": null, "sessions": [["09:30", "16:00"]], "cloture_enchere": "16:00", "tal": null,
+   "note": "≈ 70 % de ton ETF Monde et l'essentiel du Nasdaq-100. Nasdaq : mêmes heures de séance principale.",
+   "source_nom": "NYSE — horaires et jours fériés", "source_url": "https://www.nyse.com/markets/hours-calendars",
+   "verifie": true, "verifie_le": "2026-11-19"
+  },
+  {
+   "id": "tokyo", "nom": "Tokyo", "ville": "Tokyo", "region": "Asie-Pacifique", "tz": "Asia/Tokyo", "ordre": 6,
+   "pre": "08:00", "sessions": [["09:00", "11:30"], ["12:30", "15:30"]], "cloture_enchere": null, "tal": null,
+   "note": "Japon ≈ 5 % de ton ETF Monde.",
+   "source_nom": "Japan Exchange Group — horaires", "source_url": "https://www.jpx.co.jp/english/equities/trading/domestic/01.html",
+   "verifie": true, "verifie_le": "2026-11-19"
+  },
+  {
+   "id": "hongkong", "nom": "Hong Kong", "ville": "Hong Kong", "region": "Asie-Pacifique", "tz": "Asia/Hong_Kong", "ordre": 7,
+   "pre": "09:00", "sessions": [["09:30", "12:00"], ["13:00", "16:00"]], "cloture_enchere": "16:10", "tal": null,
+   "note": "Grandes valeurs chinoises (Tencent, Alibaba) de ton ETF Émergents.",
+   "source_nom": "HKEX — horaires du marché actions", "source_url": "https://www.hkex.com.hk/Services/Trading-hours-and-Severe-Weather-Arrangements/Trading-Hours/Securities-Market?sc_lang=en",
+   "verifie": true, "verifie_le": "2026-11-19"
+  },
+  {
+   "id": "shanghai", "nom": "Shanghai", "ville": "Shanghai", "region": "Asie-Pacifique", "tz": "Asia/Shanghai", "ordre": 8,
+   "pre": "09:15", "sessions": [["09:30", "11:30"], ["13:00", "15:00"]], "cloture_enchere": null, "tal": null,
+   "note": "Actions chinoises continentales (part de ton ETF Émergents). Enchère de clôture 14:57–15:00.",
+   "source_nom": "Shanghai Stock Exchange — horaires", "source_url": "https://english.sse.com.cn/start/trading/schedule/",
+   "verifie": true, "verifie_le": "2026-11-19"
+  },
+  {
+   "id": "taipei", "nom": "Taïwan", "ville": "Taipei", "region": "Asie-Pacifique", "tz": "Asia/Taipei", "ordre": 9,
+   "pre": "08:30", "sessions": [["09:00", "13:30"]], "cloture_enchere": null, "tal": null,
+   "note": "Taïwan ≈ un cinquième de ton ETF Émergents (TSMC). Enchère de clôture 13:25–13:30.",
+   "source_nom": "Taiwan Stock Exchange — horaires", "source_url": "https://www.twse.com.tw/en/products/system/trading.html",
+   "verifie": true, "verifie_le": "2026-11-19"
+  },
+  {
+   "id": "mumbai", "nom": "Inde (NSE)", "ville": "Mumbai", "region": "Asie-Pacifique", "tz": "Asia/Kolkata", "ordre": 10,
+   "pre": "09:00", "sessions": [["09:15", "15:30"]], "cloture_enchere": null, "tal": null,
+   "note": "Inde ≈ 18 % de ton ETF Émergents : seule grande place émergente encore ouverte le matin à Paris.",
+   "source_nom": "National Stock Exchange of India", "source_url": "https://www.nseindia.com/",
+   "verifie": false, "verifie_le": null, "note_verification": "Site non lisible automatiquement. Horaires usuels, à confirmer."
+  },
+  {
+   "id": "sydney", "nom": "Sydney (ASX)", "ville": "Sydney", "region": "Asie-Pacifique", "tz": "Australia/Sydney", "ordre": 11,
+   "pre": "07:00", "sessions": [["10:00", "16:00"]], "cloture_enchere": "16:11", "tal": null,
+   "note": "Utile pendant ton Working Holiday. Ouverture échelonnée de 10:00 à ~10:09 selon les valeurs.",
+   "source_nom": "ASX — horaires du marché au comptant", "source_url": "https://www.asx.com.au/markets/market-resources/trading-hours-calendar/cash-market-trading-hours",
+   "verifie": true, "verifie_le": "2026-11-19"
+  }
+ ],
+ "lignes_fenetres": {
+  "WPEA": {"type": "us", "explication": "≈ 70 % d'actions américaines : quand New York est ouvert, les teneurs de marché (les intermédiaires qui affichent les prix d'achat et de vente) couvrent leurs positions sur les vraies actions, et l'écart entre prix d'achat et de vente se resserre."},
+  "NDX": {"type": "us", "explication": "100 % américain : même logique, et tu ne l'achètes de toute façon plus."},
+  "ETZ": {"type": "europe", "explication": "Actions européennes : toutes ouvertes pendant la séance de Paris. Évite seulement l'ouverture et la clôture."},
+  "EM": {"type": "em", "explication": "La plupart des marchés émergents (Chine, Taïwan, Hong Kong) sont fermés pendant la séance de Paris : l'écart de prix est structurellement plus large. Le moins mauvais moment est le matin, tant que l'Inde est ouverte."},
+  "SGO": {"type": "action", "explication": "Action cotée à Paris : liquide toute la journée. Évite seulement l'ouverture et la clôture."}
+ }
+}

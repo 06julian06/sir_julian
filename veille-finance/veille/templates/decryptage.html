@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% from "_termes.html" import termes, sources %}
+{% block title %}{{ d.titre }} — Décryptage{% endblock %}
+{% block content %}
+<article>
+<p class="kicker">Décryptage · {{ d.date_label }} à {{ d.heure }}</p>
+<h1>{{ d.titre }}</h1>
+<p class="lede">{{ d.chapo }}</p>
+<section class="card"><h2>Les faits</h2><div class="txt">{{ d.faits | md }}</div></section>
+<section class="card"><h2>Ce que ça veut dire</h2><div class="txt">{{ d.ce_que_ca_veut_dire | md }}</div></section>
+<section class="card"><h2>Qui est concerné</h2><div class="txt">{{ d.qui_est_concerne | md }}</div></section>
+<section class="card"><h2>Les attendus : ce qu'il faut surveiller</h2><div class="txt">{{ d.attendus | md }}</div></section>
+<section class="card mentor"><h2>Pour toi</h2><p>{{ d.pour_toi | md }}</p></section>
+{{ termes(d.termes, root) }}
+<section class="card">{{ sources(d.sources) }}<p class="note">Détecté via : <a href="{{ d.origine.url }}" target="_blank" rel="noopener">{{ d.origine.source }}</a> · rédigé par l'IA sans relecture humaine.</p></section>
+<p><a href="../decryptages.html">← Tous les décryptages</a></p>
+</article>
+{% endblock %}

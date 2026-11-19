@@ -1,0 +1,46 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# TON PROFIL — c'est ce fichier qui fait que l'IA "comprend ta situation".
+# Plus il est précis, plus la veille est pertinente. Les champs marqués
+# A_COMPLETER sont des hypothèses par défaut : remplace-les par la réalité.
+# Ne mets JAMAIS ici d'identifiants bancaires, numéros de compte ou mots de passe :
+# ce fichier est versionné dans le dépôt.
+# ─────────────────────────────────────────────────────────────────────────────
+
+identite:
+  pays_residence_fiscale: France
+  statut: "A_COMPLETER — ex : étudiant en master finance / jeune actif"
+  age_tranche: "A_COMPLETER — ex : 20-25"
+
+trajectoire_pro:
+  objectif: >
+    Évoluer vers des fonctions à responsabilité en finance réglementée et
+    stratégique (conformité, risques, régulation, stratégie).
+  centres_interet: [finance réglementée, conformité, stratégie, innovation]
+  # L'IA ajoute à chaque édition un angle "ce qu'un professionnel de la
+  # conformité doit savoir" — c'est ton avantage compétitif en entretien.
+
+patrimoine:
+  # Ordres de grandeur suffisent. Laisse vide si tu ne veux pas les partager.
+  epargne_precaution: "A_COMPLETER — ex : 3 à 6 mois de dépenses, Livret A / LDDS"
+  enveloppes:
+    - "A_COMPLETER — ex : PEA (ETF MSCI World / S&P 500 éligibles PEA)"
+    - "A_COMPLETER — ex : Assurance-vie (fonds euros + UC)"
+    - "A_COMPLETER — ex : CTO (actions US / ETF non éligibles PEA)"
+  versements_mensuels: "A_COMPLETER — ex : DCA de 150 €/mois"
+  crypto: "A_COMPLETER — ex : aucune / <5 % du patrimoine"
+
+strategie:
+  horizon: "10 ans et plus"
+  style: "Passif majoritaire (ETF, DCA), une poche active limitée et assumée"
+  tolerance_risque: "A_COMPLETER — modérée / dynamique"
+  regles_non_negociables:
+    - Pas de levier (CFD, turbos, options nues) sur l'épargne de long terme.
+    - Pas plus de 5 % du portefeuille sur une seule ligne d'action.
+    - Épargne de précaution intouchable avant tout investissement risqué.
+    - Toute décision d'achat/vente doit être écrite (thèse + condition de sortie) avant d'agir.
+
+ton_attendu:
+  posture: >
+    Mentor exigeant, direct, zéro flatterie. Signale les incohérences entre mes
+    ambitions et mes actions. Explique les mécanismes, pas seulement les conclusions.
+  langue: français

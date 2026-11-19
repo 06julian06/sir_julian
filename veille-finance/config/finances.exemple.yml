@@ -1,0 +1,52 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# TES FINANCES PERSONNELLES — alimente l'onglet « Mon espace » (chiffré).
+#
+# Le dépôt est PUBLIC : ne committe JAMAIS tes vrais chiffres.
+#   1. Copie ce fichier, remplis-le avec tes vrais montants.
+#   2. Colle tout son contenu dans le secret GitHub FINANCES_YAML
+#      (Settings → Secrets and variables → Actions).
+#   3. Crée aussi le secret ESPACE_PASSPHRASE : la phrase secrète qui ouvrira ton espace.
+# config/finances.yml est ignoré par git : tu peux le garder en local pour tester.
+#
+# Montants mensuels en euros. Les chiffres ci-dessous sont des EXEMPLES.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Compte de résultat : ce qui entre et sort chaque mois ──
+revenus_mensuels:
+  - {poste: "Salaire net / alternance", montant: 1450, type: actif}    # actif = revenu du travail
+  - {poste: "Aides (APL, bourse)",      montant: 180,  type: actif}
+  - {poste: "Intérêts Livret A",        montant: 7,    type: passif}   # passif = l'argent travaille pour toi
+  - {poste: "Dividendes",               montant: 6,    type: passif}
+
+charges_mensuelles:
+  - {poste: "Loyer + charges",   montant: 620, nature: fixe}
+  - {poste: "Abonnements",       montant: 45,  nature: fixe}
+  - {poste: "Assurances",        montant: 25,  nature: fixe}
+  - {poste: "Transport",         montant: 75,  nature: fixe}
+  - {poste: "Alimentation",      montant: 260, nature: variable}
+  - {poste: "Loisirs, sorties",  montant: 150, nature: variable}
+
+# ── Flux de trésorerie hors exploitation ──
+flux_investissement_mensuels:          # ce que tu places chaque mois
+  - {poste: "DCA PEA (ETF monde)",        montant: 150}
+  - {poste: "Versement assurance-vie",    montant: 50}
+flux_financement_mensuels:             # remboursements en NÉGATIF, nouvel emprunt en positif
+  - {poste: "Remboursement prêt étudiant", montant: -110}
+
+# ── Bilan : ce que tu possèdes et ce que tu dois (aujourd'hui) ──
+# categorie : liquidites | epargne_precaution | placements | immobilier | autres
+# Le portefeuille boursier (portefeuille.yml / PORTEFEUILLE_YAML) est ajouté automatiquement au prix du marché.
+actifs:
+  - {poste: "Compte courant",            montant: 900,  categorie: liquidites}
+  - {poste: "Livret A",                  montant: 2500, categorie: epargne_precaution}
+  - {poste: "Assurance-vie (fonds euros)", montant: 1200, categorie: placements}
+
+# type : immo | etudiant | conso | autre   (le crédit conso pénalise le score)
+passifs:
+  - {poste: "Prêt étudiant", type: etudiant, capital_restant: 6500, mensualite: 110, taux: 0.95}
+
+# ── Optionnel : relevés mensuels de ton patrimoine net, pour la courbe et la série ──
+historique_patrimoine:
+  - {mois: "2026-08", patrimoine_net: 1800}
+  - {mois: "2026-09", patrimoine_net: 2150}
+  - {mois: "2026-10", patrimoine_net: 2390}

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Veille Finance{% endblock %}</title>
+<meta name="description" content="Veille financière automatique, 24h/24 : marchés, régulation, investissements.">
+<link rel="alternate" type="application/rss+xml" title="Veille Finance" href="{{ root }}feed.xml">
+<link rel="stylesheet" href="{{ root }}style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="{{ root }}index.html"><span class="dot"></span>Veille Finance</a>
+    <nav><a href="{{ root }}direct.html"><span class="live"></span>Direct</a><a href="{{ root }}index.html">Édition</a><a href="{{ root }}decryptages.html">Décryptages</a><a href="{{ root }}academie.html">Académie</a><a href="{{ root }}simulateur.html">Simulateur</a><a href="{{ root }}lexique.html">Lexique</a><a href="{{ root }}questions.html">Questions</a><a href="{{ root }}portefeuille.html">Portefeuille</a><a href="{{ root }}moi.html" class="nav-moi">Mon espace</a>{% if cap_url %}<a href="{{ cap_url }}" class="nav-moi">Cap 2046</a>{% endif %}<a href="{{ root }}archives.html">Archives</a></nav>
+  </div>
+</header>
+{% if ia_active is defined and not ia_active %}<div class="wrap"><p class="ia-off">L'IA n'est pas encore branchée (jeton d'abonnement Claude manquant) : le fil mondial, les cours et les calendriers se mettent à jour, mais les éditions, décryptages, cours de l'Académie et réponses arriveront dès que le jeton sera ajouté.</p></div>{% endif %}
+<main class="wrap">
+{% block content %}{% endblock %}
+</main>
+{% block scripts %}{% endblock %}
+<footer class="wrap foot">
+  <p>Mis à jour automatiquement le {{ maj }} (heure de Paris) · Rédigé par une IA, sans relecture humaine avant publication.</p>
+  <p>Contenu à caractère informatif et pédagogique. Ne constitue pas un conseil en investissement personnalisé au sens de l'article L.541-1 du Code monétaire et financier. Tout investissement comporte un risque de perte en capital. Vérifiez les sources citées.</p>
+</footer>
+<script src="{{ root }}charts.js" defer></script>
+</body>
+</html>

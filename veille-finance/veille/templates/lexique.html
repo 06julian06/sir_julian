@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Lexique — Veille Finance{% endblock %}
+{% block content %}
+<p class="kicker">{{ lex | length }} termes · s'enrichit à chaque cours et décryptage</p>
+<h1>Lexique</h1>
+<div class="card lex-outils">
+  <input class="recherche" id="lex-q" type="search" placeholder="Chercher : EBITDA, PER, spread, CET1…" aria-label="Chercher un terme">
+  <div class="filtres" id="lex-cat">{% for c, n in [('', 'Tout'), ('comptes', 'Comptes'), ('valorisation', 'Valorisation'), ('marches', 'Marchés'), ('macro', 'Macro'), ('portefeuille', 'Portefeuille'), ('produits', 'Produits'), ('regulation', 'Régulation')] %}<button type="button" data-cat="{{ c }}" aria-pressed="{{ 'true' if not c else 'false' }}">{{ n }}</button>{% endfor %}</div>
+  <p class="lettres">{% for l in lettres %}<a href="#l-{{ l }}">{{ l }}</a>{% endfor %}</p>
+</div>
+<div id="lex">
+{% for t in lex %}{% if loop.first or t.lettre != loop.previtem.lettre %}<h2 class="lex-l" id="l-{{ t.lettre }}">{{ t.lettre }}</h2>{% endif %}
+<article class="lex-t" id="{{ t.ancre }}" data-cat="{{ t.categorie or '' }}">
+  <h3>{{ t.terme }}</h3>
+  <p>{{ t.definition | md }}</p>
+  {% if t.formule %}<p><code>{{ t.formule }}</code></p>{% endif %}
+  {% if t.exemple %}<p class="muted">Exemple : {{ t.exemple }}</p>{% endif %}
+  {% if t.piege %}<p class="why"><strong>Piège :</strong> {{ t.piege }}</p>{% endif %}
+  {% set o = t.origine or {} %}
+  {% if o.type == 'cours' %}<p class="note">Vu dans le <a href="academie/{{ '%02d' % o.numero }}.html">cours {{ o.numero }}</a></p>
+  {% elif o.type == 'decryptage' %}<p class="note">Vu dans le décryptage <a href="decryptages/{{ o.slug }}.html">{{ o.titre }}</a></p>
+  {% elif o.type == 'question' %}<p class="note">Vu dans <a href="questions.html#q{{ o.numero }}">ta question</a></p>{% endif %}
+</article>{% endfor %}
+</div>
+<p class="muted" id="lex-vide" hidden>Aucun terme trouvé. <a href="questions.html">Pose la question</a> : la réponse l'ajoutera au lexique.</p>
+{% endblock %}
+{% block scripts %}<script src="apprendre.js" defer></script>{% endblock %}

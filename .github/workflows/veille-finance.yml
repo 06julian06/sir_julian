@@ -1,0 +1,161 @@
+# Veille financière autonome : collecte, rédaction IA, publication du site, newsletter.
+# Les horaires cron de GitHub sont en UTC (Paris = UTC+1 en hiver, UTC+2 en été).
+name: Veille Finance
+
+on:
+  schedule:
+    - cron: "4,19,34,49 * * * *"  # direct : fil mondial, cours, calendrier (sans IA, gratuit)
+    - cron: "57 10,16,20 * * *"     # radar IA : tri, décryptages, questions (3 fois par jour, ménage l'abonnement)
+    - cron: "43 5 * * 1-6"   # édition du jour : ~6h45 Paris (hiver), lundi→samedi
+    - cron: "13 7 * * 0"     # édition hebdo : dimanche ~8h15 Paris (hiver)
+    - cron: "11 5 * * 1"     # Académie : nouveau cours chaque lundi ~6h10 Paris (hiver)
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Mode à lancer"
+        type: choice
+        options: [quotidien, direct, radar, hebdo, cours, build]
+        default: quotidien
+
+permissions:
+  contents: write   # pour sauvegarder les données sur la branche « veille-data »
+  issues: write     # pour répondre aux questions posées en Issues (label « question »)
+  pages: write
+  id-token: write
+
+# Une seule exécution à la fois : toutes écrivent sur la même branche de données.
+concurrency:
+  group: veille-finance
+  cancel-in-progress: false
+
+jobs:
+  veille:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    defaults:
+      run:
+        working-directory: veille-finance
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: veille-finance/requirements.txt
+
+      - run: pip install -r requirements.txt
+
+      # Les données (éditions, fil, espace chiffré) vivent sur la branche « veille-data » :
+      # mise à jour toutes les 15 min sans polluer l'historique du code. Un seul commit, réécrit à
+      # chaque passage (les données elles-mêmes contiennent l'historique utile).
+      - name: Récupérer les données
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          URL="https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          if git ls-remote --exit-code --heads "$URL" veille-data >/dev/null 2>&1; then
+            git clone -q --depth 1 --branch veille-data "$URL" "$GITHUB_WORKSPACE/veille-data"
+          else
+            mkdir -p "$GITHUB_WORKSPACE/veille-data"
+            cp -r data/. "$GITHUB_WORKSPACE/veille-data/" 2>/dev/null || true
+          fi
+
+      - name: Choisir le mode
+        id: mode
+        run: |
+          case "${{ github.event.schedule }}" in
+            "4,19,34,49 * * * *") echo "mode=direct" >> "$GITHUB_OUTPUT" ;;
+            "57 10,16,20 * * *") echo "mode=radar" >> "$GITHUB_OUTPUT" ;;
+            "43 5 * * 1-6") echo "mode=quotidien" >> "$GITHUB_OUTPUT" ;;
+            "13 7 * * 0")   echo "mode=hebdo" >> "$GITHUB_OUTPUT" ;;
+            "11 5 * * 1")   echo "mode=cours" >> "$GITHUB_OUTPUT" ;;
+            *)              echo "mode=${{ inputs.mode || 'quotidien' }}" >> "$GITHUB_OUTPUT" ;;
+          esac
+
+      # Moteur gratuit : l'IA tourne avec l'abonnement Claude (secret CLAUDE_CODE_OAUTH_TOKEN).
+      - name: Installer Claude Code (seulement pour les passages avec IA)
+        if: steps.mode.outputs.mode != 'direct' && steps.mode.outputs.mode != 'build'
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Lancer la veille (${{ steps.mode.outputs.mode }})
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PORTEFEUILLE_YAML: ${{ secrets.PORTEFEUILLE_YAML }}
+          FINANCES_YAML: ${{ secrets.FINANCES_YAML }}
+          ESPACE_PASSPHRASE: ${{ secrets.ESPACE_PASSPHRASE }}
+          VEILLE_DATA_DIR: ${{ github.workspace }}/veille-data
+          CAP2046_URL: ${{ vars.CAP2046_URL }}
+          SITE_URL: ${{ vars.SITE_URL }}
+          VEILLE_MODEL: ${{ vars.VEILLE_MODEL }}
+          VEILLE_MODEL_RADAR: ${{ vars.VEILLE_MODEL_RADAR }}
+          NEWSLETTER_PROVIDER: ${{ vars.NEWSLETTER_PROVIDER || 'smtp' }}
+          NEWSLETTER_DISABLED: ${{ vars.NEWSLETTER_DISABLED }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          NEWSLETTER_FROM: ${{ secrets.NEWSLETTER_FROM }}
+          NEWSLETTER_TO: ${{ secrets.NEWSLETTER_TO }}
+          BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
+        run: python -m veille.main ${{ steps.mode.outputs.mode }}
+
+      # Cap 2046 : relit les calendriers officiels une fois par jour (édition du matin ou lancement manuel).
+      - name: Cap 2046 — événements officiels
+        if: steps.mode.outputs.mode == 'quotidien' || steps.mode.outputs.mode == 'hebdo'
+        continue-on-error: true
+        working-directory: cap2046
+        env:
+          CAP2046_EVENTS: ${{ github.workspace }}/veille-data/cap2046/events.json
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          [ -f "$CAP2046_EVENTS" ] || { mkdir -p "$(dirname "$CAP2046_EVENTS")"; cp data/events.json "$CAP2046_EVENTS"; }
+          python scripts/maj_evenements.py | tee -a "$GITHUB_STEP_SUMMARY"
+          ECHECS=$(python3 -c "import json,os;d=json.load(open(os.environ['CAP2046_EVENTS']));print(', '.join(k for k,v in d['sources_statut'].items() if not v['ok']))")
+          [ -z "$ECHECS" ] && exit 0
+          TITRE="Cap 2046 : source(s) officielle(s) illisible(s)"
+          if gh issue list --state open --search "$TITRE in:title" --json number --jq 'length' | grep -q '^0$'; then
+            gh issue create --title "$TITRE" --body "Échec de lecture : $ECHECS. Les anciennes dates sont conservées. Journal : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          fi
+
+      - name: Sauvegarder les données
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        working-directory: veille-data
+        run: |
+          rm -rf .git
+          git init -q -b veille-data
+          git config user.name "veille-finance-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "données : ${{ steps.mode.outputs.mode }} $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push -q -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" veille-data
+
+      - name: Joindre le jeu (/jeu/) et les données de Cap 2046 (/cap2046-data/)
+        run: |
+          mkdir -p _site/jeu _site/cap2046-data
+          cp ../index.html ../tmi.min.js _site/jeu/ 2>/dev/null || true
+          cp "$GITHUB_WORKSPACE/veille-data/cap2046/events.json" _site/cap2046-data/events.json 2>/dev/null \
+            || cp ../cap2046/data/events.json _site/cap2046-data/events.json
+
+      # Tant que GitHub Pages n'est pas activé (Settings → Pages → GitHub Actions), la publication échoue
+      # sans faire échouer l'exécution : les données sont déjà sauvegardées.
+      - uses: actions/configure-pages@v5
+        id: pages
+        continue-on-error: true
+      - uses: actions/upload-pages-artifact@v3
+        if: steps.pages.outcome == 'success'
+        with:
+          path: veille-finance/_site
+      - id: deploy
+        if: steps.pages.outcome == 'success'
+        uses: actions/deploy-pages@v4
+      - name: Rappel si GitHub Pages n'est pas activé
+        if: steps.pages.outcome != 'success'
+        run: |
+          echo "::warning::GitHub Pages n'est pas activé (Settings, Pages, Source = GitHub Actions). Le site n'a pas été publié."

@@ -1,0 +1,113 @@
+# Lexique de départ. Les cours, décryptages et réponses de l'IA l'enrichissent automatiquement.
+# categorie : comptes | valorisation | marches | macro | produits | regulation | portefeuille
+termes:
+  - terme: "Chiffre d'affaires"
+    categorie: comptes
+    definition: "Total des ventes d'une entreprise sur une période, avant toute dépense."
+    exemple: "Si Apple vend 100 millions d'iPhone à 900 $, cela fait 90 milliards de dollars de chiffre d'affaires."
+  - terme: "EBITDA"
+    categorie: comptes
+    definition: "Bénéfice avant intérêts, impôts, dépréciations et amortissements (en français : EBE, excédent brut d'exploitation). Mesure ce que l'activité courante génère avant le coût de la dette, les impôts et l'usure des équipements."
+    formule: "EBITDA = résultat d'exploitation (EBIT) + dotations aux amortissements et dépréciations"
+    exemple: "Résultat d'exploitation 80, amortissements 20 : EBITDA = 100."
+    piege: "Il ignore les investissements nécessaires pour maintenir l'activité : une entreprise très gourmande en usines peut afficher un gros EBITDA et peu de cash."
+  - terme: "EBIT (résultat d'exploitation)"
+    categorie: comptes
+    definition: "Bénéfice généré par l'activité après amortissements, mais avant intérêts et impôts."
+    formule: "EBIT = chiffre d'affaires − charges d'exploitation − amortissements"
+  - terme: "Résultat net"
+    categorie: comptes
+    definition: "Ce qui reste pour les actionnaires une fois toutes les charges payées : exploitation, intérêts, impôts."
+  - terme: "BPA (bénéfice par action)"
+    categorie: comptes
+    definition: "Résultat net divisé par le nombre d'actions. C'est le chiffre que les analystes comparent aux attentes le jour des résultats."
+    formule: "BPA = résultat net ÷ nombre d'actions"
+  - terme: "Marge"
+    categorie: comptes
+    definition: "Part du chiffre d'affaires conservée à un niveau donné du compte de résultat (marge brute, opérationnelle, nette)."
+    formule: "Marge opérationnelle = EBIT ÷ chiffre d'affaires"
+  - terme: "Free cash flow (flux de trésorerie disponible)"
+    categorie: comptes
+    definition: "Le cash réellement généré après avoir payé les investissements nécessaires. C'est ce qui peut servir à rembourser la dette, verser des dividendes ou racheter des actions."
+    formule: "FCF = flux de trésorerie opérationnels − investissements (capex)"
+    piege: "Un bénéfice comptable sans free cash flow pendant plusieurs années est un signal d'alerte."
+  - terme: "Capitaux propres"
+    categorie: comptes
+    definition: "Ce qui appartient aux actionnaires au bilan : total des actifs moins total des dettes."
+  - terme: "Dette nette"
+    categorie: comptes
+    definition: "Dettes financières moins la trésorerie disponible. Négative, l'entreprise a plus de cash que de dettes."
+    formule: "Dette nette = dettes financières − trésorerie"
+  - terme: "Dette nette / EBITDA (levier)"
+    categorie: comptes
+    definition: "Nombre d'années d'EBITDA qu'il faudrait pour rembourser la dette nette. Mesure la solidité financière."
+    exemple: "Sous 2 : confortable pour une entreprise industrielle. Au-dessus de 4 : sous surveillance des agences de notation."
+  - terme: "ROE (rentabilité des capitaux propres)"
+    categorie: comptes
+    definition: "Bénéfice net rapporté aux capitaux propres : combien l'entreprise gagne pour chaque euro des actionnaires."
+    formule: "ROE = résultat net ÷ capitaux propres"
+    piege: "Un ROE élevé peut venir d'une forte dette plutôt que d'une bonne activité."
+  - terme: "Capitalisation boursière"
+    categorie: valorisation
+    definition: "Valeur de toutes les actions d'une entreprise au prix du marché."
+    formule: "Capitalisation = cours × nombre d'actions"
+  - terme: "PER (Price Earnings Ratio, ou P/E)"
+    categorie: valorisation
+    definition: "Prix de l'action divisé par le bénéfice par action : combien d'années de bénéfices actuels tu paies. C'est le « P/E » des analystes anglophones."
+    formule: "PER = cours ÷ BPA = capitalisation ÷ résultat net"
+    exemple: "Action à 100 €, BPA de 5 € : PER de 20. Tu paies 20 ans de bénéfices actuels."
+    piege: "Un PER bas n'est pas forcément « pas cher » : le marché anticipe peut-être une baisse des bénéfices. Compare toujours au secteur et à la croissance."
+  - terme: "Valeur d'entreprise (EV)"
+    categorie: valorisation
+    definition: "Prix qu'il faudrait payer pour racheter toute l'entreprise, dette comprise : les actions plus la dette nette."
+    formule: "EV = capitalisation + dette nette"
+  - terme: "EV/EBITDA"
+    categorie: valorisation
+    definition: "Valeur d'entreprise divisée par l'EBITDA. Permet de comparer des entreprises qui n'ont pas le même niveau de dette, contrairement au PER."
+    formule: "EV/EBITDA = (capitalisation + dette nette) ÷ EBITDA"
+  - terme: "Rendement du free cash flow (FCF yield)"
+    categorie: valorisation
+    definition: "Free cash flow rapporté à la capitalisation : le « rendement en cash » de l'entreprise si tu l'achetais entière."
+    formule: "FCF yield = free cash flow ÷ capitalisation"
+  - terme: "Consensus"
+    categorie: marches
+    definition: "Moyenne des prévisions des analystes (bénéfice, chiffre d'affaires, statistique économique). Le marché réagit à l'écart entre le chiffre publié et le consensus, pas au chiffre seul."
+  - terme: "Guidance"
+    categorie: marches
+    definition: "Prévisions que l'entreprise donne elle-même pour les trimestres à venir. Une guidance abaissée fait souvent plus baisser l'action qu'un mauvais trimestre passé."
+  - terme: "Volatilité"
+    categorie: portefeuille
+    definition: "Ampleur des variations d'un prix. Une volatilité de 20 % par an signifie que des variations de ±20 % sur un an sont courantes."
+  - terme: "Drawdown"
+    categorie: portefeuille
+    definition: "Baisse entre un plus haut et le plus bas qui suit. Le MSCI World a connu un drawdown d'environ −55 % en 2008-2009."
+  - terme: "Taux directeur"
+    categorie: macro
+    definition: "Taux auquel une banque centrale prête aux banques. Il fixe le coût de l'argent dans toute l'économie."
+  - terme: "Inflation"
+    categorie: macro
+    definition: "Hausse générale des prix, mesurée sur un an. Elle érode le pouvoir d'achat de l'épargne qui ne rapporte rien."
+  - terme: "Spread"
+    categorie: macro
+    definition: "Écart de rendement entre deux obligations, par exemple entre la France et l'Allemagne. Un spread qui s'élargit signale une méfiance accrue."
+  - terme: "ETF"
+    categorie: produits
+    definition: "Fonds coté en bourse qui réplique un indice. Une seule ligne te donne accès à des centaines d'entreprises, avec des frais faibles."
+  - terme: "Effet de levier"
+    categorie: produits
+    definition: "Mécanisme qui multiplie gains et pertes (turbo, CFD, ETF ×2). Avec un levier ×2, une baisse de 50 % efface toute la mise."
+  - terme: "DCA (investissement programmé)"
+    categorie: portefeuille
+    definition: "Investir le même montant à intervalle régulier, quel que soit le niveau du marché."
+  - terme: "Ratio CET1"
+    categorie: regulation
+    definition: "Fonds propres les plus solides d'une banque rapportés à ses actifs pondérés par leur risque. Mesure clé de la solidité bancaire sous Bâle III (minimum réglementaire de 4,5 %, auquel s'ajoutent des coussins)."
+  - terme: "MiFID II"
+    categorie: regulation
+    definition: "Directive européenne qui encadre les services d'investissement : protection des clients, transparence des coûts, adéquation des conseils au profil."
+  - terme: "MiCA"
+    categorie: regulation
+    definition: "Règlement européen sur les marchés de crypto-actifs : agrément des prestataires et règles pour les émetteurs de stablecoins."
+  - terme: "KYC"
+    categorie: regulation
+    definition: "« Know your customer » : obligation pour un établissement financier de vérifier l'identité de ses clients et l'origine des fonds."

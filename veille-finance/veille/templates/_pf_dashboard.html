@@ -1,0 +1,47 @@
+{% from "_charts.html" import chart %}
+{% set hist = pf.historique %}
+<div class="kpis">
+  {% if pf.total_eur is defined %}<div class="kpi"><span class="tn">Valeur totale</span><span class="kv">{{ fmt_num(pf.total_eur) }} €</span><span class="ty">plus-value latente {{ fmt_num(pf.pv_eur) }} €</span></div>{% endif %}
+  <div class="kpi"><span class="tn">Performance depuis tes achats</span><span class="kv {{ 'up' if pf.perf_pct > 0 else 'down' }}">{{ '%+.2f'|format(pf.perf_pct) }} %</span><span class="ty">par rapport à tes prix de revient</span></div>
+  <div class="kpi"><span class="tn">Dernière séance</span><span class="kv {{ 'up' if pf.var_jour_pct > 0 else ('down' if pf.var_jour_pct < 0 else '') }}">{{ '%+.2f'|format(pf.var_jour_pct) }} %</span>{% if pf.var_jour_eur is defined %}<span class="ty">{{ '%+.0f'|format(pf.var_jour_eur) }} €</span>{% endif %}</div>
+  {% if hist and hist.indice %}{% set p1 = hist.portefeuille[-1] - 100 %}{% set i1 = (hist.indice | reject('none') | list)[-1] - 100 %}
+  <div class="kpi"><span class="tn">1 an vs {{ hist.indice_nom }}</span><span class="kv {{ 'up' if p1 - i1 > 0 else 'down' }}">{{ '%+.1f'|format(p1 - i1) }} pts</span><span class="ty">toi {{ '%+.1f'|format(p1) }} % · indice {{ '%+.1f'|format(i1) }} %</span></div>
+  {% endif %}
+</div>
+
+{% if hist %}
+<h3 class="vh">Ton portefeuille face au marché</h3>
+{% set series = [{"nom": "Ton portefeuille", "court": "Toi", "valeurs": hist.portefeuille, "slot": 1}] %}
+{% if hist.indice %}{% set series = series + [{"nom": hist.indice_nom, "court": "Indice", "valeurs": hist.indice, "slot": 2}] %}{% endif %}
+{{ chart("line", {"dates": hist.dates, "series": series, "rebase": true, "ranges": true, "titre": "Performance comparée, base 100"}) }}
+<p class="note">Base 100 au début de la période. Composition actuelle supposée constante : c'est « ce qu'aurait fait ton portefeuille d'aujourd'hui », pas l'historique réel de tes achats et ventes.</p>
+{% endif %}
+
+<div class="viz-cols">
+  <div>
+    <h3 class="vh">Poids de chaque ligne</h3>
+    {{ chart("bars", {"libelle": "Poids", "items": pf.lignes | rejectattr("indisponible") | map("pf_bar") | list}) }}
+    <p class="note">Le trait vertical marque la limite de 5 % par action fixée dans ton profil.</p>
+  </div>
+  <div>
+    {% for axe, items in (pf.repartition or {}).items() %}
+    <h3 class="vh">Répartition par {{ axe }}</h3>
+    {{ chart("seg", {"items": items | map("pf_seg") | list}) }}
+    {% endfor %}
+  </div>
+</div>
+
+{% if pf.contrib_jour %}
+<h3 class="vh">Qui a fait bouger ton portefeuille à la dernière séance</h3>
+{{ chart("diverge", {"libelle": "Contribution", "items": pf.contrib_jour | map("pf_contrib") | list}) }}
+<p class="note">Contribution = poids × variation du jour, en points de %. La somme donne la variation du portefeuille.</p>
+{% endif %}
+
+<details class="det"><summary>Détail des lignes</summary>
+<div class="tscroll"><table class="pf">
+  <tr><th>Ligne</th><th>Env.</th><th>Poids</th><th>Depuis PRU</th><th>Jour</th></tr>
+  {% for l in pf.lignes %}<tr><td>{{ l.nom }}</td><td>{{ l.enveloppe or '' }}</td>
+  {% if l.indisponible %}<td colspan="3" class="muted">cours indisponible</td>{% else %}
+  <td>{{ l.poids_pct }} %</td><td class="{{ 'up' if l.perf_pct > 0 else 'down' }}">{{ '%+.1f'|format(l.perf_pct) }} %</td><td class="{{ 'up' if l.var_jour_pct > 0 else ('down' if l.var_jour_pct < 0 else '') }}">{{ '%+.2f'|format(l.var_jour_pct) }} %</td>{% endif %}</tr>{% endfor %}
+</table></div></details>
+{% for a in pf.alertes_regles %}<p class="why rule">⚠ {{ a }}</p>{% endfor %}

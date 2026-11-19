@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "_termes.html" import sources %}
+{% block title %}Tes questions — Veille Finance{% endblock %}
+{% block content %}
+<p class="kicker">Réponse en moins d'une heure, avec sources</p>
+<h1>Pose n'importe quelle question</h1>
+<div class="card">
+  <p>« C'est quoi l'EBITDA ? », « Pourquoi Nvidia baisse après de bons résultats ? », « Qu'attend le marché de la BCE jeudi ? »… L'IA cherche, vérifie et répond ici et par commentaire sous ta question, au plus tard au passage horaire suivant.</p>
+  {% if repo %}<p><a class="btn-p" href="https://github.com/{{ repo }}/issues/new?template=question-veille.yml" target="_blank" rel="noopener">Poser une question</a></p>
+  <p class="note">Ouvre GitHub (compte requis). Seules tes questions sont traitées : celles d'inconnus sont ignorées.</p>{% endif %}
+</div>
+{% for q in qs %}
+<section class="card" id="q{{ q.numero }}">
+  <p class="kicker">{{ q.date_label }}</p><h2 class="dec-t">{{ q.titre }}</h2>
+  <p><b>{{ q.reponse_courte | md }}</b></p>
+  <details class="det"><summary>Explication complète</summary><div class="txt">{{ q.explication | md }}</div>
+  {% if q.pour_toi %}<p class="why"><strong>Pour toi :</strong> {{ q.pour_toi | md }}</p>{% endif %}{{ sources(q.sources) }}</details>
+</section>
+{% else %}<p class="card muted">Aucune question posée pour l'instant.</p>{% endfor %}
+{% endblock %}

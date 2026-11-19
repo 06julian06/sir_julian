@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Décryptages — Veille Finance{% endblock %}
+{% block content %}
+<p class="kicker">Rédigés automatiquement dès qu'une actualité majeure tombe</p>
+<h1>Décryptages</h1>
+<p class="lede">Ce qui s'est passé, ce que ça veut dire, ce qu'il faut surveiller, ce que ça change pour toi.</p>
+{% for d in decs %}
+<a class="card dec-li" href="decryptages/{{ d.slug }}.html">
+  <span class="kicker">{{ d.date_label }} · {{ d.heure }}{% if d.importance >= 5 %} · <span class="li-imp">● majeur</span>{% endif %}</span>
+  <h2 class="dec-t">{{ d.titre }}</h2><p>{{ d.chapo }}</p></a>
+{% else %}<p class="card muted">Aucun décryptage pour l'instant : ils apparaissent dès que l'IA détecte une actualité d'importance 4 ou 5.</p>{% endfor %}
+{% endblock %}

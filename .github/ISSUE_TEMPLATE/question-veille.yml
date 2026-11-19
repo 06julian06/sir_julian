@@ -1,0 +1,12 @@
+name: Question pour la veille
+description: Pose une question — l'IA y répond dans la prochaine édition (rubrique « Tes questions »).
+title: "Question : "
+labels: ["question"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Ta question
+      description: Sois précis. Contexte utile (enveloppe, horizon, montant en ordre de grandeur) bienvenu — mais aucune donnée bancaire.
+    validations:
+      required: true

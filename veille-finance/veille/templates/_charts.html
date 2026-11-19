@@ -1,0 +1,3 @@
+{% macro chart(kind, data, cls="") -%}
+<div class="viz {{ cls }}" data-chart="{{ kind }}"><script type="application/json">{{ data | tojson }}</script></div>
+{%- endmacro %}

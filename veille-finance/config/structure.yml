@@ -1,0 +1,100 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# STRUCTURE ÉDITORIALE — calquée sur le format de l'émission de Fuze
+# (« Bon... Je suis ruiné à cause de la Bourse », 18/11/2026) :
+#   Intro → Point sur le portefeuille → Deep Dive → Questions des abonnés
+#   → Notion du jour → Portefeuille des abonnés
+# + trois rubriques ajoutées pour TA trajectoire (actualités, régulation, carrière).
+# Réordonne, renomme, ajoute ou supprime librement : l'IA suit ce fichier.
+# Champs : id (unique), titre, consigne, max_items.
+# Les ids "portefeuille" et "questions" ont un traitement spécial (données réelles).
+# ─────────────────────────────────────────────────────────────────────────────
+
+rubriques:
+  - id: portefeuille
+    titre: "Point sur ton portefeuille"
+    consigne: >
+      À partir des DONNÉES RÉELLES du portefeuille fournies (valeur, plus/moins-values,
+      poids, variation du jour), fais le point comme un gérant exigeant : ce qui a bougé
+      et pourquoi (relie à l'actualité), ce qui pèse trop, les règles du profil qui sont
+      violées (ex : ligne > 5 %), la cohérence avec l'horizon. Distingue le bruit du jour
+      d'un vrai problème. Ne recalcule pas les chiffres : commente-les. Si aucun
+      portefeuille n'est configuré, un seul élément qui l'explique.
+    max_items: 4
+
+  - id: actualites
+    titre: "Les marchés — ce qui compte vraiment"
+    consigne: >
+      Les 3 à 6 informations macro, marchés, banques centrales ou entreprises qui ont un
+      impact réel. Pour chacune : le fait (sourcé), puis "pourquoi ça compte".
+    max_items: 6
+
+  - id: resultats
+    titre: "Résultats publiés — ce qu'il faut en retenir"
+    consigne: >
+      Les résultats d'entreprises publiés depuis la dernière édition, en priorité celles qui
+      pèsent dans un ETF Monde, Europe ou Nasdaq, et les lignes du portefeuille. Pour chacune :
+      chiffres clés (chiffre d'affaires, marge, BPA, free cash flow) comparés au consensus,
+      guidance, réaction du marché, et LA chose à retenir. Explique chaque terme. Si aucune
+      publication majeure, un seul élément qui annonce les publications des 7 prochains jours.
+    max_items: 4
+
+  - id: deep_dive
+    titre: "Le Deep Dive"
+    consigne: >
+      UNE entreprise cotée analysée en profondeur, idéalement liée à l'actualité ou au
+      portefeuille, jamais une déjà traitée récemment (liste fournie). En 4 éléments :
+      1) modèle économique (comment elle gagne de l'argent, segments, marges),
+      2) avantage concurrentiel et risques, 3) chiffres clés récents sourcés
+      (croissance, free cash flow, dette, valorisation : PER, EV/EBITDA, FCF yield),
+      4) verdict analytique : ce qu'il faudrait croire pour que le titre soit attractif
+      au prix actuel. Pas d'ordre d'achat.
+    max_items: 4
+
+  - id: questions
+    titre: "Tes questions"
+    consigne: >
+      Réponds aux questions reçues (fournies avec leur numéro : mets ce numéro dans
+      "ref"). Réponse directe, argumentée, qui corrige la question si elle est mal posée.
+      S'il n'y a aucune question, choisis LA question qu'une personne de ce profil
+      devrait se poser cette semaine (ref vide).
+    max_items: 3
+
+  - id: notion
+    titre: "La notion du jour"
+    consigne: >
+      UN concept financier expliqué à fond (ex : free cash flow, duration, tracking error,
+      ETF synthétique vs physique, appel de marge, PER vs EV/EBITDA, ratio CET1).
+      Définition, calcul pas à pas avec exemple chiffré, piège d'interprétation,
+      à quoi ça sert concrètement. Jamais une notion déjà traitée récemment (liste fournie).
+    max_items: 1
+
+  - id: crible
+    titre: "Portefeuilles passés au crible — comment on finit ruiné"
+    consigne: >
+      Analyse UN portefeuille type réaliste (ex : 100 % tech US, 40 % crypto, 15 lignes
+      de small caps, tout sur l'action de son employeur, levier via CFD, ETF empilés qui
+      se recoupent). Diagnostic sans complaisance : concentration, corrélations, frais,
+      fiscalité, scénario de perte chiffré, et comment le corriger.
+    max_items: 1
+
+  - id: nouveautes
+    titre: "Nouveautés — produits, fiscalité, plateformes"
+    consigne: >
+      Nouveaux ETF, évolutions de frais, changements fiscaux (PEA, assurance-vie, flat
+      tax), offres de courtiers, réformes de l'épargne. Seulement le nouveau et vérifiable.
+    max_items: 3
+
+  - id: regulation
+    titre: "Régulation & conformité — l'angle pro"
+    consigne: >
+      Publications AMF, ACPR, ESMA, EBA, BCE, Commission européenne (MiCA, DORA, MiFID,
+      AI Act appliqué à la finance, LCB-FT, encadrement des influenceurs financiers...).
+      Ce qui change, qui est concerné, ce qu'un professionnel de la conformité en retient.
+    max_items: 3
+
+  - id: carriere
+    titre: "Coup d'avance — finance réglementée"
+    consigne: >
+      Une question d'entretien type (conformité, risques, régulation, stratégie) avec une
+      réponse modèle en 3 phrases, liée si possible à l'actualité du jour.
+    max_items: 1
