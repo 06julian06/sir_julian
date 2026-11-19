@@ -62,7 +62,18 @@ RÈGLES DE FOND
 - Si rien d'important ne s'est passé, dis-le. "Rien à faire" est une réponse valable."""
 
 
+def moteur() -> str | None:
+    """« api » (clé payante à l'usage), « abonnement » (abonnement Claude existant, 0 € de plus) ou None."""
+    if os.environ.get("ANTHROPIC_API_KEY"):
+        return "api"
+    from . import abonnement
+    return "abonnement" if abonnement.disponible() else None
+
+
 def _stream(model: str = MODEL, **kwargs):
+    if moteur() == "abonnement":
+        from . import abonnement
+        return abonnement.message(model=model, **kwargs)
     with _get_client().beta.messages.stream(model=model, betas=BETAS, fallbacks=FALLBACKS, **kwargs) as s:
         msg = s.get_final_message()
     if msg.stop_reason == "refusal":

@@ -15,7 +15,7 @@
     <nav><a href="{{ root }}direct.html"><span class="live"></span>Direct</a><a href="{{ root }}index.html">Édition</a><a href="{{ root }}decryptages.html">Décryptages</a><a href="{{ root }}academie.html">Académie</a><a href="{{ root }}simulateur.html">Simulateur</a><a href="{{ root }}lexique.html">Lexique</a><a href="{{ root }}questions.html">Questions</a><a href="{{ root }}portefeuille.html">Portefeuille</a><a href="{{ root }}moi.html" class="nav-moi">Mon espace</a>{% if cap_url %}<a href="{{ cap_url }}" class="nav-moi">Cap 2046</a>{% endif %}<a href="{{ root }}archives.html">Archives</a></nav>
   </div>
 </header>
-{% if ia_active is defined and not ia_active %}<div class="wrap"><p class="ia-off">L'IA n'est pas encore branchée (clé API manquante) : le fil mondial, les cours et les calendriers se mettent à jour, mais les éditions, décryptages, cours de l'Académie et réponses arriveront dès que la clé sera ajoutée.</p></div>{% endif %}
+{% if ia_active is defined and not ia_active %}<div class="wrap"><p class="ia-off">L'IA n'est pas encore branchée (jeton d'abonnement Claude manquant) : le fil mondial, les cours et les calendriers se mettent à jour, mais les éditions, décryptages, cours de l'Académie et réponses arriveront dès que le jeton sera ajouté.</p></div>{% endif %}
 <main class="wrap">
 {% block content %}{% endblock %}
 </main>

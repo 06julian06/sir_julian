@@ -109,7 +109,7 @@ commentaire et ferme l'issue. Seules les questions du propriétaire et des colla
 
 1. **Fusionner** cette branche dans la branche par défaut. Les déclenchements planifiés de GitHub Actions ne tournent **que** sur la branche par défaut.
 2. **Clé Claude** : *Settings → Secrets and variables → Actions → New repository secret*
-   `ANTHROPIC_API_KEY` = ta clé (console.anthropic.com).
+   `CLAUDE_CODE_OAUTH_TOKEN` = jeton de ton abonnement Claude (`claude setup-token`).
 3. **Newsletter (SMTP, ex. Gmail)** — secrets :
    - `SMTP_HOST` = `smtp.gmail.com`, `SMTP_PORT` = `465`
    - `SMTP_USER` = ton adresse Gmail
@@ -127,19 +127,13 @@ commentaire et ferme l'issue. Seules les questions du propriétaire et des colla
 Les données (éditions, fil, espace chiffré) sont stockées sur la branche **`veille-data`**, réécrite à chaque
 passage : l'historique du code reste propre malgré les 96 mises à jour quotidiennes.
 
-## Coûts (ordre de grandeur, tarifs Claude Opus 5.5 : 4 $ / 20 $ par million de tokens)
+## Coûts : 0 € de plus
 
-| Tâche | Fréquence | Estimation |
-|---|---|---|
-| Direct (collecte, sans IA) | 72 / jour | 0 $ |
-| Radar (tri IA du fil) | 24 / jour | ~0,03 à 0,08 $ chacun |
-| Édition du jour + coach personnel | 6 / semaine | ~0,70 à 1,30 $ |
-| Édition hebdo | 1 / semaine | ~1 à 2 $ |
-| **Total** | | **≈ 50 à 80 $ / mois** |
-
-Le levier principal est le radar horaire : la variable `VEILLE_MODEL_RADAR=claude-haiku-5-5` le ramène à quelques
-dollars par mois (tri moins fin). Fixe une limite de dépense mensuelle dans la console Anthropic.
-GitHub Actions et Pages sont gratuits sur un dépôt public.
+L'IA utilise ton **abonnement Claude existant** via Claude Code (secret `CLAUDE_CODE_OAUTH_TOKEN`, généré par
+`claude setup-token`). Aucune API facturée à l'usage. Les passages IA (tri 3 fois par jour, édition du matin,
+cours du lundi, décryptages, réponses) comptent dans les limites de ton abonnement. GitHub Actions et Pages
+sont gratuits sur un dépôt public, Netlify reste dans son offre gratuite. Une clé `ANTHROPIC_API_KEY`, si tu en
+ajoutes une un jour, est prioritaire et facturée à l'usage : ne la crée pas si tu veux rester à 0 €.
 
 ## Personnaliser
 
@@ -155,7 +149,7 @@ cd veille-finance
 pip install -r requirements.txt
 NEWSLETTER_DISABLED=1 python -m veille.main quotidien --demo   # rendu sans IA
 open _site/index.html
-ANTHROPIC_API_KEY=... NEWSLETTER_DISABLED=1 python -m veille.main quotidien   # vraie édition
+CLAUDE_CODE_OAUTH_TOKEN=... NEWSLETTER_DISABLED=1 python -m veille.main quotidien   # vraie édition (abonnement Claude, Claude Code installé)
 ```
 
 ## Limites connues

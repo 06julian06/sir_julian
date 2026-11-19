@@ -492,8 +492,9 @@ def main() -> None:
     a = p.parse_args()
     # Sans clé API, tout ce qui ne demande pas d'IA continue de tourner (fil mondial, cours, calendriers,
     # site) : le site reste vivant en attendant la configuration, et aucune exécution n'échoue.
-    if not os.environ.get("ANTHROPIC_API_KEY") and not a.demo and a.mode in ("radar", "quotidien", "hebdo", "cours"):
-        log.warning("ANTHROPIC_API_KEY absente : mode « %s » réduit à la collecte sans IA.", a.mode)
+    from . import brain
+    if brain.moteur() is None and not a.demo and a.mode in ("radar", "quotidien", "hebdo", "cours"):
+        log.warning("Ni CLAUDE_CODE_OAUTH_TOKEN ni ANTHROPIC_API_KEY : mode « %s » réduit à la collecte sans IA.", a.mode)
         run_direct()
         return
     if a.mode == "build":

@@ -6,6 +6,21 @@ https://<ton-site>.netlify.app/veille/     → Veille IA : direct, éditions, d�
                                              simulateur, lexique, questions, mon espace chiffré
 ```
 
+## Coût total : 0 € de plus
+
+| Brique | Coût |
+|---|---|
+| GitHub (dépôt public, Actions, Pages) | gratuit |
+| Netlify (offre gratuite, aucun redéploiement automatique) | gratuit |
+| Données (flux, calendriers et horaires officiels) | gratuit |
+| IA | ton abonnement Claude existant (jeton `CLAUDE_CODE_OAUTH_TOKEN`) : 0 € de plus |
+
+L'IA tourne 3 fois par jour en semaine pour le tri et les décryptages, plus l'édition du matin et le cours du
+lundi : environ 6 à 10 sessions par jour, qui comptent dans les limites de ton abonnement (les mêmes que
+quand tu utilises Claude). Le fil mondial, les cours de bourse et les calendriers, eux, tournent toutes les
+15 minutes sans IA. Si un jour les limites de l'abonnement sont atteintes, le passage IA échoue proprement et
+le site continue sans IA jusqu'au suivant.
+
 ## Pourquoi ce montage (lis-le une fois)
 
 Netlify facture chaque déploiement : **offre gratuite = 300 crédits/mois, 15 crédits par déploiement**,
@@ -25,7 +40,10 @@ Donc :
 1. Fusionne la pull request dans `main` (les tâches planifiées ne tournent que sur `main`).
 2. *Settings → Pages* → Source : **GitHub Actions**.
 3. *Settings → Secrets and variables → Actions* :
-   - Secret **`ANTHROPIC_API_KEY`** (obligatoire : l'IA).
+   - Secret **`CLAUDE_CODE_OAUTH_TOKEN`** (l'IA, **sans aucun coût en plus**) : sur ton ordinateur, installe
+     Claude Code puis tape `claude setup-token` ; copie le jeton affiché dans ce secret. L'IA utilise alors ton
+     abonnement Claude (Pro, Max…) au lieu d'une API payante à l'usage. **Ne crée pas `ANTHROPIC_API_KEY`** :
+     s'il existe, c'est lui qui est utilisé, et il est facturé à l'usage.
    - Secrets newsletter : `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `NEWSLETTER_TO` (voir `veille-finance/README.md`).
    - Secrets privés (facultatifs) : `PORTEFEUILLE_YAML`, `FINANCES_YAML`, `ESPACE_PASSPHRASE`.
 4. *Actions → Veille Finance → Run workflow → quotidien* : première édition + premier calendrier Cap 2046.
