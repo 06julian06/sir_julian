@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cap 2046</title>
+<meta name="description" content="Les événements qui peuvent bouger les marchés, rapportés à ton portefeuille PEA, avec un verdict par défaut : continue ton DCA.">
+<meta name="theme-color" content="#1f5f8b">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand">Cap 2046 <small>PEA · DCA · long terme</small></div>
+    <div class="maj" id="maj">Chargement…</div>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Sections">
+  <button type="button" data-vue="accueil" aria-current="page"><span class="ic" aria-hidden="true">◎</span>Accueil</button>
+  <button type="button" data-vue="calendrier"><span class="ic" aria-hidden="true">▦</span>Agenda</button>
+  <button type="button" data-vue="portefeuille"><span class="ic" aria-hidden="true">◔</span>Positions</button>
+  <button type="button" data-vue="fomo"><span class="ic" aria-hidden="true">✋</span>Anti-FOMO</button>
+  <button type="button" data-vue="journal"><span class="ic" aria-hidden="true">✎</span>Journal</button>
+  <button type="button" data-vue="plan"><span class="ic" aria-hidden="true">⚑</span>Plan</button>
+</nav>
+
+<main>
+  <section class="view" id="v-accueil" aria-label="Aujourd'hui"></section>
+
+  <section class="view" id="v-calendrier" aria-label="Calendrier" hidden>
+    <div class="cols">
+      <div>
+        <div class="card">
+          <div class="barre-outils">
+            <div class="seg" role="group" aria-label="Affichage">
+              <button type="button" data-aff="mois" aria-pressed="true">Mois</button>
+              <button type="button" data-aff="liste" aria-pressed="false">Liste</button>
+            </div>
+            <label class="small"><input type="checkbox" id="f-moi"> Seulement ce qui me touche</label>
+          </div>
+          <div class="filtres" id="f-cat" role="group" aria-label="Catégories"></div>
+          <div class="filtres" id="f-imp" role="group" aria-label="Importance"></div>
+          <div id="cal-mois"></div>
+        </div>
+        <div id="cal-liste"></div>
+      </div>
+      <div class="sticky"><article class="card detail" id="detail" aria-live="polite"></article></div>
+    </div>
+    <div class="card"><h2>Récapitulatif des 3 prochains mois</h2><div class="tscroll" id="recap"></div></div>
+    <div class="card" id="a-confirmer"></div>
+  </section>
+
+  <section class="view" id="v-portefeuille" aria-label="Portefeuille" hidden></section>
+  <section class="view" id="v-fomo" aria-label="Anti-FOMO" hidden></section>
+  <section class="view" id="v-journal" aria-label="Journal" hidden></section>
+  <section class="view" id="v-plan" aria-label="Plan et sources" hidden></section>
+</main>
+
+<footer>
+  Outil d'aide à la décision personnel. Ne constitue pas un conseil en investissement personnalisé. Les données « non vérifié » doivent être confirmées sur la source officielle indiquée.
+</footer>
+<script src="app.js" defer></script>
+</body>
+</html>

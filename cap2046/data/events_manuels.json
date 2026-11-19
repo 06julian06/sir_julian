@@ -1,0 +1,190 @@
+{
+ "_lisez_moi": "Événements NON automatisables. À relire chaque semaine. verifie=false => affiché « non vérifié » sur le site. Quand tu confirmes une date sur la source officielle : verifie=true, verifie_le=AAAA-MM-JJ, et précise la note.",
+ "events": [
+  {
+   "id": "bls-emploi-2026-12-04", "date": "2026-12-04", "datetime_utc": "2026-12-04T13:30:00Z", "heure_verifiee": false,
+   "categorie": "macro", "importance": 3, "zones": ["US"], "societes": [],
+   "titre": "États-Unis : rapport sur l'emploi (novembre)",
+   "description": "Le rapport mensuel sur l'emploi américain (créations d'emplois, chômage, salaires) est l'un des chiffres qui fait le plus bouger les marchés : il guide les décisions de la Fed.",
+   "haussier": "Emploi solide sans surchauffe des salaires : scénario « atterrissage en douceur ».",
+   "baissier": "Chute des créations d'emplois (crainte de récession) ou salaires qui accélèrent (taux durablement hauts).",
+   "source_nom": "BLS — calendrier des publications", "source_url": "https://www.bls.gov/schedule/news_release/empsit.htm",
+   "verifie": false, "verifie_le": null,
+   "note_verification": "Le site du BLS bloque la lecture automatique. Date reprise de calendriers tiers concordants (fedratecalc.com, cmelitegroup.com) : à confirmer sur la page officielle. Heure habituelle 8h30 à New York."
+  },
+  {
+   "id": "bls-cpi-2026-12-10", "date": "2026-12-10", "datetime_utc": "2026-12-10T13:30:00Z", "heure_verifiee": false,
+   "categorie": "macro", "importance": 3, "zones": ["US"], "societes": [],
+   "titre": "États-Unis : inflation CPI (novembre)",
+   "description": "Le CPI (indice des prix à la consommation américain) est le chiffre d'inflation le plus suivi au monde. Une surprise d'un dixième de point peut faire bouger la tech américaine de plusieurs pourcents dans la journée.",
+   "haussier": "Inflation inférieure aux attentes : anticipation de baisses de taux, la tech US monte.",
+   "baissier": "Inflation supérieure aux attentes : taux plus hauts plus longtemps, la tech US baisse.",
+   "source_nom": "BLS — calendrier CPI", "source_url": "https://www.bls.gov/schedule/news_release/cpi.htm",
+   "verifie": false, "verifie_le": null,
+   "note_verification": "Le site du BLS bloque la lecture automatique. Date reprise d'un calendrier tiers (cmelitegroup.com) : à confirmer sur la page officielle. Heure habituelle 8h30 à New York."
+  },
+  {
+   "id": "bls-emploi-2027-01-08", "date": "2027-01-08", "datetime_utc": "2027-01-08T13:30:00Z", "heure_verifiee": false,
+   "categorie": "macro", "importance": 3, "zones": ["US"], "societes": [],
+   "titre": "États-Unis : rapport sur l'emploi (décembre)",
+   "description": "Le rapport mensuel sur l'emploi américain (créations d'emplois, chômage, salaires) guide les décisions de la Fed.",
+   "haussier": "Emploi solide sans surchauffe des salaires.",
+   "baissier": "Chute des créations d'emplois ou salaires qui accélèrent.",
+   "source_nom": "BLS — calendrier des publications", "source_url": "https://www.bls.gov/schedule/news_release/empsit.htm",
+   "verifie": false, "verifie_le": null,
+   "note_verification": "Date reprise d'un calendrier tiers (chartwatch.tv) : à confirmer sur la page officielle du BLS."
+  },
+  {
+   "id": "bls-cpi-2027-01-13", "date": "2027-01-13", "datetime_utc": "2027-01-13T13:30:00Z", "heure_verifiee": false,
+   "categorie": "macro", "importance": 3, "zones": ["US"], "societes": [],
+   "titre": "États-Unis : inflation CPI (décembre)",
+   "description": "Le CPI (indice des prix à la consommation américain) est le chiffre d'inflation le plus suivi au monde.",
+   "haussier": "Inflation inférieure aux attentes : la tech US monte.",
+   "baissier": "Inflation supérieure aux attentes : la tech US baisse.",
+   "source_nom": "BLS — calendrier CPI", "source_url": "https://www.bls.gov/schedule/news_release/cpi.htm",
+   "verifie": false, "verifie_le": null,
+   "note_verification": "Date reprise de calendriers tiers concordants (chartwatch.tv, gloom.sh) : à confirmer sur la page officielle du BLS."
+  },
+  {
+   "id": "bls-emploi-2027-02-05", "date": "2027-02-05", "datetime_utc": "2027-02-05T13:30:00Z", "heure_verifiee": false,
+   "categorie": "macro", "importance": 3, "zones": ["US"], "societes": [],
+   "titre": "États-Unis : rapport sur l'emploi (janvier)",
+   "description": "Le rapport mensuel sur l'emploi américain guide les décisions de la Fed. Celui de janvier inclut la révision annuelle des chiffres de l'année passée.",
+   "haussier": "Emploi solide sans surchauffe des salaires.",
+   "baissier": "Révisions fortement négatives ou salaires qui accélèrent.",
+   "source_nom": "BLS — calendrier des publications", "source_url": "https://www.bls.gov/schedule/news_release/empsit.htm",
+   "verifie": false, "verifie_le": null,
+   "note_verification": "Date reprise d'un calendrier tiers (chartwatch.tv) : à confirmer sur la page officielle du BLS."
+  },
+  {
+   "id": "bls-cpi-2027-02-11", "date": "2027-02-11", "datetime_utc": "2027-02-11T13:30:00Z", "heure_verifiee": false,
+   "categorie": "macro", "importance": 3, "zones": ["US"], "societes": [],
+   "titre": "États-Unis : inflation CPI (janvier)",
+   "description": "Le CPI (indice des prix à la consommation américain) est le chiffre d'inflation le plus suivi au monde.",
+   "haussier": "Inflation inférieure aux attentes : la tech US monte.",
+   "baissier": "Inflation supérieure aux attentes : la tech US baisse.",
+   "source_nom": "BLS — calendrier CPI", "source_url": "https://www.bls.gov/schedule/news_release/cpi.htm",
+   "verifie": false, "verifie_le": null,
+   "note_verification": "Sources tierces en désaccord : 11 février (chartwatch.tv, cmelitegroup.com) contre 10 février (cpiinflationcalculator.com, date « projetée »). À confirmer sur la page officielle du BLS."
+  },
+  {
+   "id": "bls-emploi-2027-03-05", "date": "2027-03-05", "datetime_utc": "2027-03-05T13:30:00Z", "heure_verifiee": false,
+   "categorie": "macro", "importance": 3, "zones": ["US"], "societes": [],
+   "titre": "États-Unis : rapport sur l'emploi (février)",
+   "description": "Le rapport mensuel sur l'emploi américain guide les décisions de la Fed.",
+   "haussier": "Emploi solide sans surchauffe des salaires.",
+   "baissier": "Chute des créations d'emplois ou salaires qui accélèrent.",
+   "source_nom": "BLS — calendrier des publications", "source_url": "https://www.bls.gov/schedule/news_release/empsit.htm",
+   "verifie": false, "verifie_le": null,
+   "note_verification": "Date reprise d'un calendrier tiers (chartwatch.tv) : à confirmer sur la page officielle du BLS."
+  },
+  {
+   "id": "eurostat-hicp-2026-12-01", "date": "2026-12-01", "datetime_utc": "2026-12-01T10:00:00Z", "heure_verifiee": false,
+   "categorie": "macro", "importance": 2, "zones": ["ZoneEuro"], "societes": [],
+   "titre": "Zone euro : inflation, estimation rapide (novembre)",
+   "description": "Première estimation de l'inflation de la zone euro (indice IPCH), publiée par Eurostat. C'est le chiffre que la BCE regarde avant chaque décision ; la prochaine est le 17 décembre.",
+   "haussier": "Inflation en baisse : la BCE peut assouplir, soutien aux actions européennes.",
+   "baissier": "Inflation qui remonte : la BCE reste ferme, pression sur les actions européennes.",
+   "source_nom": "Eurostat — calendrier des euro-indicateurs", "source_url": "https://ec.europa.eu/eurostat/news/release-calendar",
+   "verifie": false, "verifie_le": null,
+   "note_verification": "Le calendrier Eurostat s'affiche en JavaScript et n'a pas pu être lu automatiquement. Date reprise d'un calendrier tiers (financecalendar.com) : à confirmer. Heure habituelle 11h00 (Luxembourg)."
+  },
+  {
+   "id": "eurostat-hicp-2027-01-06", "date": "2027-01-06", "datetime_utc": "2027-01-06T10:00:00Z", "heure_verifiee": false,
+   "categorie": "macro", "importance": 2, "zones": ["ZoneEuro"], "societes": [],
+   "titre": "Zone euro : inflation, estimation rapide (décembre)",
+   "description": "Première estimation de l'inflation de la zone euro (indice IPCH) par Eurostat, regardée de près par la BCE.",
+   "haussier": "Inflation en baisse : soutien aux actions européennes.",
+   "baissier": "Inflation qui remonte : pression sur les actions européennes.",
+   "source_nom": "Eurostat — calendrier des euro-indicateurs", "source_url": "https://ec.europa.eu/eurostat/news/release-calendar",
+   "verifie": false, "verifie_le": null,
+   "note_verification": "Date reprise d'un calendrier tiers (financecalendar.com) : à confirmer sur le calendrier Eurostat."
+  },
+  {
+   "id": "fr-budget-senat-2026-12-09", "date": "2026-12-09", "datetime_utc": null, "heure_verifiee": false,
+   "categorie": "fiscalite", "importance": 2, "zones": ["ZoneEuro"], "societes": ["Saint-Gobain"],
+   "titre": "France : vote du Sénat sur le budget 2027",
+   "description": "Le projet de loi de finances (le budget de l'État) a été rejeté par l'Assemblée le 4 novembre ; le Sénat l'examine. C'est ce texte qui peut modifier la fiscalité de l'épargne (PEA, flat tax). Un blocage budgétaire peut aussi faire monter les taux d'emprunt de la France et peser sur les actions françaises.",
+   "haussier": "Budget adopté sans hausse de la fiscalité de l'épargne : incertitude levée.",
+   "baissier": "Nouveau blocage, mesures sur la fiscalité du capital, ou écart de taux France-Allemagne qui s'élargit.",
+   "source_nom": "Sénat — projet de loi de finances pour 2027", "source_url": "https://www.senat.fr/travaux-parlementaires/textes-legislatifs/la-loi-en-clair/projet-de-loi-de-finances-pour-2027.html",
+   "verifie": false, "verifie_le": null,
+   "note_verification": "Date du vote solennel citée par la presse (Public Sénat, LCP) d'après le calendrier du Sénat, non lue directement sur senat.fr. Le contenu PEA du texte n'est pas vérifié."
+  },
+  {
+   "id": "fr-budget-delai-2026-12-17", "date": "2026-12-17", "datetime_utc": null, "heure_verifiee": false,
+   "categorie": "fiscalite", "importance": 2, "zones": ["ZoneEuro"], "societes": [],
+   "titre": "France : fin du délai constitutionnel de 70 jours pour le budget",
+   "description": "Si le Parlement ne s'est pas prononcé dans ce délai, le gouvernement peut mettre le budget en vigueur par ordonnance (article 47 de la Constitution). Incertitude politique possible sur les taux français.",
+   "haussier": "Accord en commission mixte paritaire avant la date.",
+   "baissier": "Recours aux ordonnances ou crise politique : tension sur les taux d'emprunt français.",
+   "source_nom": "Assemblée nationale — organisation de l'examen du PLF 2027", "source_url": "https://www.assemblee-nationale.fr/dyn/contenu/visualisation/1119828/file/organisation%20PLF%202027.pdf",
+   "verifie": false, "verifie_le": null,
+   "note_verification": "Date citée dans un document de l'Assemblée nationale trouvé par recherche, non lu directement. À confirmer."
+  },
+  {
+   "id": "us-financement-2026-12-11", "date": "2026-12-11", "datetime_utc": null, "heure_verifiee": false,
+   "categorie": "geopolitique", "importance": 2, "zones": ["US"], "societes": [],
+   "titre": "États-Unis : échéance de financement de l'État fédéral",
+   "description": "Sans vote du Congrès, l'administration fédérale peut être partiellement fermée (« shutdown »), ce qui retarde aussi la publication de statistiques officielles (emploi, inflation).",
+   "haussier": "Accord de financement voté à temps.",
+   "baissier": "Shutdown : statistiques retardées, volatilité accrue sur les actions américaines.",
+   "source_nom": "Congrès américain", "source_url": "https://www.congress.gov/",
+   "verifie": false, "verifie_le": null,
+   "note_verification": "Date citée par un cabinet d'avocats (clarkhill.com), aucune source officielle lue. À confirmer."
+  },
+  {
+   "id": "us-chine-treve-2027-01-10", "date": "2027-01-10", "datetime_utc": null, "heure_verifiee": false,
+   "categorie": "geopolitique", "importance": 2, "zones": ["US", "Chine"], "societes": ["Apple", "Nvidia"],
+   "titre": "États-Unis / Chine : fin annoncée de la trêve sur les droits de douane",
+   "description": "La trêve commerciale entre les deux pays suspend des droits de douane. Sa fin sans accord toucherait la tech américaine (Apple, Nvidia) et les actions chinoises de ton ETF Émergents.",
+   "haussier": "Prolongation ou accord durable.",
+   "baissier": "Retour des droits de douane : baisse de la tech US et des actions chinoises.",
+   "source_nom": "Bureau du représentant américain au commerce (USTR)", "source_url": "https://ustr.gov/",
+   "verifie": false, "verifie_le": null,
+   "note_verification": "Date rapportée par une lettre d'information spécialisée, sans communiqué officiel de la Maison-Blanche selon la source elle-même. Non vérifié."
+  },
+  {
+   "id": "options-2026-12-18", "date": "2026-12-18", "datetime_utc": null, "heure_verifiee": false,
+   "categorie": "marche", "importance": 1, "zones": ["US", "ZoneEuro"], "societes": [],
+   "titre": "Échéance trimestrielle des options et contrats à terme (« quatre sorcières »)",
+   "description": "Quatre fois par an, le 3e vendredi du trimestre, des milliers de contrats dérivés (options et contrats à terme : des paris financiers sur les indices) expirent en même temps. Les volumes explosent et les cours peuvent bouger sans raison de fond. C'est aussi le jour des rééquilibrages trimestriels de plusieurs indices.",
+   "haussier": "Sans effet durable.",
+   "baissier": "Sans effet durable ; volatilité ponctuelle, aucune raison d'agir.",
+   "source_nom": "Euronext — calendriers de négociation (règle du 3e vendredi)", "source_url": "https://www.euronext.com/en/trading-calendars-hours",
+   "verifie": false, "verifie_le": null,
+   "note_verification": "Date déduite de la règle d'expiration (3e vendredi de mars, juin, septembre, décembre), non lue sur un calendrier officiel."
+  },
+  {
+   "id": "ndx-reconstitution-2026-12-21", "date": "2026-12-21", "datetime_utc": null, "heure_verifiee": false,
+   "categorie": "marche", "importance": 1, "zones": ["US"], "societes": [],
+   "titre": "Nasdaq-100 : reconstitution annuelle (entrées et sorties de l'indice)",
+   "description": "Chaque année en décembre, Nasdaq revoit la liste des 100 sociétés de l'indice. Ton ETF Nasdaq-100 suit automatiquement : tu n'as rien à faire.",
+   "haussier": "Sans effet sur ton portefeuille.",
+   "baissier": "Sans effet sur ton portefeuille.",
+   "source_nom": "Nasdaq — annonces sur l'indice", "source_url": "https://www.nasdaq.com/",
+   "verifie": false, "verifie_le": null,
+   "note_verification": "Date déduite de la règle habituelle (effectif le lundi suivant le 3e vendredi de décembre). Le communiqué officiel 2026 n'a pas été lu."
+  },
+  {
+   "id": "options-2027-03-19", "date": "2027-03-19", "datetime_utc": null, "heure_verifiee": false,
+   "categorie": "marche", "importance": 1, "zones": ["US", "ZoneEuro"], "societes": [],
+   "titre": "Échéance trimestrielle des options et contrats à terme (« quatre sorcières »)",
+   "description": "Expiration simultanée de nombreux contrats dérivés (le 3e vendredi du trimestre) et rééquilibrages d'indices : volumes élevés, mouvements sans raison de fond.",
+   "haussier": "Sans effet durable.",
+   "baissier": "Sans effet durable ; aucune raison d'agir.",
+   "source_nom": "Euronext — calendriers de négociation (règle du 3e vendredi)", "source_url": "https://www.euronext.com/en/trading-calendars-hours",
+   "verifie": false, "verifie_le": null,
+   "note_verification": "Date déduite de la règle d'expiration (3e vendredi du trimestre), non lue sur un calendrier officiel."
+  }
+ ],
+ "a_confirmer": [
+  {"societe": "Nvidia", "evenement": "Résultats du 4e trimestre de l'exercice 2027", "periode_habituelle": "fin février 2027", "source_url": "https://investor.nvidia.com/events-and-presentations/default.aspx", "importance": 3},
+  {"societe": "Apple", "evenement": "Résultats du 1er trimestre de l'exercice 2027", "periode_habituelle": "fin janvier 2027", "source_url": "https://investor.apple.com/investor-relations/default.aspx", "importance": 2},
+  {"societe": "Microsoft", "evenement": "Résultats du 2e trimestre de l'exercice 2027", "periode_habituelle": "fin janvier 2027", "source_url": "https://www.microsoft.com/en-us/investor/events/default.aspx", "importance": 2},
+  {"societe": "ASML", "evenement": "Résultats annuels 2026", "periode_habituelle": "mi-janvier 2027", "source_url": "https://investor.asml.com/financial-events", "importance": 2},
+  {"societe": "SAP", "evenement": "Résultats annuels 2026", "periode_habituelle": "fin janvier 2027", "source_url": "https://www.sap.com/investors/en/calendar.html", "importance": 2},
+  {"societe": "LVMH", "evenement": "Résultats annuels 2026", "periode_habituelle": "fin janvier 2027", "source_url": "https://www.lvmh.com/en/financial-calendar", "importance": 2},
+  {"societe": "Saint-Gobain", "evenement": "Résultats annuels 2026", "periode_habituelle": "fin février 2027", "source_url": "https://www.saint-gobain.com/fr/finance", "importance": 3}
+ ]
+}

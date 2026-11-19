@@ -1,0 +1,51 @@
+# Cap 2046 : relit chaque jour les calendriers officiels et met à jour cap2046/data/events.json.
+# Netlify redéploie automatiquement le site à chaque commit sur la branche par défaut.
+name: Cap 2046 — mise à jour des événements
+
+on:
+  schedule:
+    - cron: "23 5 * * *"   # chaque jour vers 6h-7h à Paris
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: cap2046-evenements
+  cancel-in-progress: false
+
+jobs:
+  maj:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Lire les sources officielles
+        working-directory: cap2046
+        run: python scripts/maj_evenements.py | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Enregistrer si quelque chose a changé
+        run: |
+          git config user.name "cap2046-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add cap2046/data/events.json
+          if git diff --cached --quiet; then echo "Aucun changement"; exit 0; fi
+          git commit -m "cap2046 : événements mis à jour $(date -u +%Y-%m-%d)"
+          for i in 1 2 3; do git pull --rebase && git push && exit 0; sleep $((i * 5)); done
+          exit 1
+
+      - name: Prévenir si une source officielle n'a pas pu être lue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ECHECS=$(python3 -c "import json;d=json.load(open('cap2046/data/events.json'));print(', '.join(k for k,v in d['sources_statut'].items() if not v['ok']))")
+          [ -z "$ECHECS" ] && exit 0
+          TITRE="Cap 2046 : source(s) officielle(s) illisible(s)"
+          if gh issue list --state open --search "$TITRE in:title" --json number --jq 'length' | grep -q '^0$'; then
+            gh issue create --title "$TITRE" --body "Échec de lecture : $ECHECS. Les anciennes dates sont conservées et le site affiche la date de dernière vérification. La page a peut-être changé de format : voir le journal de l'exécution ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          fi

@@ -1,0 +1,116 @@
+{
+ "_lisez_moi": "Composition des lignes (« transparisation » : ce qu'il y a dans chaque ETF). TOUTES les valeurs ci-dessous sont NON VÉRIFIÉES : ordres de grandeur, les sites des émetteurs n'ont pas pu être lus automatiquement. Pour vérifier : ouvre la factsheet (lien), recopie les poids et la date, passe verifie à true.",
+ "lignes": {
+  "WPEA": {
+   "nom": "iShares MSCI World Swap PEA UCITS ETF",
+   "indice": "MSCI World",
+   "replication": "synthétique (swap) : le fonds détient un panier d'actions européennes éligibles PEA et un contrat d'échange qui lui verse la performance du MSCI World. Ton exposition économique est celle de l'indice.",
+   "factsheet_url": "https://www.ishares.com/fr",
+   "verifie": false,
+   "verifie_le": null,
+   "date_donnees": null,
+   "zones": {
+    "US": 71,
+    "ZoneEuro": 8,
+    "UK": 3.5,
+    "Suisse": 2.5,
+    "Japon": 5,
+    "AutresDev": 10
+   },
+   "societes": {
+    "Nvidia": 5.5,
+    "Apple": 4.8,
+    "Microsoft": 4.3,
+    "ASML": 0.5,
+    "SAP": 0.4,
+    "LVMH": 0.3,
+    "TotalEnergies": 0.2,
+    "Saint-Gobain": 0.05
+   }
+  },
+  "ETZ": {
+   "nom": "BNP Paribas Easy STOXX Europe 600 UCITS ETF",
+   "indice": "STOXX Europe 600",
+   "replication": "à vérifier : la correspondance entre le code ETZ et ce fonds, ainsi que l'adresse de la fiche produit, n'ont pas pu être confirmées.",
+   "factsheet_url": null,
+   "verifie": false,
+   "verifie_le": null,
+   "date_donnees": null,
+   "zones": {
+    "ZoneEuro": 57,
+    "UK": 22,
+    "Suisse": 14,
+    "AutresDev": 7
+   },
+   "societes": {
+    "ASML": 2.4,
+    "SAP": 2.2,
+    "LVMH": 1.1,
+    "TotalEnergies": 1.0,
+    "Saint-Gobain": 0.3
+   }
+  },
+  "SGO": {
+   "nom": "Saint-Gobain (action détenue en direct)",
+   "indice": "—",
+   "replication": "action détenue en direct (zone = pays de cotation, pas répartition des ventes)",
+   "factsheet_url": "https://www.saint-gobain.com/fr/finance",
+   "verifie": true,
+   "verifie_le": "2026-11-19",
+   "date_donnees": "2026-11-19",
+   "zones": {
+    "ZoneEuro": 100
+   },
+   "societes": {
+    "Saint-Gobain": 100
+   }
+  },
+  "EM": {
+   "nom": "Amundi PEA Marchés Émergents (MSCI Emerging Markets)",
+   "indice": "MSCI Emerging Markets",
+   "replication": "synthétique (swap) probable pour un ETF PEA sur les émergents : à vérifier sur la factsheet.",
+   "factsheet_url": "https://www.amundietf.fr/fr/particuliers/produits-etf/etf-pea",
+   "verifie": false,
+   "verifie_le": null,
+   "date_donnees": null,
+   "zones": {
+    "Chine": 27,
+    "Taiwan": 20,
+    "Inde": 18,
+    "AutresEM": 35
+   },
+   "societes": {}
+  },
+  "NDX": {
+   "nom": "Amundi PEA Nasdaq-100 UCITS ETF",
+   "indice": "Nasdaq-100",
+   "replication": "synthétique (swap) : exposition économique = l'indice Nasdaq-100.",
+   "factsheet_url": "https://www.amundietf.fr/fr/particuliers/produits-etf/etf-pea",
+   "verifie": false,
+   "verifie_le": null,
+   "date_donnees": null,
+   "zones": {
+    "US": 97,
+    "AutresDev": 3
+   },
+   "societes": {
+    "Nvidia": 9,
+    "Microsoft": 8,
+    "Apple": 8,
+    "ASML": 0.8
+   }
+  }
+ },
+ "noms_zones": {
+  "US": "États-Unis",
+  "ZoneEuro": "Zone euro",
+  "UK": "Royaume-Uni",
+  "Suisse": "Suisse",
+  "Japon": "Japon",
+  "AutresDev": "Autres pays développés",
+  "Chine": "Chine",
+  "Taiwan": "Taïwan",
+  "Inde": "Inde",
+  "AutresEM": "Autres émergents"
+ }
+}
