@@ -8,12 +8,13 @@ on:
     - cron: "49 * * * *"       # radar : direct + tri IA + alerte (toutes les heures)
     - cron: "43 5 * * 1-6"   # édition du jour : ~6h45 Paris (hiver), lundi→samedi
     - cron: "13 7 * * 0"     # édition hebdo : dimanche ~8h15 Paris (hiver)
+    - cron: "11 5 * * 1"     # Académie : nouveau cours chaque lundi ~6h10 Paris (hiver)
   workflow_dispatch:
     inputs:
       mode:
         description: "Mode à lancer"
         type: choice
-        options: [quotidien, direct, radar, hebdo, build]
+        options: [quotidien, direct, radar, hebdo, cours, build]
         default: quotidien
 
 permissions:
@@ -71,6 +72,7 @@ jobs:
             "49 * * * *")   echo "mode=radar" >> "$GITHUB_OUTPUT" ;;
             "43 5 * * 1-6") echo "mode=quotidien" >> "$GITHUB_OUTPUT" ;;
             "13 7 * * 0")   echo "mode=hebdo" >> "$GITHUB_OUTPUT" ;;
+            "11 5 * * 1")   echo "mode=cours" >> "$GITHUB_OUTPUT" ;;
             *)              echo "mode=${{ inputs.mode || 'quotidien' }}" >> "$GITHUB_OUTPUT" ;;
           esac
 

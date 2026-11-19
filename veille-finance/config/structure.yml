@@ -28,6 +28,16 @@ rubriques:
       impact réel. Pour chacune : le fait (sourcé), puis "pourquoi ça compte".
     max_items: 6
 
+  - id: resultats
+    titre: "Résultats publiés — ce qu'il faut en retenir"
+    consigne: >
+      Les résultats d'entreprises publiés depuis la dernière édition, en priorité celles qui
+      pèsent dans un ETF Monde, Europe ou Nasdaq, et les lignes du portefeuille. Pour chacune :
+      chiffres clés (chiffre d'affaires, marge, BPA, free cash flow) comparés au consensus,
+      guidance, réaction du marché, et LA chose à retenir. Explique chaque terme. Si aucune
+      publication majeure, un seul élément qui annonce les publications des 7 prochains jours.
+    max_items: 4
+
   - id: deep_dive
     titre: "Le Deep Dive"
     consigne: >

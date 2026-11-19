@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Simulateur — Veille Finance{% endblock %}
+{% block content %}
+<p class="kicker">Calculs faits dans ton navigateur · rien n'est envoyé</p>
+<h1>Simulateur</h1>
+<div class="filtres sim-onglets" role="tablist">
+  <button type="button" data-sim="dca" aria-pressed="true">Intérêts composés &amp; DCA</button>
+  <button type="button" data-sim="krach" aria-pressed="false">Test de krach</button>
+  <button type="button" data-sim="objectif" aria-pressed="false">Atteindre un objectif</button>
+  <button type="button" data-sim="valo" aria-pressed="false">Valoriser une entreprise</button>
+</div>
+
+<section class="card sim" id="sim-dca">
+  <h2>Que devient un versement régulier ?</h2>
+  <form class="sim-f">
+    <label>Capital de départ (€)<input name="capital" type="number" inputmode="decimal" value="5000" min="0" step="any"></label>
+    <label>Versement mensuel (€)<input name="mensuel" type="number" inputmode="decimal" value="500" min="0" step="any"></label>
+    <label>Durée (années)<input name="annees" type="number" inputmode="numeric" value="20" min="1" max="60" step="1"></label>
+    <label>Rendement annuel moyen (%)<input name="rendement" type="number" inputmode="decimal" value="7" step="any"></label>
+    <label>Frais annuels (%)<input name="frais" type="number" inputmode="decimal" value="0.3" min="0" step="any"></label>
+    <label>Inflation annuelle (%)<input name="inflation" type="number" inputmode="decimal" value="2" min="0" step="any"></label>
+  </form>
+  <div class="sim-r" id="r-dca"></div>
+  <p class="note">Le rendement d'un ETF actions monde a été d'environ 7 à 8 %/an en moyenne sur longue période, avec des années à −40 %. Une moyenne n'est pas une promesse.</p>
+</section>
+
+<section class="card sim" id="sim-krach" hidden>
+  <h2>Et si le marché chutait demain ?</h2>
+  <form class="sim-f">
+    <label>Valeur de ton portefeuille (€)<input name="valeur" type="number" inputmode="decimal" value="15000" min="0" step="any"></label>
+    <label>Baisse (%)<input name="baisse" type="number" inputmode="decimal" value="35" min="1" max="95" step="any"></label>
+    <label>Versement mensuel pendant la baisse (€)<input name="mensuel" type="number" inputmode="decimal" value="500" min="0" step="any"></label>
+    <label>Rendement annuel de la reprise (%)<input name="reprise" type="number" inputmode="decimal" value="8" min="0.1" step="any"></label>
+  </form>
+  <div class="sim-r" id="r-krach"></div>
+</section>
+
+<section class="card sim" id="sim-objectif" hidden>
+  <h2>Combien verser pour atteindre mon objectif ?</h2>
+  <form class="sim-f">
+    <label>Objectif (€)<input name="cible" type="number" inputmode="decimal" value="1000000" min="1" step="any"></label>
+    <label>Dans combien d'années<input name="annees" type="number" inputmode="numeric" value="20" min="1" max="60" step="1"></label>
+    <label>Capital actuel (€)<input name="capital" type="number" inputmode="decimal" value="15000" min="0" step="any"></label>
+    <label>Rendement annuel moyen (%)<input name="rendement" type="number" inputmode="decimal" value="7" step="any"></label>
+  </form>
+  <div class="sim-r" id="r-objectif"></div>
+</section>
+
+<section class="card sim" id="sim-valo" hidden>
+  <h2>Valoriser une entreprise : PER, EV/EBITDA, FCF…</h2>
+  <p class="note">Recopie les chiffres du dernier rapport annuel (en millions, dans la même devise). Chaque ratio est expliqué.</p>
+  <form class="sim-f">
+    <label>Cours de l'action<input name="cours" type="number" inputmode="decimal" value="100" min="0" step="any"></label>
+    <label>Nombre d'actions (millions)<input name="actions" type="number" inputmode="decimal" value="500" min="0" step="any"></label>
+    <label>Résultat net (M)<input name="rn" type="number" inputmode="decimal" value="2500" step="any"></label>
+    <label>EBITDA (M)<input name="ebitda" type="number" inputmode="decimal" value="5000" step="any"></label>
+    <label>Dette nette (M, négatif si trésorerie nette)<input name="dette" type="number" inputmode="decimal" value="6000" step="any"></label>
+    <label>Free cash flow (M)<input name="fcf" type="number" inputmode="decimal" value="2000" step="any"></label>
+    <label>Capitaux propres (M)<input name="cp" type="number" inputmode="decimal" value="15000" step="any"></label>
+    <label>Croissance attendue du bénéfice (%/an)<input name="croissance" type="number" inputmode="decimal" value="8" step="any"></label>
+  </form>
+  <div class="sim-r" id="r-valo"></div>
+  <p class="note">Les repères (« bas », « élevé ») sont des ordres de grandeur généraux : compare toujours au secteur et à l'historique de l'entreprise.</p>
+</section>
+{% endblock %}
+{% block scripts %}<script src="simu.js" defer></script>{% endblock %}

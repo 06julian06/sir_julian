@@ -21,6 +21,19 @@ t'envoie une newsletter. Zéro serveur à gérer.
 | **Portefeuille** | chaque matin | Tableau de bord visuel (pourcentages seulement : la page est publique) |
 | **Mon espace** | chaque matin | **Privé et chiffré** — voir ci-dessous |
 
+## Apprendre : Académie, décryptages, questions, lexique, simulateur
+
+| Fonction | Fréquence | Comment |
+|---|---|---|
+| **Académie** | chaque lundi ~6 h | Cours n°N du programme (`config/academie.yml`, 40 semaines en 7 modules : bases, lire les comptes, valorisation, macro, portefeuille, produits avancés, finance réglementée). Chaque cours reçoit le résumé des précédents : progression continue. Exemple chiffré, cas réel sourcé, exercice + corrigé, quiz, « à retenir », angle pro. Archivé et classé par module, envoyé par e-mail. |
+| **Décryptages** | toutes les heures | Toute actualité notée 4 ou 5/5 par l'IA (ex. « départ du PDG de Nvidia ») reçoit sa page : faits, ce que ça veut dire, qui est concerné, attendus, pour toi. Lien depuis le fil en direct. Maximum 2 par heure (coût maîtrisé). |
+| **Questions** | réponse en moins d'une heure | Pose n'importe quelle question (Issue GitHub « Question pour la veille », bouton sur la page Questions). Recherche web, réponse sourcée sur le site et en commentaire. |
+| **Lexique** | s'enrichit tout seul | 30 termes de base (EBITDA, PER/P/E, EV/EBITDA, FCF, CET1, MiFID…) + chaque terme expliqué dans un cours, un décryptage ou une réponse. Recherche instantanée. |
+| **Simulateur** | dans le navigateur | Intérêts composés et DCA (frais, inflation), test de krach, versement nécessaire pour un objectif, valorisation d'une entreprise (PER, PEG, EV/EBITDA, FCF yield, dette/EBITDA, ROE expliqués ligne par ligne). |
+| **Résultats publiés** | chaque matin | Rubrique de l'édition : chiffres clés contre consensus, guidance, ce qu'il faut retenir. |
+
+Coût supplémentaire estimé : ~2 à 4 $ par cours, ~0,10 à 0,20 $ par décryptage ou réponse.
+
 ## Mon espace (privé)
 
 Le dépôt et le site sont **publics** : ton espace est donc chiffré (AES-256-GCM, clé dérivée de ta phrase secrète

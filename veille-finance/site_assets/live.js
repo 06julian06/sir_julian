@@ -54,6 +54,7 @@
           <span>${esc(i.source)} · ${relatif(i.date)}</span>${i.importance >= 4 ? '<span class="li-imp">● majeur</span>' : ""}</div>
         <a href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.titre)}</a>
         ${i.pourquoi ? `<p class="li-why"><b>Pour toi :</b> ${esc(i.pourquoi)}</p>` : ""}
+        ${i.decryptage ? `<p class="li-why"><a class="li-dec" href="decryptages/${esc(i.decryptage)}.html">→ Lire le décryptage : ce que ça veut dire</a></p>` : ""}
       </article>`).join("") || '<p class="muted">Rien pour ce filtre.</p>';
     $("plus").hidden = liste.length <= limite;
   }

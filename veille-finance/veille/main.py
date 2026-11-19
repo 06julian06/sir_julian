@@ -4,6 +4,7 @@
   python -m veille.main radar      toutes les heures : direct + tri IA, alerte si événement majeur
   python -m veille.main quotidien  chaque matin  : édition complète + newsletter
   python -m veille.main hebdo      le dimanche   : bilan de la semaine + newsletter
+  python -m veille.main cours      le lundi      : cours suivant de l'Académie + newsletter
   python -m veille.main build      reconstruit le site seul (aucun appel IA)
 
 Option --demo : génère une édition factice sans clé API, pour tester le rendu.
@@ -253,6 +254,15 @@ def run_radar() -> None:
                 i["importance"], i["pourquoi"] = par_id[i["id"]]["importance"], par_id[i["id"]]["pourquoi"]
         _json_save(DATA / "live.json", live)
 
+    try:
+        _decryptages(retenus)
+    except Exception as e:
+        log.warning("Décryptages impossibles : %s", e)
+    try:
+        _questions()
+    except Exception as e:
+        log.warning("Questions impossibles : %s", e)
+
     radar = _json_load(DATA / "radar.json", [])
     for r in retenus:
         r["detecte_le"] = now.isoformat()
@@ -274,6 +284,122 @@ def run_radar() -> None:
             _json_save(state_p, state)
 
     render.build_site(SITE_URL)
+
+
+# ─── Apprendre : lexique, décryptages, questions, cours ───────────────────────
+
+def _lexique_maj(termes: list[dict], origine: dict) -> None:
+    """Ajoute les termes appris au lexique (un terme déjà présent n'est pas écrasé)."""
+    p = DATA / "lexique.json"
+    lex = _json_load(p, {})
+    for t in termes or []:
+        cle = t["terme"].strip().lower()
+        if cle and cle not in lex:
+            lex[cle] = {**{k: v for k, v in t.items() if v}, "origine": origine}
+    _json_save(p, lex)
+
+
+def _slug(txt: str) -> str:
+    import re
+    import unicodedata
+    t = unicodedata.normalize("NFKD", txt).encode("ascii", "ignore").decode().lower()
+    return re.sub(r"[^a-z0-9]+", "-", t).strip("-")[:60]
+
+
+MAX_DECRYPTAGES_PAR_HEURE = 2
+
+
+def _decryptages(retenus: list[dict]) -> None:
+    from . import brain, savoir
+    majeurs = sorted((r for r in retenus if r["importance"] >= 4), key=lambda r: -r["importance"])[:MAX_DECRYPTAGES_PAR_HEURE]
+    if not majeurs:
+        return
+    system = brain.system_prompt(_yaml("profil.yml"), _yaml("structure.yml"))
+    live = _json_load(DATA / "live.json", [])
+    for item in majeurs:
+        slug = f"{datetime.now(PARIS).date().isoformat()}-{_slug(item['titre'])}"
+        if (DATA / "decryptages" / f"{slug}.json").exists():
+            continue
+        d = savoir.decrypter(system, item)
+        d.update(slug=slug, publie_le=datetime.now(PARIS).isoformat(), importance=item["importance"],
+                 origine={"titre": item["titre"], "url": item["url"], "source": item["source"]}, rubrique=item.get("rubrique", ""))
+        _json_save(DATA / "decryptages" / f"{slug}.json", d)
+        _lexique_maj(d["termes"], {"type": "decryptage", "slug": slug, "titre": d["titre"]})
+        for i in live:
+            if i["id"] == item["id"]:
+                i["decryptage"] = slug
+        log.info("Décryptage publié : %s", d["titre"])
+    _json_save(DATA / "live.json", live)
+
+
+def _questions() -> None:
+    from . import brain, github_questions, savoir
+    qs = github_questions.fetch_open()[:3]
+    if not qs:
+        return
+    system = brain.system_prompt(_yaml("profil.yml"), _yaml("structure.yml"))
+    for q in qs:
+        r = savoir.repondre(system, q)
+        r.update(numero=q["numero"], question=q["titre"], texte=q.get("texte", ""), publie_le=datetime.now(PARIS).isoformat())
+        _json_save(DATA / "questions" / f"{q['numero']}.json", r)
+        _lexique_maj(r["termes"], {"type": "question", "numero": q["numero"], "titre": r["titre"]})
+        lien = f"{SITE_URL}questions.html#q{q['numero']}" if SITE_URL else ""
+        corps = f"**{r['reponse_courte']}**\n\n{r['explication']}" + (f"\n\n**Pour toi :** {r['pour_toi']}" if r["pour_toi"] else "") \
+            + ("\n\nSources : " + ", ".join(f"[{s['nom']}]({s['url']})" for s in r["sources"]) if r["sources"] else "")
+        github_questions.answer_and_close(q["numero"], corps, lien)
+
+
+def programme() -> list[dict]:
+    """Programme de l'Académie aplati : [{numero, module_id, module, titre, notions}]."""
+    out, n = [], 0
+    for m in _yaml("academie.yml")["modules"]:
+        for sem in m["semaines"]:
+            n += 1
+            out.append({"numero": n, "module_id": m["id"], "module": m["titre"], **sem})
+    return out
+
+
+def run_cours(demo: bool = False) -> None:
+    prog = programme()
+    faits = sorted(int(p.stem) for p in (DATA / "academie").glob("*.json")) if (DATA / "academie").exists() else []
+    suivant = next((s for s in prog if s["numero"] not in faits), None)
+    if not suivant:
+        log.info("Programme de l'Académie terminé (%d cours). Ajoute des semaines dans config/academie.yml.", len(prog))
+        render.build_site(SITE_URL)
+        return
+    precedents = [_json_load(DATA / "academie" / f"{n:02d}.json", {}) for n in faits]
+    if demo:
+        c = _cours_demo(suivant)
+    else:
+        from . import brain, savoir
+        system = brain.system_prompt(_yaml("profil.yml"), _yaml("structure.yml"))
+        c = savoir.cours(system, suivant["numero"], suivant["module"], suivant, precedents)
+    c.update(numero=suivant["numero"], module_id=suivant["module_id"], module=suivant["module"],
+             publie_le=datetime.now(PARIS).isoformat())
+    _json_save(DATA / "academie" / f"{suivant['numero']:02d}.json", c)
+    _lexique_maj(c["termes"], {"type": "cours", "numero": suivant["numero"], "titre": c["titre"]})
+    render.build_site(SITE_URL)
+    log.info("Cours n°%d publié : %s", suivant["numero"], c["titre"])
+    if os.environ.get("NEWSLETTER_DISABLED") != "1":
+        from . import newsletter
+        texte = "\n\n".join([c["titre"], c["accroche"], "À retenir :"] + [f"- {x}" for x in c["a_retenir"]])
+        newsletter.send(f"🎓 Cours n°{suivant['numero']} : {c['titre']}", render.render_cours_email(c, SITE_URL), texte)
+
+
+def _cours_demo(s: dict) -> dict:
+    return {
+        "titre": s["titre"], "accroche": "Cours de démonstration (aucun appel à l'IA).", "rappel": "",
+        "objectifs": ["Vérifier la mise en page d'un cours."],
+        "sections": [{"titre": "Section exemple", "contenu": "Le **résultat net** est ce qui reste aux actionnaires.\n- point 1\n- point 2"}],
+        "exemple": {"enonce": "Capital 1 000 € à 7 % par an pendant 10 ans.", "etapes": ["1 000 × 1,07^10", "= 1 967 €"], "resultat": "1 967 €"},
+        "cas_reel": {"titre": "Cas réel", "explication": "Exemple.", "source_nom": "", "source_url": ""},
+        "exercice": {"enonce": "Calcule.", "questions": ["Question 1 ?"], "corrige": "Réponse détaillée."},
+        "quiz": [{"question": "Que mesure le PER ?", "choix": ["Le cash", "Le prix payé pour 1 € de bénéfice", "La dette"], "bonne_reponse": 1,
+                  "explication": "PER = cours ÷ bénéfice par action."}],
+        "a_retenir": ["Point clé 1", "Point clé 2"], "angle_pro": "En entretien : ...",
+        "termes": [{"terme": "Terme de démo", "categorie": "comptes", "definition": "Définition.", "formule": "", "exemple": ""}],
+        "pour_aller_plus_loin": [],
+    }
 
 
 def _finances_conf() -> dict:
@@ -361,11 +487,13 @@ def _demo_edition() -> dict:
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
     p = argparse.ArgumentParser()
-    p.add_argument("mode", choices=["direct", "radar", "quotidien", "hebdo", "build"])
+    p.add_argument("mode", choices=["direct", "radar", "quotidien", "hebdo", "cours", "build"])
     p.add_argument("--demo", action="store_true")
     a = p.parse_args()
     if a.mode == "build":
         render.build_site(SITE_URL)
+    elif a.mode == "cours":
+        run_cours(demo=a.demo)
     elif a.mode == "direct":
         run_direct()
     elif a.mode == "radar":

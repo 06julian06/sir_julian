@@ -83,7 +83,7 @@ def build_site(site_url: str = "") -> Path:
     if OUT.exists():
         shutil.rmtree(OUT)
     (OUT / "editions").mkdir(parents=True)
-    for f in ("style.css", "charts.js", "live.js", "moi.js"):
+    for f in ("style.css", "charts.js", "live.js", "moi.js", "apprendre.js", "simu.js"):
         shutil.copy(ROOT / "site_assets" / f, OUT / f)
     # Données lues par le navigateur (le fil se rafraîchit sans recharger la page).
     (OUT / "data").mkdir()
@@ -115,8 +115,81 @@ def build_site(site_url: str = "") -> Path:
         **ctx(None, ""), espace_dispo=(DATA / "moi.enc.json").exists()))
     (OUT / "archives.html").write_text(e.get_template("archives.html").render(**ctx(None, "")))
     (OUT / "feed.xml").write_text(e.get_template("feed.xml").render(archives=archives, site_url=site_url))
+    _build_apprendre(e, ctx)
     (OUT / ".nojekyll").write_text("")
     return OUT
+
+
+def _charger_dossier(nom: str) -> list[dict]:
+    d = DATA / nom
+    return [json.loads(p.read_text()) for p in sorted(d.glob("*.json"))] if d.exists() else []
+
+
+def lexique_complet() -> list[dict]:
+    """Lexique de base (config) + termes appris (cours, décryptages, réponses), triés alphabétiquement."""
+    import unicodedata
+    import yaml
+    base = yaml.safe_load((ROOT / "config" / "lexique_base.yml").read_text())["termes"]
+    lex = {t["terme"].strip().lower(): {**t, "origine": {"type": "base"}} for t in base}
+    appris = json.loads((DATA / "lexique.json").read_text()) if (DATA / "lexique.json").exists() else {}
+    for k, t in appris.items():
+        lex.setdefault(k, t)
+    cle = lambda t: unicodedata.normalize("NFKD", t["terme"]).encode("ascii", "ignore").decode().lower()
+    out = sorted(lex.values(), key=cle)
+    for t in out:
+        t["ancre"] = re.sub(r"[^a-z0-9]+", "-", cle(t)).strip("-")
+        t["lettre"] = (cle(t)[:1] or "#").upper()
+    return out
+
+
+def _build_apprendre(e, ctx):
+    import yaml
+    # Académie
+    modules = yaml.safe_load((ROOT / "config" / "academie.yml").read_text())["modules"]
+    publies = {c["numero"]: c for c in _charger_dossier("academie")}
+    n, plan = 0, []
+    for m in modules:
+        sems = []
+        for sem in m["semaines"]:
+            n += 1
+            c = publies.get(n)
+            sems.append({"numero": n, "titre": c["titre"] if c else sem["titre"], "publie": bool(c),
+                         "date": date_label(c["publie_le"][:10]) if c else "", "notions": sem.get("notions", [])})
+        plan.append({"titre": m["titre"], "id": m["id"], "semaines": sems})
+    total, faits = n, len(publies)
+    (OUT / "academie").mkdir()
+    (OUT / "academie.html").write_text(e.get_template("academie.html").render(**ctx(None, ""), plan=plan, total=total, faits=faits))
+    nums = sorted(publies)
+    for i, k in enumerate(nums):
+        c = publies[k]
+        prev = publies.get(nums[i - 1]) if i > 0 else None
+        nxt = publies.get(nums[i + 1]) if i + 1 < len(nums) else None
+        (OUT / "academie" / f"{k:02d}.html").write_text(e.get_template("cours.html").render(
+            **ctx(None, "../"), c=c, prev=prev, nxt=nxt, total=total, date_c=date_label(c["publie_le"][:10])))
+    # Décryptages
+    decs = sorted(_charger_dossier("decryptages"), key=lambda d: d["publie_le"], reverse=True)
+    for d in decs:
+        d["date_label"] = date_label(d["publie_le"][:10])
+        d["heure"] = d["publie_le"][11:16].replace(":", "h")
+    (OUT / "decryptages").mkdir()
+    (OUT / "decryptages.html").write_text(e.get_template("decryptages.html").render(**ctx(None, ""), decs=decs))
+    for d in decs:
+        (OUT / "decryptages" / f"{d['slug']}.html").write_text(e.get_template("decryptage.html").render(**ctx(None, "../"), d=d))
+    # Questions
+    qs = sorted(_charger_dossier("questions"), key=lambda q: q["publie_le"], reverse=True)
+    for q in qs:
+        q["date_label"] = date_label(q["publie_le"][:10])
+    repo = os.environ.get("GITHUB_REPOSITORY", "")
+    (OUT / "questions.html").write_text(e.get_template("questions.html").render(**ctx(None, ""), qs=qs, repo=repo))
+    # Lexique et simulateur
+    lex = lexique_complet()
+    (OUT / "lexique.html").write_text(e.get_template("lexique.html").render(**ctx(None, ""), lex=lex,
+                                      lettres=sorted({t["lettre"] for t in lex})))
+    (OUT / "simulateur.html").write_text(e.get_template("simulateur.html").render(**ctx(None, "")))
+
+
+def render_cours_email(c: dict, site_url: str = "") -> str:
+    return env().get_template("cours_email.html").render(c=c, site_url=site_url)
 
 
 def render_email(ed: dict, site_url: str = "") -> str:

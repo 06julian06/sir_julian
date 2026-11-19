@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Académie — Veille Finance{% endblock %}
+{% block content %}
+<p class="kicker">Un cours chaque lundi · progression continue</p>
+<h1>L'Académie</h1>
+<div class="card">
+  <p class="lede" style="margin:0 0 10px">{{ faits }} cours publiés sur {{ total }}. Chaque cours s'appuie sur les précédents : suis-les dans l'ordre.</p>
+  <div class="xp"><span style="width:{{ (faits / total * 100) | round(0) }}%"></span></div>
+  <p class="note">Nouveau cours chaque lundi matin, envoyé aussi par e-mail. Les termes appris rejoignent le <a href="lexique.html">lexique</a>.</p>
+</div>
+{% for m in plan %}
+<section class="card"><h2>{{ m.titre }}</h2>
+<ol class="prog">{% for s in m.semaines %}
+  <li class="{{ 'ok' if s.publie else 'avenir' }}">
+    <span class="prog-n">{{ s.numero }}</span>
+    {% if s.publie %}<a href="academie/{{ '%02d' % s.numero }}.html">{{ s.titre }}</a> <span class="muted small">· {{ s.date }}</span>
+    {% else %}<span>{{ s.titre }}</span> <span class="muted small">· à venir</span>{% endif %}
+    <br><span class="muted small">{{ s.notions | join(' · ') }}</span>
+  </li>{% endfor %}</ol>
+</section>
+{% endfor %}
+{% endblock %}

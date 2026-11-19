@@ -1,0 +1,8 @@
+{% macro termes(liste, root) -%}
+{% if liste %}<section class="card"><h2>Les termes de ce texte</h2><dl class="lex-mini">
+{% for t in liste %}<dt>{{ t.terme }}</dt><dd>{{ t.definition | md }}{% if t.formule %}<br><code>{{ t.formule }}</code>{% endif %}{% if t.exemple %}<br><span class="muted">Ex. : {{ t.exemple }}</span>{% endif %}</dd>{% endfor %}
+</dl><p class="note"><a href="{{ root }}lexique.html">Tout le lexique →</a></p></section>{% endif %}
+{%- endmacro %}
+{% macro sources(liste) -%}
+{% if liste %}<p class="src">Sources : {% for s in liste %}<a href="{{ s.url }}" target="_blank" rel="noopener">{{ s.nom }}</a>{{ ", " if not loop.last }}{% endfor %}</p>{% endif %}
+{%- endmacro %}

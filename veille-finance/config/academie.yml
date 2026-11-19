@@ -1,0 +1,75 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# ACADÉMIE — un cours chaque lundi, du plus simple au plus pointu.
+# Chaque cours s'appuie explicitement sur les précédents (l'IA reçoit leur résumé).
+# Modifie librement l'ordre, les titres ou ajoute des semaines : le prochain lundi,
+# l'IA rédige la première semaine pas encore publiée.
+# ─────────────────────────────────────────────────────────────────────────────
+
+modules:
+  - id: bases
+    titre: "1. Les bases de l'argent qui travaille"
+    semaines:
+      - {titre: "Intérêts composés, inflation et valeur temps de l'argent", notions: [taux réel, capitalisation, actualisation, règle de 72]}
+      - {titre: "Rendement et risque : pourquoi on ne peut pas avoir l'un sans l'autre", notions: [volatilité, drawdown, prime de risque, horizon]}
+      - {titre: "Actions, obligations, monétaire : ce que tu achètes vraiment", notions: [capitaux propres, coupon, duration, liquidité]}
+      - {titre: "Les ETF de A à Z : réplication physique, synthétique, frais, tracking", notions: [indice, swap, TER, tracking difference, PEA]}
+      - {titre: "PEA, assurance-vie, CTO : la fiscalité qui change tout sur 20 ans", notions: [flat tax, prélèvements sociaux, abattement, antériorité]}
+
+  - id: comptes
+    titre: "2. Lire les comptes d'une entreprise"
+    semaines:
+      - {titre: "Le compte de résultat : du chiffre d'affaires au bénéfice net", notions: [chiffre d'affaires, marge brute, EBITDA, EBIT, résultat net, BPA]}
+      - {titre: "Le bilan : ce que l'entreprise possède et ce qu'elle doit", notions: [actif, passif, capitaux propres, dette nette, BFR, goodwill]}
+      - {titre: "Le tableau des flux de trésorerie : le cash ne ment pas", notions: [flux opérationnels, capex, free cash flow, rachat d'actions]}
+      - {titre: "Marges et rentabilité : ROE, ROCE, ROIC", notions: [ROE, ROCE, ROIC, levier de DuPont]}
+      - {titre: "Dette et solidité : dette nette/EBITDA, couverture des intérêts, notation", notions: [gearing, covenant, notation, maturité]}
+      - {titre: "Lire un communiqué de résultats en 10 minutes", notions: [guidance, consensus, organique, éléments non récurrents, ajusté vs publié]}
+      - {titre: "Les pièges comptables : ajustements, EBITDA flatteur, stock-options", notions: [normes IFRS, US GAAP, rémunération en actions, dépréciations]}
+
+  - id: valo
+    titre: "3. Valoriser : combien ça vaut vraiment ?"
+    semaines:
+      - {titre: "PER : le ratio le plus cité et le plus mal compris", notions: [PER, PER forward, PEG, rendement bénéficiaire]}
+      - {titre: "Valeur d'entreprise et EV/EBITDA : comparer des sociétés endettées ou non", notions: [valeur d'entreprise, capitalisation, EV/EBITDA, EV/EBIT]}
+      - {titre: "Rendement du free cash flow et dividendes", notions: [FCF yield, taux de distribution, rendement total]}
+      - {titre: "Le DCF expliqué simplement : actualiser les flux futurs", notions: [WACC, valeur terminale, sensibilité, taux sans risque]}
+      - {titre: "Valoriser un indice entier : le PER du S&P 500 et du MSCI World", notions: [CAPE, prime de risque actions, concentration]}
+      - {titre: "Cas pratique : valoriser une grande entreprise de A à Z", notions: [synthèse, hypothèses, marge de sécurité]}
+
+  - id: macro
+    titre: "4. Macroéconomie et marchés"
+    semaines:
+      - {titre: "Banques centrales : comment les taux font bouger tout le reste", notions: [taux directeur, QE, QT, forward guidance]}
+      - {titre: "Inflation : CPI, PCE, IPCH et pourquoi les marchés y sont accros", notions: [inflation cœur, effet de base, anticipations]}
+      - {titre: "La courbe des taux, les spreads et ce qu'ils annoncent", notions: [courbe inversée, spread souverain, OAT-Bund]}
+      - {titre: "Emploi, PIB, PMI : lire le cycle économique", notions: [récession, PMI, cycle, atterrissage]}
+      - {titre: "Devises et matières premières : dollar, euro, pétrole, or", notions: [risque de change, couverture, valeur refuge]}
+      - {titre: "Géopolitique et marchés : droits de douane, sanctions, élections", notions: [prime de risque géopolitique, chaînes d'approvisionnement]}
+
+  - id: portefeuille
+    titre: "5. Construire et piloter un portefeuille"
+    semaines:
+      - {titre: "Diversification et corrélation : le seul repas gratuit", notions: [corrélation, risque spécifique, risque systématique]}
+      - {titre: "Allocation d'actifs et rééquilibrage", notions: [allocation stratégique, bandes de tolérance, rééquilibrage par flux]}
+      - {titre: "DCA contre investissement en une fois : ce que disent les chiffres", notions: [lissage, coût d'opportunité, discipline]}
+      - {titre: "Mesurer sa performance : TRI, TWR, comparaison à un indice", notions: [TRI, TWR, benchmark, alpha, bêta]}
+      - {titre: "Finance comportementale : les biais qui ruinent les particuliers", notions: [aversion à la perte, biais de confirmation, FOMO, ancrage]}
+      - {titre: "Krachs historiques : 1929, 2000, 2008, 2020, 2022 — ce qu'il faut en retenir", notions: [drawdown, temps de récupération, contagion]}
+
+  - id: produits
+    titre: "6. Produits et marchés avancés"
+    semaines:
+      - {titre: "Options : calls, puts et pourquoi le levier est dangereux", notions: [prime, strike, delta, levier]}
+      - {titre: "Produits structurés, turbos, CFD : ce que les banques ne te disent pas", notions: [frais implicites, barrière, risque de contrepartie]}
+      - {titre: "Crypto-actifs : technologie, régulation MiCA et risques", notions: [stablecoin, PSAN, CASP, conservation]}
+      - {titre: "Immobilier coté, SCPI, private equity : la classe d'actifs illiquide", notions: [liquidité, décote, frais d'entrée]}
+
+  - id: regulation
+    titre: "7. Finance réglementée et conformité (ta trajectoire)"
+    semaines:
+      - {titre: "Qui régule quoi : AMF, ACPR, BCE, ESMA, EBA", notions: [supervision, mécanisme de surveillance unique, autorités européennes]}
+      - {titre: "MiFID II : protection de l'investisseur et adéquation", notions: [profil client, conseil indépendant, transparence des coûts]}
+      - {titre: "Bâle III/IV et la solidité des banques", notions: [ratio CET1, LCR, NSFR, actifs pondérés]}
+      - {titre: "LCB-FT : lutte contre le blanchiment et le financement du terrorisme", notions: [KYC, déclaration de soupçon, Tracfin, gel des avoirs]}
+      - {titre: "Abus de marché : initié, manipulation, MAR", notions: [information privilégiée, liste d'initiés, sanctions AMF]}
+      - {titre: "DORA, IA Act et risque technologique dans la finance", notions: [résilience opérationnelle, prestataires critiques, IA à haut risque]}

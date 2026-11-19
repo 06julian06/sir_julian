@@ -66,7 +66,8 @@
       const m = { l: 44, r: cfg.series.length > 1 ? 92 : 16, t: 12, b: 26 };
       const all = series.flatMap((s) => s.v).filter((x) => x != null);
       let lo = Math.min(...all), hi = Math.max(...all);
-      const pad = (hi - lo) * 0.08 || 1; lo -= pad; hi += pad;
+      const pad = (hi - lo) * 0.08 || 1; const positif = lo >= 0; lo -= pad; hi += pad;
+      if (positif) lo = Math.max(0, lo);  // des montants positifs ne descendent pas sous zéro
       const X = (i) => m.l + (i / Math.max(1, dates.length - 1)) * (W - m.l - m.r);
       const Y = (v) => m.t + (1 - (v - lo) / (hi - lo)) * (H - m.t - m.b);
       box.innerHTML = "";
@@ -102,7 +103,7 @@
         ends.forEach((e) => {
           const t = el("text", { x: W - m.r + 8, y: e.y, class: "viz-lab" }, svg);
           el("tspan", { x: W - m.r + 8, dy: 0, class: "viz-lab-n" }, t).textContent = e.s.court || e.s.nom;
-          el("tspan", { x: W - m.r + 8, dy: 14 }, t).textContent = cfg.rebase ? sgn(e.v - 100) + " %" : fr(e.v, 2);
+          el("tspan", { x: W - m.r + 8, dy: 14 }, t).textContent = cfg.rebase ? sgn(e.v - 100) + " %" : fr(e.v, Math.abs(e.v) >= 1000 ? 0 : 2) + (cfg.unite || "");
         });
       }
       // Réticule + infobulle
@@ -119,7 +120,7 @@
           const v = s.v[i];
           if (v == null) { dots[k].style.display = "none"; return; }
           dots[k].setAttribute("cx", X(i)); dots[k].setAttribute("cy", Y(v)); dots[k].style.display = "";
-          html += `<br>${sw(s.slot)}${s.nom} : <b>${cfg.rebase ? sgn(v - 100) + " %" : fr(v, 2) + (cfg.unite || "")}</b>`;
+          html += `<br>${sw(s.slot)}${s.nom} : <b>${cfg.rebase ? sgn(v - 100) + " %" : fr(v, Math.abs(v) >= 1000 ? 0 : 2) + (cfg.unite || "")}</b>`;
         });
         showTip(html, ev.clientX, ev.clientY);
       };

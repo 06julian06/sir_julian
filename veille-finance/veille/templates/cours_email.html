@@ -1,0 +1,14 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>{{ c.titre }}</title></head>
+<body style="margin:0;background:#f3f1ec;font-family:Georgia,serif;color:#1c1b19;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:24px 12px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px;background:#fff;border:1px solid #e2ded5;"><tr><td style="padding:28px;">
+<p style="margin:0;font:600 12px Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#8a5a00;">Académie · cours {{ c.numero }} · {{ c.module }}</p>
+<h1 style="margin:8px 0;font-size:26px;line-height:1.2;">{{ c.titre }}</h1>
+<p style="font-size:17px;color:#4a4740;">{{ c.accroche }}</p>
+<h2 style="font:700 15px Arial,sans-serif;border-bottom:2px solid #1c1b19;padding-bottom:4px;">À retenir</h2>
+<ul style="font-size:16px;line-height:1.55;">{% for a in c.a_retenir %}<li>{{ a | md }}</li>{% endfor %}</ul>
+<h2 style="font:700 15px Arial,sans-serif;border-bottom:2px solid #1c1b19;padding-bottom:4px;">Exemple chiffré</h2>
+<p style="font-size:16px;">{{ c.exemple.enonce | md }}</p><p style="font-size:16px;"><b>Résultat :</b> {{ c.exemple.resultat | md }}</p>
+{% if site_url %}<p style="margin:20px 0;"><a href="{{ site_url }}academie/{{ '%02d' % c.numero }}.html" style="background:#1c1b19;color:#fff;padding:12px 18px;text-decoration:none;font:700 15px Arial,sans-serif;">Suivre le cours complet (exercice + quiz) →</a></p>{% endif %}
+<p style="font:11px Arial,sans-serif;color:#888;">Rédigé par une IA à partir de sources vérifiées. Contenu pédagogique, pas un conseil en investissement.</p>
+</td></tr></table></td></tr></table></body></html>
